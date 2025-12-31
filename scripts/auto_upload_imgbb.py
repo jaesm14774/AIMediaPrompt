@@ -16,7 +16,6 @@ class ImgBBUploader:
         self.api_key = api_key
         self.upload_url = "https://api.imgbb.com/1/upload"
         self.image_dir = Path("Local_Media")
-        self.prompt_dir = Path("Prompt/Image")
 
     def upload_image(self, image_path: Path) -> Dict:
         """上傳單張圖片到 ImgBB"""
@@ -63,9 +62,17 @@ class ImgBBUploader:
 
     def get_prompt_file(self, prompt_name: str) -> Optional[Path]:
         """根據指定的 prompt 檔案名稱取得檔案路徑"""
-        prompt_file = self.prompt_dir / f"{prompt_name}.md"
-        if prompt_file.exists():
-            return prompt_file
+        search_dirs = [
+            Path("Prompt/Image"),
+            Path("Prompt/Video"),
+            Path("Prompt/Image/Shared"),
+            Path("Prompt/Video/Shared")
+        ]
+        
+        for search_dir in search_dirs:
+            prompt_file = search_dir / f"{prompt_name}.md"
+            if prompt_file.exists():
+                return prompt_file
         return None
 
     def insert_image_url(self, prompt_file: Path, image_url: str, image_name: str, is_first_image: bool = False):
@@ -106,7 +113,11 @@ class ImgBBUploader:
         prompt_file = self.get_prompt_file(prompt_name)
         if not prompt_file:
             print(f"✗ 找不到 prompt 檔案: {prompt_name}.md")
-            print(f"  請確認檔案存在於 {self.prompt_dir} 資料夾中")
+            print(f"  請確認檔案存在於以下資料夾之一:")
+            print(f"    - Prompt/Image")
+            print(f"    - Prompt/Video")
+            print(f"    - Prompt/Image/Shared")
+            print(f"    - Prompt/Video/Shared")
             return
         
         extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}

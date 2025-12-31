@@ -24,3 +24,10 @@ An ultra-detailed, professional design presentation board organized in a 4x4 gri
 Professional studio lighting, clean modular grid layout, white background, technical annotations with callouts, Behance-style portfolio presentation, hyper-realistic textures, 8k resolution, minimalist sans-serif typography.
 
 **Smart Integration:** Ensure the character's design features (shapes/patterns) are subtly derived from the [品牌名稱]'s visual elements. Consistent brand colors applied across all sections.
+
+## 範例圖片
+
+![Gemini_Generated_Image_g754qg754qg754qg](https://i.ibb.co/67BcHW6W/febeb9819746.png)
+![Gemini_Generated_Image_k11wajk11wajk11w](https://i.ibb.co/8nKYY6sp/c0d01ff2c8e4.png)
+![Gemini_Generated_Image_m088nzm088nzm088](https://i.ibb.co/ccKBGR0K/32fbb4df77c9.png)
+![Gemini_Generated_Image_zbkcfzbkcfzbkcfz](https://i.ibb.co/JRBkGdCD/ba3850b9a0bd.png)

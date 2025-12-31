@@ -32,3 +32,10 @@ Analyze the input subject. Is it Humanoid, Creature, Weapon, or Abstract? Adapt 
 **Composition:** Connected by glowing golden upgrade arrows. Background features ornate ancient carvings.
 
 **Style:** High-budget Chinese Mobile RPG UI (SSR/UR rarity aesthetic), 8k resolution, volumetric lighting, particle explosion, '進化' (Evolution) calligraphy watermark in background, cinematic composition, 16:9."
+
+## 範例圖片
+
+![Game_evolution_showcase_2k_202512270818](https://i.ibb.co/Y4XjDswm/b8de536e1a07.jpg)
+![Game_evolution_showcase_2k_202512270819](https://i.ibb.co/7fwqyGw/31a0abe63927.jpg)
+![Game_evolution_showcase_2k_202512270821](https://i.ibb.co/ntmNvWc/358b434925d5.jpg)
+![Game_evolution_showcase_2k_202512270822](https://i.ibb.co/TDvmvTK7/ed2e4faed6a7.jpg)

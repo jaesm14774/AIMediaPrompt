@@ -56,3 +56,9 @@ Analyze the User Input to determine the specific visual elements. Apply the foll
 **Output Definition:**
 
 A seamless, high-resolution conceptual render where the visual impact explodes in the final stage.
+
+## 範例圖片
+
+![Role_lead_concept_2k_202512270830](https://i.ibb.co/XZh0f2yD/447b2f247475.jpg)
+![Role_lead_vfx_2k_202512270838](https://i.ibb.co/LhzkMDgs/5fbbb79e7f7b.jpg)
+![Role_lead_vfx_2k_202512270840](https://i.ibb.co/m5HTjFLB/c67a31807a5a.jpg)

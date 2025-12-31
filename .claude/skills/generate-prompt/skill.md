@@ -152,7 +152,7 @@
    - 包含完整 Example
 
 3. **保存檔案**
-   - 檔名：`[Template名稱].txt`
+   - 檔名：`[Template名稱].md`
    - 位置：`Test/` 資料夾
    - 編碼：UTF-8
 
@@ -181,7 +181,7 @@
 類型：Absurd Professionalism
 填空：1 個（選擇動物）
 風格：National Geographic 紀實攝影
-檔案：Test/職場動物崩潰.txt
+檔案：Test/職場動物崩潰.md
 
 驚喜點：用動物的無辜表情演繹週五被加班的心情
 使用：複製 Template → 選一個動物 → 完成

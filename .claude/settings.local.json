@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(python:*)",
-      "Bash(if not exist \"Test\" mkdir Test)"
+      "Bash(if not exist \"Test\" mkdir Test)",
+      "Skill(generate-prompt)"
     ]
   }
 }

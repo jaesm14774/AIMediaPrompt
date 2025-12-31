@@ -13,7 +13,7 @@
 
 ### 1. 設定 API Key
 
-複製 `scripts/imgbb_config.example.json` 為 `scripts/imgbb_config.json`，並填入您的 ImgBB API Key。
+複製 `config/imgbb_config.example.json` 為 `config/imgbb_config.json`，並填入您的 ImgBB API Key。
 
 取得 API Key: https://api.imgbb.com/
 
@@ -61,10 +61,13 @@ AIMediaPrompt/
 ├── scripts/
 │   ├── auto_upload_imgbb.py
 │   ├── sync_to_notion.py
+│   └── requirements.txt
+├── config/
 │   ├── imgbb_config.json
 │   ├── imgbb_config.example.json
 │   ├── notion_config.json
-│   └── notion_config.example.json
+│   ├── notion_config.example.json
+│   └── notion_sync_state.json
 └── README.md
 ```
 
@@ -72,7 +75,7 @@ AIMediaPrompt/
 
 ### 1. 設定 Notion API
 
-複製 `scripts/notion_config.example.json` 為 `scripts/notion_config.json`，並填入：
+複製 `config/notion_config.example.json` 為 `config/notion_config.json`，並填入：
 
 - **API Key**: 在 https://www.notion.so/my-integrations 創建整合並取得 API Key
 - **Database ID** (選填): 在 Notion 中創建一個 Database，從 URL 中取得 Database ID
@@ -111,7 +114,7 @@ python scripts/sync_to_notion.py --full
 **注意**：
 - 預設使用增量同步，只更新變動的部分（新增、刪除、狀態變更），速度更快
 - 使用 `--full` 參數可強制完整同步（首次同步或狀態檔案損壞時使用）
-- 狀態檔案會儲存在 `scripts/notion_sync_state.json`，用於追蹤同步狀態
+- 狀態檔案會儲存在 `config/notion_sync_state.json`，用於追蹤同步狀態
 
 ### 4. 同步結果
 
@@ -146,5 +149,5 @@ python scripts/sync_to_notion.py --full
    - `Prompt/Image/shared`（或 `Shared`）和 `Prompt/Video/shared`（或 `Shared`）資料夾下的檔案
 6. 已分享的 prompt（位於 shared 資料夾中）會在 Notion 中以紅色標題顯示
 7. 預設使用增量同步，只更新變動的部分（新增、刪除、狀態變更），速度更快，適合頻繁同步
-8. 狀態檔案 `scripts/notion_sync_state.json` 會自動生成，用於追蹤同步狀態，請勿手動修改
+8. 狀態檔案 `config/notion_sync_state.json` 會自動生成，用於追蹤同步狀態，請勿手動修改
 

@@ -1,7 +1,9 @@
 # GitHub 設定檔（包含 Token，不要上傳！）
 scripts/github_config.json
 scripts/imgur_config.json
-scripts/notion_config.json
+config/notion_config.json
+config/imgbb_config.json
+config/notion_sync_state.json
 
 # URL 映射表（可選，包含本地路徑）
 github_image_urls.json
@@ -30,5 +32,4 @@ Thumbs.db
 # 臨時檔案
 *.tmp
 *.log
-*config.json
 Local_Media/

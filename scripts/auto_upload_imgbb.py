@@ -143,14 +143,14 @@ class ImgBBUploader:
                 print(f"  ✓ 已插入 URL 到 {prompt_file.name}")
 
 
-def load_config(config_file: str = 'scripts/imgbb_config.json') -> Optional[Dict]:
+def load_config(config_file: str = 'config/imgbb_config.json') -> Optional[Dict]:
     """載入設定檔"""
     try:
         with open(config_file, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"✗ 找不到設定檔: {config_file}")
-        print("請先創建設定檔，參考 imgbb_config.example.json")
+        print("請先創建設定檔，參考 config/imgbb_config.example.json")
         return None
 
 
@@ -184,7 +184,7 @@ def main():
     
     api_key = config.get('api_key')
     if not api_key or api_key == "YOUR_IMGBB_API_KEY_HERE":
-        print("✗ 請在 scripts/imgbb_config.json 中設定有效的 api_key")
+        print("✗ 請在 config/imgbb_config.json 中設定有效的 api_key")
         print("  取得方式: https://api.imgbb.com/")
         return
     

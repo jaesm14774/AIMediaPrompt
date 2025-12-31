@@ -20,7 +20,7 @@ class NotionSyncer:
         self.page_id = self._extract_id(page_id) if page_id else None
         self.image_dir = Path("Prompt/Image")
         self.video_dir = Path("Prompt/Video")
-        self.state_file = Path("scripts/notion_sync_state.json")
+        self.state_file = Path("config/notion_sync_state.json")
     
     def _extract_id(self, id_or_url: str) -> str:
         """從 URL 或 ID 中提取正確的 UUID"""
@@ -927,14 +927,14 @@ class NotionSyncer:
             print("\n✗ 同步失敗")
 
 
-def load_config(config_file: str = 'scripts/notion_config.json') -> Optional[Dict]:
+def load_config(config_file: str = 'config/notion_config.json') -> Optional[Dict]:
     """載入設定檔"""
     try:
         with open(config_file, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         print(f"✗ 找不到設定檔: {config_file}")
-        print("請先創建設定檔，參考 notion_config.example.json")
+        print("請先創建設定檔，參考 config/notion_config.example.json")
         return None
 
 
@@ -970,12 +970,12 @@ def main():
     page_id = config.get('page_id')
     
     if not api_key or api_key == "YOUR_NOTION_API_KEY_HERE":
-        print("✗ 請在 scripts/notion_config.json 中設定有效的 api_key")
+        print("✗ 請在 config/notion_config.json 中設定有效的 api_key")
         print("  取得方式: https://www.notion.so/my-integrations")
         return
     
     if not database_id and not page_id:
-        print("✗ 請在 scripts/notion_config.json 中設定 database_id 或 page_id")
+        print("✗ 請在 config/notion_config.json 中設定 database_id 或 page_id")
         print("  Database ID 或 Page ID 可以在 Notion 頁面的 URL 中找到")
         return
     

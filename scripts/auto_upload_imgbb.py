@@ -7,6 +7,7 @@ ImgBB: 免費圖片托管，無需註冊（匿名上傳）
 import json
 import base64
 import argparse
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 import requests
@@ -60,8 +61,15 @@ class ImgBBUploader:
                 'error': str(e)
             }
 
-    def get_prompt_file(self, prompt_name: str) -> Optional[Path]:
+    def get_prompt_file(self, prompt_name: str, env: Optional[str] = None, type: Optional[str] = None) -> Optional[Path]:
         """根據指定的 prompt 檔案名稱取得檔案路徑"""
+        test_envs = {'dev', 'stg', 'test'}
+        
+        if env and env.lower() in test_envs and type:
+            test_file = Path("Test") / f"{prompt_name}.md"
+            if test_file.exists():
+                return test_file
+        
         search_dirs = [
             Path("Prompt/Image"),
             Path("Prompt/Video"),
@@ -74,6 +82,38 @@ class ImgBBUploader:
             if prompt_file.exists():
                 return prompt_file
         return None
+    
+    def move_test_file_to_prompt(self, test_file: Path, prompt_name: str, type: str) -> Optional[Path]:
+        """將 Test 資料夾的檔案移動到對應的 Prompt 資料夾"""
+        test_envs = {'dev', 'stg', 'test'}
+        
+        if type.lower() == 'image':
+            target_dir = Path("Prompt/Image")
+        elif type.lower() == 'video':
+            target_dir = Path("Prompt/Video")
+        else:
+            print(f"  ✗ 不支援的 type: {type}")
+            return None
+        
+        if not target_dir.exists():
+            target_dir.mkdir(parents=True, exist_ok=True)
+        
+        target_file = target_dir / f"{prompt_name}.md"
+        
+        if target_file.exists():
+            print(f"  ⚠ 目標檔案已存在: {target_file}")
+            response = input(f"  是否覆蓋？(y/n): ").strip().lower()
+            if response != 'y':
+                print(f"  ⚠ 跳過移動")
+                return target_file
+        
+        try:
+            shutil.move(str(test_file), str(target_file))
+            print(f"  ✓ 已移動檔案: {test_file.name} -> {target_file}")
+            return target_file
+        except Exception as e:
+            print(f"  ✗ 移動失敗: {e}")
+            return None
 
     def insert_image_url(self, prompt_file: Path, image_url: str, image_name: str, is_first_image: bool = False):
         """將圖片 URL 插入到 prompt 檔案末尾"""
@@ -104,13 +144,13 @@ class ImgBBUploader:
             print(f"  ✗ 插入失敗: {e}")
             return False
 
-    def process_all_images(self, prompt_name: str):
+    def process_all_images(self, prompt_name: str, env: Optional[str] = None, type: Optional[str] = None):
         """處理所有圖片並插入到指定的 prompt 檔案"""
         if not self.image_dir.exists():
             print(f"✗ 找不到圖片資料夾: {self.image_dir}")
             return
         
-        prompt_file = self.get_prompt_file(prompt_name)
+        prompt_file = self.get_prompt_file(prompt_name, env, type)
         if not prompt_file:
             print(f"✗ 找不到 prompt 檔案: {prompt_name}.md")
             print(f"  請確認檔案存在於以下資料夾之一:")
@@ -118,7 +158,19 @@ class ImgBBUploader:
             print(f"    - Prompt/Video")
             print(f"    - Prompt/Image/Shared")
             print(f"    - Prompt/Video/Shared")
+            if env and env.lower() in {'dev', 'stg', 'test'}:
+                print(f"    - Test")
             return
+        
+        test_envs = {'dev', 'stg', 'test'}
+        if env and env.lower() in test_envs and type and prompt_file.parent.name == "Test":
+            print(f"\n檢測到 Test 環境，準備移動檔案...")
+            moved_file = self.move_test_file_to_prompt(prompt_file, prompt_name, type)
+            if moved_file:
+                prompt_file = moved_file
+            else:
+                print(f"✗ 無法移動檔案，停止處理")
+                return
         
         extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
         image_files_set = set()
@@ -173,8 +225,12 @@ def main():
 範例:
   python auto_upload_imgbb.py 貪吃蛇
   python auto_upload_imgbb.py "One leaf, one world"
+  python auto_upload_imgbb.py "Kirby-IP-Copy-Ability" --env dev --type image
+  python auto_upload_imgbb.py "test-video" --env stg --type video
   
-注意: Local_Media 資料夾一次僅放一種型態的圖片
+注意: 
+  - Local_Media 資料夾一次僅放一種型態的圖片
+  - 當使用 --env (dev/stg/test) 且 --type (image/video) 時，會從 Test/ 資料夾找檔案並自動移動到對應的 Prompt 資料夾
         '''
     )
     parser.add_argument(
@@ -182,12 +238,34 @@ def main():
         type=str,
         help='prompt 檔案名稱（不含副檔名），例如: 貪吃蛇 或 "One leaf, one world"'
     )
+    parser.add_argument(
+        '--env',
+        type=str,
+        choices=['dev', 'stg', 'test'],
+        default=None,
+        help='環境變數：dev/stg/test，與 --type 一起使用時會從 Test/ 資料夾找檔案並移動'
+    )
+    parser.add_argument(
+        '--type',
+        type=str,
+        choices=['image', 'video'],
+        default=None,
+        help='類型：image/video，與 --env 一起使用時會移動檔案到對應的 Prompt 資料夾'
+    )
     
     args = parser.parse_args()
     
     print("=" * 60)
     print("自動上傳圖片到 ImgBB 並插入 URL 工具")
     print("=" * 60)
+    
+    if args.env and not args.type:
+        print("✗ 使用 --env 時必須同時指定 --type")
+        return
+    
+    if args.type and not args.env:
+        print("✗ 使用 --type 時必須同時指定 --env")
+        return
     
     config = load_config()
     if not config:
@@ -200,7 +278,7 @@ def main():
         return
     
     uploader = ImgBBUploader(api_key)
-    uploader.process_all_images(args.prompt_name)
+    uploader.process_all_images(args.prompt_name, args.env, args.type)
 
 
 if __name__ == "__main__":

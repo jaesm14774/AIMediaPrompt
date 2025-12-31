@@ -26,20 +26,35 @@
 ### 3. 執行腳本
 
 ```bash
-python scripts/auto_upload_imgbb.py <prompt檔案名稱>
+python scripts/auto_upload_imgbb.py <prompt檔案名稱> [--env <環境>] [--type <類型>]
 ```
 
 **參數說明：**
 - `prompt檔案名稱`: prompt 檔案名稱（不含副檔名，檔案格式為 .md）
+- `--env`: 環境變數（可選），可選值：`dev`、`stg`、`test`，與 `--type` 一起使用時會從 `Test/` 資料夾找檔案並自動移動到對應的 Prompt 資料夾
+- `--type`: 類型（可選），可選值：`image`、`video`，與 `--env` 一起使用時會移動檔案到對應的 Prompt 資料夾
 
 **範例：**
 ```bash
-# 中文檔名
+# 基本用法（從 Prompt/Image 或 Prompt/Video 找檔案）
 python scripts/auto_upload_imgbb.py 貪吃蛇
-
-# 英文檔名（含空格需加引號）
 python scripts/auto_upload_imgbb.py "One leaf, one world"
+
+# Test 環境用法（從 Test/ 資料夾找檔案並移動到 Prompt/Image）
+python scripts/auto_upload_imgbb.py "Kirby-IP-Copy-Ability" --env dev --type image
+
+# Test 環境用法（從 Test/ 資料夾找檔案並移動到 Prompt/Video）
+python scripts/auto_upload_imgbb.py "test-video" --env stg --type video
 ```
+
+**Test 環境功能說明：**
+- 當使用 `--env`（dev/stg/test）且 `--type`（image/video）時：
+  - 腳本會先從 `Test/` 資料夾尋找指定的 prompt 檔案
+  - 找到後會自動將檔案移動到對應的 Prompt 資料夾：
+    - `--type image` → 移動到 `Prompt/Image`
+    - `--type video` → 移動到 `Prompt/Video`
+  - 如果目標位置已存在同名檔案，會詢問是否覆蓋
+  - 移動完成後再進行圖片上傳和 URL 插入
 
 ### 4. 查看結果
 
@@ -53,11 +68,12 @@ python scripts/auto_upload_imgbb.py "One leaf, one world"
 ```
 AIMediaPrompt/
 ├── Local_Media/          # 放置要上傳的圖片
+├── Test/                 # 測試用的 prompt 檔案（使用 --env 時會從這裡找檔案）
 ├── Prompt/
 │   ├── Image/            # prompt 檔案存放位置
-│   │   └── shared/       # 已分享的 prompt（會以紅色標記）
+│   │   └── Shared/      # 已分享的 prompt（會以紅色標記）
 │   └── Video/            # prompt 檔案存放位置
-│       └── shared/       # 已分享的 prompt（會以紅色標記）
+│       └── Shared/      # 已分享的 prompt（會以紅色標記）
 ├── scripts/
 │   ├── auto_upload_imgbb.py
 │   ├── sync_to_notion.py
@@ -75,27 +91,116 @@ AIMediaPrompt/
 
 ### 1. 設定 Notion API
 
-複製 `config/notion_config.example.json` 為 `config/notion_config.json`，並填入：
+#### 步驟 1：創建 Notion Integration
 
-- **API Key**: 在 https://www.notion.so/my-integrations 創建整合並取得 API Key
-- **Database ID** (選填): 在 Notion 中創建一個 Database，從 URL 中取得 Database ID
-  - 方法1：直接貼上完整 URL，腳本會自動提取 ID
-    - 例如：`https://www.notion.so/workspace/2dab80218be180faa39efd22aebb31cf`
-  - 方法2：從 URL 中手動提取最後一段（32 個字元）
-    - URL 格式：`https://www.notion.so/workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
-    - ID 格式：`xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` 或 `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
-- **Page ID** (選填): 如果要同步到現有頁面，提供 Page ID
-  - 方法1：直接貼上完整 URL，腳本會自動提取 ID
-  - 方法2：從頁面 URL 中取得，格式與 Database ID 相同
-  - **如何找到 Page ID**：
-    1. 在 Notion 中打開要同步的頁面
-    2. 點擊右上角的「分享」或「...」選單
-    3. 選擇「複製連結」或查看瀏覽器網址列
-    4. URL 格式：`https://www.notion.so/頁面標題-2dab80218be180faa39efd22aebb31cf`
-    5. ID 是 URL 中最後的 32 個字元（`2dab80218be180faa39efd22aebb31cf`）
-  - **注意**: 必須提供 `database_id` 或 `page_id` 其中一個
+1. 前往 https://www.notion.so/my-integrations
+2. 點擊右上角的 **「+ New integration」** 按鈕
+3. 填寫整合資訊：
+   - **Name**: 輸入整合名稱（例如：`AI Media Prompt Syncer`）
+   - **Logo** (選填): 可選擇上傳圖示
+   - **Associated workspace**: 選擇要使用的 Notion 工作區
+   - **Type**: 選擇 **「Internal」**（內部整合）
+   - **Capabilities**: 確保勾選以下權限：
+     - ✅ **Read content**
+     - ✅ **Update content**
+     - ✅ **Insert content**
+4. 點擊 **「Submit」** 創建整合
+5. 創建完成後，在整合頁面中找到 **「Internal Integration Token」**，複製這個 Token（這就是您的 API Key）
+   - Token 格式類似：`secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+#### 步驟 2：創建 Notion Database 或選擇現有頁面
+
+您有兩種方式可以選擇：
+
+**方式 A：使用 Database（推薦，適合首次使用）**
+
+1. 在 Notion 中創建一個新的頁面或打開現有頁面
+2. 在頁面中輸入 `/database` 或點擊 **「+」** 按鈕，選擇 **「Table - Inline」** 或 **「Table - Full page」**
+3. 創建 Database 後，點擊 Database 右上角的 **「...」** 選單
+4. 選擇 **「Connections」** → 找到您剛才創建的 Integration → 點擊 **「Connect」** 授權訪問
+5. 取得 Database ID：
+   - 方法1（推薦）：複製 Database 的完整 URL，腳本會自動提取 ID
+     - URL 格式：`https://www.notion.so/workspace/2dab80218be180faa39efd22aebb31cf`
+   - 方法2：從 URL 中手動提取 ID
+     - URL 格式：`https://www.notion.so/workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+     - ID 是 URL 中最後的 32 個字元（`2dab80218be180faa39efd22aebb31cf`）
+     - 腳本會自動將 32 字元轉換為標準 UUID 格式（`xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`）
+
+**方式 B：使用現有頁面**
+
+1. 在 Notion 中打開要同步的頁面
+2. 點擊頁面右上角的 **「...」** 選單
+3. 選擇 **「Connections」** → 找到您創建的 Integration → 點擊 **「Connect」** 授權訪問
+4. 取得 Page ID：
+   - 方法1（推薦）：複製頁面的完整 URL，腳本會自動提取 ID
+     - URL 格式：`https://www.notion.so/頁面標題-2dab80218be180faa39efd22aebb31cf`
+   - 方法2：從瀏覽器網址列中取得
+     - 打開頁面後，查看瀏覽器網址列
+     - ID 是 URL 中最後的 32 個字元（`2dab80218be180faa39efd22aebb31cf`）
+
+**重要提示**：
+- 必須提供 `database_id` 或 `page_id` 其中一個（不能兩個都留空）
+- 如果提供 `database_id`，腳本會在 Database 中創建新頁面
+- 如果提供 `page_id`，腳本會直接更新該頁面的內容
+- 無論使用哪種方式，都必須先授權 Integration 訪問該 Database 或 Page
+
+#### 步驟 3：填寫配置文件
+
+1. 複製 `config/notion_config.example.json` 為 `config/notion_config.json`
+2. 打開 `config/notion_config.json`，填入以下資訊：
+
+```json
+{
+  "api_key": "secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "database_id": "https://www.notion.so/workspace/2dab80218be180faa39efd22aebb31cf",
+  "page_id": ""
+}
+```
+
+**配置說明**：
+- **api_key**: 貼上步驟 1 中取得的 Internal Integration Token
+- **database_id**: 貼上 Database 的完整 URL 或 ID（如果使用 Database 方式）
+- **page_id**: 貼上頁面的完整 URL 或 ID（如果使用 Page 方式）
+  - 如果使用 `database_id`，可以將 `page_id` 留空
+  - 如果使用 `page_id`，可以將 `database_id` 留空
+
+**範例配置**：
+
+使用 Database：
+```json
+{
+  "api_key": "secret_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz",
+  "database_id": "https://www.notion.so/myworkspace/2dab80218be180faa39efd22aebb31cf",
+  "page_id": ""
+}
+```
+
+使用 Page：
+```json
+{
+  "api_key": "secret_abc123def456ghi789jkl012mno345pqr678stu901vwx234yz",
+  "database_id": "",
+  "page_id": "https://www.notion.so/myworkspace/AI-Prompts-2dab80218be180faa39efd22aebb31cf"
+}
+```
+
+**注意**：
+- 可以直接貼上完整 URL，腳本會自動提取 ID
+- ID 格式可以是 32 字元（無連字號）或標準 UUID 格式（有連字號），腳本會自動處理
+- 確保 Integration 已經授權訪問對應的 Database 或 Page
+
+#### 步驟 4：驗證設定
+
+在執行同步前，請確認：
+- ✅ API Key 已正確填入（以 `secret_` 開頭）
+- ✅ Database ID 或 Page ID 已正確填入（至少填寫一個）
+- ✅ Integration 已授權訪問對應的 Database 或 Page
+
+如果設定有誤，執行同步時會顯示錯誤訊息，請根據錯誤訊息修正配置。
 
 ### 2. 安裝依賴
+
+確保已安裝所需的 Python 套件：
 
 ```bash
 pip install -r scripts/requirements.txt
@@ -111,10 +216,14 @@ python scripts/sync_to_notion.py
 python scripts/sync_to_notion.py --full
 ```
 
-**注意**：
-- 預設使用增量同步，只更新變動的部分（新增、刪除、狀態變更），速度更快
-- 使用 `--full` 參數可強制完整同步（首次同步或狀態檔案損壞時使用）
-- 狀態檔案會儲存在 `config/notion_sync_state.json`，用於追蹤同步狀態
+**同步模式說明**：
+- **增量同步**（預設）：只更新變動的部分（新增、刪除、內容變更、狀態變更），速度更快，適合頻繁同步
+- **完整同步**（`--full`）：清空現有內容後重新同步所有檔案，適合首次同步或狀態檔案損壞時使用
+
+**狀態檔案**：
+- 狀態檔案會自動儲存在 `config/notion_sync_state.json`
+- 用於追蹤每個檔案的同步狀態，包括內容雜湊值、是否已分享等
+- 請勿手動修改此檔案，以免造成同步錯誤
 
 ### 4. 同步結果
 
@@ -138,16 +247,67 @@ python scripts/sync_to_notion.py --full
 
 所有格式會自動轉換為對應的 Notion 格式，圖片會直接顯示，連結可以點擊。
 
+## 常見問題與疑難排解
+
+### ImgBB 上傳相關
+
+**Q: 上傳失敗怎麼辦？**
+- 檢查 API Key 是否正確
+- 確認網路連線正常
+- 檢查圖片檔案是否損壞
+- 確認圖片格式是否支援（PNG, JPG, JPEG, GIF, WEBP）
+
+**Q: 圖片 URL 重複插入怎麼辦？**
+- 腳本會自動檢查，如果 URL 已存在會跳過
+- 如需重新上傳，請先手動刪除檔案中的舊 URL
+
+### Notion 同步相關
+
+**Q: 出現 "should be a valid uuid" 錯誤？**
+- 檢查 Database ID 或 Page ID 格式是否正確
+- 可以直接貼上完整 URL，腳本會自動提取 ID
+- 確認 ID 是 32 個字元（可能包含連字號）
+
+**Q: 出現 "object_not_found" 或 "unauthorized" 錯誤？**
+- 確認 Integration 已授權訪問對應的 Database 或 Page
+- 在 Notion 中打開 Database/Page → 點擊右上角「...」→ 「Connections」→ 確認 Integration 已連接
+
+**Q: 同步後 Notion 中沒有內容？**
+- 確認 prompt 檔案存在於正確的資料夾中
+- 檢查檔案格式是否為 `.md`
+- 確認檔案內容不為空
+- 嘗試使用 `--full` 參數執行完整同步
+
+**Q: 已分享的 prompt 沒有顯示為紅色？**
+- 確認檔案位於 `shared` 或 `Shared` 資料夾中
+- 執行增量同步以更新顏色狀態
+
+**Q: 如何重新同步所有內容？**
+- 使用 `--full` 參數執行完整同步
+- 或刪除 `config/notion_sync_state.json` 後重新執行同步
+
 ## 注意事項
+
+### ImgBB 上傳功能
 
 1. 每次執行時，`Local_Media` 資料夾中應只放置一種型態的圖片
 2. 如果圖片 URL 已存在於 prompt 檔案中，會自動跳過
-3. 確保 prompt 檔案（.md 格式）存在於 `Image` 或 `Video` 資料夾中
-4. 圖片會依檔名排序後依序處理
-5. Notion 同步會將所有 prompt 檔案同步到指定的 Database，包括：
+3. 確保 prompt 檔案（.md 格式）存在於以下位置之一：
+   - `Prompt/Image` 或 `Prompt/Video` 資料夾
+   - `Prompt/Image/Shared` 或 `Prompt/Video/Shared` 資料夾
+   - `Test/` 資料夾（使用 `--env` 和 `--type` 參數時）
+4. 使用 `--env` 和 `--type` 參數時，檔案會自動從 `Test/` 移動到對應的 Prompt 資料夾
+5. 圖片會依檔名排序後依序處理
+6. 支援的圖片格式：PNG, JPG, JPEG, GIF, WEBP
+
+### Notion 同步功能
+
+1. Notion 同步會將所有 prompt 檔案同步到指定的 Database 或 Page，包括：
    - `Prompt/Image` 和 `Prompt/Video` 資料夾下的檔案
    - `Prompt/Image/shared`（或 `Shared`）和 `Prompt/Video/shared`（或 `Shared`）資料夾下的檔案
-6. 已分享的 prompt（位於 shared 資料夾中）會在 Notion 中以紅色標題顯示
-7. 預設使用增量同步，只更新變動的部分（新增、刪除、狀態變更），速度更快，適合頻繁同步
-8. 狀態檔案 `config/notion_sync_state.json` 會自動生成，用於追蹤同步狀態，請勿手動修改
+2. 已分享的 prompt（位於 shared 資料夾中）會在 Notion 中以**紅色**標題顯示
+3. 預設使用增量同步，只更新變動的部分（新增、刪除、內容變更、狀態變更），速度更快，適合頻繁同步
+4. 狀態檔案 `config/notion_sync_state.json` 會自動生成，用於追蹤同步狀態，請勿手動修改
+5. 如果檔案從未分享移動到 shared 資料夾（或相反），會自動更新顏色標記
+6. 支援的 Markdown 格式會自動轉換為 Notion 格式（圖片、連結、粗體、斜體、標題）
 

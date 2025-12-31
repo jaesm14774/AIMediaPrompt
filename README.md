@@ -29,7 +29,7 @@ python scripts/auto_upload_imgbb.py <prompt檔案名稱>
 ```
 
 **參數說明：**
-- `prompt檔案名稱`: prompt 檔案名稱（不含副檔名）
+- `prompt檔案名稱`: prompt 檔案名稱（不含副檔名，檔案格式為 .md）
 
 **範例：**
 ```bash
@@ -65,6 +65,6 @@ AIMediaPrompt/
 
 1. 每次執行時，`Local_Media` 資料夾中應只放置一種型態的圖片
 2. 如果圖片 URL 已存在於 prompt 檔案中，會自動跳過
-3. 確保 prompt 檔案存在於 `Image` 資料夾中
+3. 確保 prompt 檔案（.md 格式）存在於 `Image` 或 `Video` 資料夾中
 4. 圖片會依檔名排序後依序處理
 

@@ -63,7 +63,7 @@ class ImgBBUploader:
 
     def get_prompt_file(self, prompt_name: str) -> Optional[Path]:
         """根據指定的 prompt 檔案名稱取得檔案路徑"""
-        prompt_file = self.prompt_dir / f"{prompt_name}.txt"
+        prompt_file = self.prompt_dir / f"{prompt_name}.md"
         if prompt_file.exists():
             return prompt_file
         return None
@@ -105,7 +105,7 @@ class ImgBBUploader:
         
         prompt_file = self.get_prompt_file(prompt_name)
         if not prompt_file:
-            print(f"✗ 找不到 prompt 檔案: {prompt_name}.txt")
+            print(f"✗ 找不到 prompt 檔案: {prompt_name}.md")
             print(f"  請確認檔案存在於 {self.prompt_dir} 資料夾中")
             return
         

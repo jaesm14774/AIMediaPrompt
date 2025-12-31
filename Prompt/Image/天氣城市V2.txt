@@ -1,0 +1,15 @@
+### 天氣城市V2
+
+Generate a vertical composition image viewed from a clear 45-degree top-down perspective.
+
+A detailed isometric miniature city of **[城市名稱]** sits physically attached to **[IP 角色名稱]**, as if the city is being **[承載方式：held / balanced / worn / supported / emerging from]** by the character's body. The city is not floating independently — its weight and placement are visually justified by the character.
+
+The current weather **[天氣描述：溫度＋狀態]** is expressed as a direct result of the IP character's **[身體部位或行為：mouth / breath / expression / posture]**, transforming into **[具體天氣效果：wind / clouds / rain / mist / sunlight]** that flows through and interacts with the city and surrounding space.
+
+The IP character dominates the composition, with the city functioning as an extension of the character rather than the main subject.
+
+Thin, minimal city base or no visible base at all.
+
+Physically Based Rendering (PBR), soft realistic lighting, clean solid-color background.
+
+At the top of the image, display **[城市名稱]** and **[天氣描述]**, accompanied by a simple weather icon that visually echoes the character's state.

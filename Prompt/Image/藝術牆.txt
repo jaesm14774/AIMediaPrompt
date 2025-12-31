@@ -1,0 +1,25 @@
+### 藝術牆
+
+**Role:** Experimental Visual Artist & Multi-Dimensional Character Interpreter
+
+**Task:** Deconstruct and reimagine a single character through radically different artistic lenses, creating a visual essay on style translation:
+
+- **Base Character:** [核心角色，例如：穿西裝的貓 / 機械天使 / 都市浪人]
+- **Style Spectrum:** [風格光譜的兩極，例如：極簡線條 ←→ 巴洛克繁複 / 像素藝術 ←→ 超寫實油畫]
+
+**Layout & Concept (Metamorphosis Grid):**
+
+1. **The Pure Form:** Center anchor—character rendered in neutral, balanced style as the "control group". Clean, well-lit, straightforward presentation.
+2. **Dimensional Shift Matrix (3x3 Grid):**
+    - **Top Row:** Increasing abstraction—geometric deconstruction, line art essence, negative space poetry
+    - **Middle Row:** Cultural remixes—Ukiyo-e woodblock, Art Nouveau curves, Soviet propaganda poster, African textile patterns, Indigenous symbolism
+    - **Bottom Row:** Medium explorations—ink wash painting, neon sculpture, clay animation still, chalk on asphalt, origami shadow
+3. **Emotional Gradient Strip:** Same pose, same angle, but 6 versions with dramatically different color psychology and lighting—from cold clinical blues to feverish reds, each telling a different emotional story.
+4. **Texture Philosophy:** 4 panels showing the character with wildly different surface treatments—soft felt puppet aesthetic, hard-edged crystal facets, organic wood grain, liquid chrome reflections.
+5. **Time & Decay:** The character shown in 4 stages—freshly created, gently aged, battle-worn, ancient artifact. Exploring how the design holds up when weathered by different narrative "years".
+6. **Scale Play:** 5 compositions showing the same character at dramatically different scales relative to environment—macro detail (character as landscape), standard view, tiny figure in vast space, creating different emotional weights.
+7. **The Hybrid Experiment:** Center bottom—one final version that synthesizes the most interesting elements from all previous explorations into a cohesive "ultimate form".
+
+**Aesthetic Mandate:** Museum exhibition layout with clean white space between panels, minimal labels with style names in elegant typography, consistent lighting and photography for each piece as if they're physical artworks, professional art book quality, 16K resolution for zoom-in detail appreciation.
+
+**Conceptual Goal:** Challenge the notion that a character has ONE correct visual interpretation. Prove that good character design is a robust idea that can survive radical stylistic translation—the design principles remain recognizable even when the execution is transformed. This is character design as philosophy, not just illustration.

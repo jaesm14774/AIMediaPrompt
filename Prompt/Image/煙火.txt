@@ -1,0 +1,89 @@
+### 煙火
+
+Create an epic New Year's Eve fireworks celebration scene themed around "{Keyword}".
+
+**[Scene Intelligence - Auto-adapt based on keyword]**
+
+**IF keyword = city name (e.g., Taipei, Tokyo, Paris):**
+
+→ Feature iconic landmark silhouette (Taipei 101, Tokyo Tower, Eiffel Tower)
+
+→ Skyline with recognizable architecture
+
+→ Cultural color palette (Taiwan: red/gold, Japan: red/white, France: blue/white/red)
+
+→ Fireworks launched from landmark or harbor
+
+**IF keyword = year (e.g., 2025, 2026):**
+
+→ Massive "{Year}" numerals as centerpiece (3x scale of other fireworks)
+
+→ Surrounded by countdown-themed bursts: clock motifs, champagne bottle shapes
+
+→ Golden/silver primary colors with accent colors
+
+→ Confetti-like particle cascades
+
+→ Celebratory crowd silhouettes below
+
+**IF keyword = zodiac/animal (e.g., Dragon, Snake, Tiger):**
+
+→ Firework trails form abstract "{Animal}" silhouette mid-explosion
+
+→ Animal characteristic colors (Dragon: red/gold, Snake: emerald/silver)
+
+→ Movement patterns mimicking animal (Dragon: serpentine trails, Tiger: fierce radial)
+
+→ Traditional motifs integrated into burst patterns
+
+**IF keyword = love/romance (e.g., Love, Heart, Wedding):**
+
+→ Heart-shaped firework formations
+
+→ Pink, rose gold, and white color scheme
+
+→ Gentle willow cascades and palm trees (soft patterns)
+
+→ Couple silhouettes in foreground
+
+→ Romantic waterfront or garden setting
+
+**IF keyword = nature element (e.g., Ocean, Mountain, Forest):**
+
+→ Ocean: blue/turquoise/silver, launched from seaside, wave-like cascades
+
+→ Mountain: earth tones, alpine silhouette, vertical shooting stars
+
+→ Forest: green/gold, tree-line silhouette, branching patterns
+
+**IF keyword = abstract concept (e.g., Hope, Dream, Future):**
+
+→ Hope: ascending rockets, sunrise colors (orange/yellow/pink)
+
+→ Dream: ethereal pastels, star-burst patterns, soft bokeh
+
+→ Future: neon colors, geometric patterns, tech-inspired sharp lines
+
+**[Universal Elements]**
+
+- Long-exposure photography capturing 3-4 second burst cycle
+- Pitch-black sky background for maximum contrast
+- Multi-layer depth: foreground sparks, mid-ground main display, background ambient glow
+- Wispy smoke trails catching colored light
+- Professional pyrotechnics-grade realism
+
+**[Composition]**
+
+- Vertical or horizontal based on keyword context
+- Dynamic balance: 40% empty sky, 60% firework coverage
+- Environmental context appropriate to theme (urban/natural/abstract)
+
+**[Technical Specs]**
+
+8K resolution, photorealistic particle physics, HDR color grading, cinematic light bloom, zero text overlays, pure visual storytelling.
+
+**[Emotional Resonance]**
+
+The scene should FEEL like "{Keyword}" - not just show it.
+
+Capture the essence, energy, and emotion of the theme through color psychology, composition dynamics, and visual metaphor.

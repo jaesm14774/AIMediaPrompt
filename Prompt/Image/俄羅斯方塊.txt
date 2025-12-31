@@ -1,0 +1,9 @@
+### 俄羅斯方塊
+
+Create a Tetris game board where falling tetromino blocks are composed of [IP角色名稱] characters stacked in L-shapes, T-shapes, I-shapes, and square formations. Each [角色] acts as one block unit, with cute expressions showing teamwork. The bottom rows show completed lines of [角色] characters glowing before disappearing. The playing field is framed by [主題相關邊框], with next-piece preview showing upcoming [角色] formations. Pieces mid-rotation create a spiral effect. Style: [風格], [色調], geometric precision, satisfying alignment, 8k quality.
+
+## 範例圖片
+
+![Create_a_tetris_2k_202512302320](https://i.ibb.co/67Hy09LW/baec29bcf651.jpg)
+![Create_a_tetris_2k_202512302321](https://i.ibb.co/f3ZNS9L/8f4cd1f912ba.jpg)
+![Gemini_Generated_Image_rpowpfrpowpfrpow](https://i.ibb.co/PzCn9XwQ/ab1653eb358f.png)

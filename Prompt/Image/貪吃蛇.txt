@@ -1,0 +1,11 @@
+### 貪吃蛇
+
+Create a snake game scene where the snake body is formed by [IP角色名稱] characters **arranged like beads on a string** - each [角色] is a bead that **directly touches the bead in front and behind it**. No character floats alone. Think of it as a **[角色名稱] train where each car is coupled to the next**. 15-20 characters total, each with different cute expressions, forming one **uninterrupted chain** that curves across [場景]. The lead character reaches for a [目標物]. Style: [風格], [色調], **physically connected segments**, 8k quality.
+
+## 範例圖片
+
+![Create_a_snake_2k_202512302318 (1)](https://i.ibb.co/LDPb13xM/ea87fa7439ff.jpg)
+
+## 範例圖片
+
+![Create_a_snake_2k_202512302318](https://i.ibb.co/VcjQ77G2/a5ab52e6e38d.jpg)

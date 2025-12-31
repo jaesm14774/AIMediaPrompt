@@ -1,0 +1,11 @@
+### 微縮世界
+
+Isometric 3D diorama of a floating cube, cutaway view.
+
+**TOP LEVEL (Surface):** <地上世界：例如熱帶島嶼、充滿霓虹燈的城市>, featuring <上面的細節：例如棕櫚樹和小屋、招牌和行人>.
+
+**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals <地下的秘密：例如埋藏的海盜寶箱、恐龍化石、神秘實驗室>.
+
+**STYLE:** High-quality clay render, miniature toy aesthetic, tilt-shift photography, shallow depth of field, incredible details, C4D style, volumetric lighting.
+
+**LIGHTING:** Warm and cozy sunlight on top, slightly darker and mysterious underground.

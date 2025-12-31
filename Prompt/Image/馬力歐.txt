@@ -1,0 +1,3 @@
+### 馬力歐
+
+Create a side-scrolling platformer scene where [IP角色名稱] jumps between floating platforms in [場景]. Multiple [角色] characters appear in different poses - one mid-jump reaching for a coin, one ground-pounding a brick block, one riding on a moving platform. Include classic elements: ? blocks releasing [主題相關道具], green pipes emerging from ground, clouds in background, flag pole in distance. A boss character [反派角色] looms on the right side. Style: [風格], [色調], dynamic action poses, parallax layers, 8k quality.

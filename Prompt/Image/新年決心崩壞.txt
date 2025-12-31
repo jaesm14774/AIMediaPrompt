@@ -1,0 +1,15 @@
+### 新年決心崩壞
+
+將每個人都有過的新年決心失敗，化為災難級大片視覺
+
+---
+
+## Prompt Template
+
+A cinematic IMAX disaster movie poster. [決心場景 with: 選擇崩壞場景 / "Early morning bedroom: person in wrinkled pajamas and messy hair, heroic desperate pose, surrounded by avalanche of screaming alarm clocks and glowing phone notifications, bed becomes crater, grey dawn light through window" / "Home gym corner: person in brand new unworn workout clothes, defeated pose, crushed under mountain of giant dumbbells and yoga mats, living room transforms into equipment graveyard, harsh fluorescent lighting" / "Kitchen battlefield: person in stained hoodie, drowning pose reaching upward, massive tsunami wave of junk food, bubble tea and instant noodles crashing down, kitchen cabinets explode open, warm orange takeout glow vs cold fridge light" / "Study desk warzone: person buried in chair, defensive pose, attacked by flying textbooks and language apps materialized as monsters, laptop screen shows 'Day 1' mockingly, papers swirl like tornado, desaturated blue screen glow"]. Dramatic low-angle shot, epic composition, [時間點 with: 何時崩潰 / "January 2nd 6:47 AM" / "First Monday back" / "Day 3 midnight" / "First weekend temptation"], cinematic apocalyptic atmosphere, desaturated color grading with selective warm glows, volumetric light rays, film grain, anamorphic lens flare, dust and debris particles, 8K resolution. Bold typography at top: "RESOLUTION COLLAPSE", tagline at bottom: "This time will be different... they said", IMAX ratio 1.9:1
+
+---
+
+## Example
+
+A cinematic IMAX disaster movie poster. Kitchen battlefield: person in stained hoodie, drowning pose reaching upward, massive tsunami wave of junk food, bubble tea and instant noodles crashing down, kitchen cabinets explode open, warm orange takeout glow vs cold fridge light. Dramatic low-angle shot, epic composition, January 2nd 6:47 AM, cinematic apocalyptic atmosphere, desaturated color grading with selective warm glows, volumetric light rays, film grain, anamorphic lens flare, dust and debris particles, 8K resolution. Bold typography at top: "RESOLUTION COLLAPSE", tagline at bottom: "This time will be different... they said", IMAX ratio 1.9:1

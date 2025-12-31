@@ -1,0 +1,3 @@
+### 迷宮追逐
+
+Create a Pac-Man maze scene where [IP角色名稱] is the player character racing through a neon-lit labyrinth. Four ghost enemies styled as [反派角色或對比角色] chase behind in different colors (red, pink, cyan, orange). The maze walls are made of [主題相關材質], with glowing power pellets scattered throughout. [角色] has its mouth wide open, about to chomp a line of dots. Corner of maze shows score display and remaining lives as tiny [角色] icons. Style: [風格], [色調], top-down isometric view, energetic motion blur, 8k quality.

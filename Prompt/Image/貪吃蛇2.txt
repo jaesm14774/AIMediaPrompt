@@ -1,0 +1,20 @@
+### 貪吃蛇2
+
+Create a **snake game–inspired scene** where the snake body is formed by **[IP角色名稱，複數]** arranged like **beads on a string**.
+
+Each **[角色]** directly touches the one in front and behind it — **no character floats alone**.
+
+Think of it as a **[IP主題化比喻，例如：角色列車 / 生物隊伍 / 連體編隊]**, where every segment is physically connected.
+
+Total of **[數量範圍，例如：15–20] [角色]**, each with **distinct variations** (such as **[能力 / 造型 / 表情的差異類型]**), forming **one uninterrupted chain** that curves across **[場景或世界觀]**.
+
+The lead **[角色]** reaches toward **[目標物 / 吃的 / 任務物件]**.
+
+Style: **[整體風格關鍵詞]**, physically connected segments, high detail, cinematic composition, ultra high quality.
+
+## 範例圖片
+
+![Create_a_snake_2k_202512302318 (1)](https://i.ibb.co/LDPb13xM/ea87fa7439ff.jpg)
+![Create_a_snake_2k_202512302318](https://i.ibb.co/VcjQ77G2/a5ab52e6e38d.jpg)
+![Gemini_Generated_Image_1erkn01erkn01erk](https://i.ibb.co/Hptmr61h/504cdb831fde.png)
+![Gemini_Generated_Image_x54wppx54wppx54w](https://i.ibb.co/BH3fMdjz/9abccf5000f6.png)

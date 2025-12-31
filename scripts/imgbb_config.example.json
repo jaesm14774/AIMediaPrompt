@@ -1,0 +1,8 @@
+{
+  "api_key": "YOUR_IMGBB_API_KEY_HERE",
+  "upload_directories": [
+    "Local_Media"
+  ],
+  "output_file": "imgbb_upload_results.json"
+}
+

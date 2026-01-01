@@ -4,7 +4,13 @@
       "Bash(mkdir:*)",
       "Bash(python:*)",
       "Bash(if not exist \"Test\" mkdir Test)",
-      "Skill(generate-prompt)"
+      "Skill(generate-prompt)",
+      "Skill(research-keyword)",
+      "WebSearch",
+      "Skill(evaluate-prompt)",
+      "Bash(if not exist \"Test\\\\research\" mkdir Testresearch)",
+      "Bash(if not exist \"Test\\\\evaluations\" mkdir Testevaluations)",
+      "Bash(dir:*)"
     ]
   }
 }

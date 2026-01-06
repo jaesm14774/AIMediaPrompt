@@ -218,7 +218,13 @@
    - 使用明確的填空標記（類型 A 或類型 B）
    - **確保符合研究報告中的核心特徵**（如有）
    - **避免研究報告中標註的常見誤解**（如有）
-   - **範例主角預設規則：如果範例中有主角但未明確指定，預設使用 Kirby作為範例主角**
+   - **範例主角預設規則（CRITICAL）：**
+     - **預設主角永遠是 Kirby**，除非：
+       1. 用戶在請求中**明確指定**其他角色（如「用 Mario」、「用人類角色」）
+       2. 主題完全不適合 Kirby（如「realistic human portrait」、「historical figure」）
+     - **即使用戶提供的參考 prompt 使用人類或其他角色，仍應使用 Kirby**
+     - **Absurd Professional 類型特別適合 Kirby**（粉紅色圓球認真工作 = 終極荒謬）
+     - 範例：「office working」→ 用 Kirby 而非人類；「ocean animals」→ 用 Kirby 而非真實動物
    - 包含完整 Example
 
 4. **保存檔案**
@@ -286,6 +292,9 @@
 1. `/research-keyword [主題]` - 深入研究
 2. `/generate-prompt [類型] [主題]` - 基於研究生成
 3. `/evaluate-prompt [檔案]` - 評估質量
+4. `/create-tutorial [檔案]` - 生成雙語教學文章（每日發布）
 
 **快速流程（熟悉主題）：**
 1. `/generate-prompt [類型] [主題]` - 直接生成
+2. `/evaluate-prompt [檔案]` - 評估質量
+3. `/create-tutorial [檔案]` - 生成教學文章

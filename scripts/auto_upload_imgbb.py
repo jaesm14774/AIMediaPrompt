@@ -144,6 +144,53 @@ class ImgBBUploader:
             print(f"  ✗ 插入失敗: {e}")
             return False
 
+    def cleanup_media_files(self):
+        """刪除 Local_Media 資料夾中的所有媒體檔案"""
+        if not self.image_dir.exists():
+            return
+        
+        # 定義所有媒體檔案副檔名
+        media_extensions = {
+            # 圖片格式
+            '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.tiff', '.svg',
+            # 視頻格式
+            '.mp4', '.mov', '.avi', '.mkv', '.wmv', '.flv', '.webm', '.m4v',
+            # 音頻格式（如果需要）
+            '.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a'
+        }
+        
+        media_files = []
+        for ext in media_extensions:
+            media_files.extend(self.image_dir.glob(f'*{ext}'))
+            media_files.extend(self.image_dir.glob(f'*{ext.upper()}'))
+        
+        if not media_files:
+            print("\n✓ Local_Media 資料夾中沒有媒體檔案需要刪除")
+            return
+        
+        print(f"\n清理 Local_Media 資料夾...")
+        deleted_count = 0
+        skipped_count = 0
+        for media_file in media_files:
+            # 刪除前檢查文件是否存在
+            if not media_file.exists():
+                skipped_count += 1
+                continue
+            
+            try:
+                media_file.unlink()
+                deleted_count += 1
+            except FileNotFoundError:
+                # 文件已經不存在，跳過
+                skipped_count += 1
+            except Exception as e:
+                print(f"  ✗ 刪除失敗 {media_file.name}: {e}")
+        
+        if deleted_count > 0:
+            print(f"  ✓ 已刪除 {deleted_count} 個媒體檔案")
+        if skipped_count > 0:
+            print(f"  ⚠ 跳過 {skipped_count} 個不存在的檔案")
+
     def process_all_images(self, prompt_name: str, env: Optional[str] = None, type: Optional[str] = None):
         """處理所有圖片並插入到指定的 prompt 檔案"""
         if not self.image_dir.exists():
@@ -204,6 +251,9 @@ class ImgBBUploader:
             is_first_image = idx == 1
             if self.insert_image_url(prompt_file, image_url, image_path.name, is_first_image):
                 print(f"  ✓ 已插入 URL 到 {prompt_file.name}")
+        
+        # 處理完成後，刪除 Local_Media 中的所有媒體檔案
+        self.cleanup_media_files()
 
 
 def load_config(config_file: str = 'config/imgbb_config.json') -> Optional[Dict]:

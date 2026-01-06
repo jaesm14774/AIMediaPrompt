@@ -8,9 +8,12 @@
       "Skill(research-keyword)",
       "WebSearch",
       "Skill(evaluate-prompt)",
+      "Skill(create-tutorial)",
       "Bash(if not exist \"Test\\\\research\" mkdir Testresearch)",
       "Bash(if not exist \"Test\\\\evaluations\" mkdir Testevaluations)",
-      "Bash(dir:*)"
+      "Bash(if not exist \"Post\" mkdir Post)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ]
   }
 }

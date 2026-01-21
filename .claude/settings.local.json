@@ -13,7 +13,10 @@
       "Bash(if not exist \"Test\\\\evaluations\" mkdir Testevaluations)",
       "Bash(if not exist \"Post\" mkdir Post)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(if not exist \".claude\\\\skills\\\\auto-produce-prompt\" mkdir .claudeskillsauto-produce-prompt)",
+      "Bash(move:*)",
+      "Skill(auto-produce-prompt)"
     ]
   }
 }

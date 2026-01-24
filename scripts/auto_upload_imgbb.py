@@ -47,7 +47,7 @@ class ImgBBUploader:
                 else:
                     return {
                         'success': False,
-                        'error': data.get('error', {}).get('message', '上傳失敗')
+                        'error': data.get('error', {}).get('message', 'Upload failed')
                     }
             else:
                 return {
@@ -65,17 +65,36 @@ class ImgBBUploader:
         """根據指定的 prompt 檔案名稱取得檔案路徑"""
         test_envs = {'dev', 'stg', 'test'}
         
-        if env and env.lower() in test_envs and type:
+        # 1. 如果是測試環境 (dev, stg, test)，優先找 Test/
+        if env and env.lower() in test_envs:
             test_file = Path("Test") / f"{prompt_name}.md"
             if test_file.exists():
                 return test_file
+            return None
         
-        search_dirs = [
-            Path("Prompt/Image"),
-            Path("Prompt/Video"),
-            Path("Prompt/Image/Shared"),
-            Path("Prompt/Video/Shared")
-        ]
+        # 2. 如果是 prod，先看 Test/ 是否有檔案待移入
+        if env and env.lower() == 'prod':
+            test_file = Path("Test") / f"{prompt_name}.md"
+            if test_file.exists():
+                return test_file
+
+        # 3. 搜尋 Prompt 資料夾
+        search_dirs = []
+        if type:
+            if type.lower() == 'image':
+                search_dirs = [Path("Prompt/Image"), Path("Prompt/Image/Shared"), Path("Prompt/Image/shared")]
+            elif type.lower() == 'video':
+                search_dirs = [Path("Prompt/Video"), Path("Prompt/Video/Shared"), Path("Prompt/Video/shared")]
+        
+        if not search_dirs:
+            search_dirs = [
+                Path("Prompt/Image"),
+                Path("Prompt/Video"),
+                Path("Prompt/Image/Shared"),
+                Path("Prompt/Video/Shared"),
+                Path("Prompt/Image/shared"),
+                Path("Prompt/Video/shared")
+            ]
         
         for search_dir in search_dirs:
             prompt_file = search_dir / f"{prompt_name}.md"
@@ -92,7 +111,7 @@ class ImgBBUploader:
         elif type.lower() == 'video':
             target_dir = Path("Prompt/Video")
         else:
-            print(f"  ✗ 不支援的 type: {type}")
+            print(f"  [X] Unsupported type: {type}")
             return None
         
         if not target_dir.exists():
@@ -101,18 +120,18 @@ class ImgBBUploader:
         target_file = target_dir / f"{prompt_name}.md"
         
         if target_file.exists():
-            print(f"  ⚠ 目標檔案已存在: {target_file}")
-            response = input(f"  是否覆蓋？(y/n): ").strip().lower()
+            print(f"  [!] Target file exists: {target_file}")
+            response = input(f"  Overwrite? (y/n): ").strip().lower()
             if response != 'y':
-                print(f"  ⚠ 跳過移動")
+                print(f"  [!] Skip move")
                 return target_file
         
         try:
             shutil.move(str(test_file), str(target_file))
-            print(f"  ✓ 已移動檔案: {test_file.name} -> {target_file}")
+            print(f"  [V] Moved file: {test_file.name} -> {target_file}")
             return target_file
         except Exception as e:
-            print(f"  ✗ 移動失敗: {e}")
+            print(f"  [X] Move failed: {e}")
             return None
 
     def insert_image_url(self, prompt_file: Path, image_url: str, image_name: str, is_first_image: bool = False):
@@ -122,7 +141,7 @@ class ImgBBUploader:
                 content = f.read()
             
             if image_url in content:
-                print(f"  ⚠ {prompt_file.name} 已包含此圖片 URL，跳過")
+                print(f"  [!] {prompt_file.name} already contains this URL, skipping")
                 return False
             
             has_example_section = "## 範例圖片" in content
@@ -141,7 +160,7 @@ class ImgBBUploader:
             return True
             
         except Exception as e:
-            print(f"  ✗ 插入失敗: {e}")
+            print(f"  [X] Insert failed: {e}")
             return False
 
     def cleanup_media_files(self):
@@ -165,10 +184,10 @@ class ImgBBUploader:
             media_files.extend(self.image_dir.glob(f'*{ext.upper()}'))
         
         if not media_files:
-            print("\n✓ Local_Media 資料夾中沒有媒體檔案需要刪除")
+            print("\n[V] No media files to delete in Local_Media")
             return
         
-        print(f"\n清理 Local_Media 資料夾...")
+        print(f"\nCleaning Local_Media folder...")
         deleted_count = 0
         skipped_count = 0
         for media_file in media_files:
@@ -184,23 +203,27 @@ class ImgBBUploader:
                 # 文件已經不存在，跳過
                 skipped_count += 1
             except Exception as e:
-                print(f"  ✗ 刪除失敗 {media_file.name}: {e}")
+                print(f"  [X] Delete failed {media_file.name}: {e}")
         
         if deleted_count > 0:
-            print(f"  ✓ 已刪除 {deleted_count} 個媒體檔案")
+            print(f"  [V] Deleted {deleted_count} media files")
         if skipped_count > 0:
-            print(f"  ⚠ 跳過 {skipped_count} 個不存在的檔案")
+            print(f"  [!] Skipped {skipped_count} missing files")
 
     def process_all_images(self, prompt_name: str, env: Optional[str] = None, type: Optional[str] = None):
         """處理所有圖片並插入到指定的 prompt 檔案"""
         if not self.image_dir.exists():
-            print(f"✗ 找不到圖片資料夾: {self.image_dir}")
+            print(f"[X] Cannot find image dir: {self.image_dir}")
             return
         
         prompt_file = self.get_prompt_file(prompt_name, env, type)
         if not prompt_file:
-            print(f"✗ 找不到 prompt 檔案: {prompt_name}.md")
-            print(f"  請確認檔案存在於以下資料夾之一:")
+            try:
+                print(f"[X] Cannot find prompt file: {prompt_name}.md")
+            except UnicodeEncodeError:
+                print(f"[X] Cannot find prompt file (encoding error)")
+            
+            print(f"  Please make sure the file exists in one of:")
             print(f"    - Prompt/Image")
             print(f"    - Prompt/Video")
             print(f"    - Prompt/Image/Shared")
@@ -209,14 +232,14 @@ class ImgBBUploader:
                 print(f"    - Test")
             return
         
-        test_envs = {'dev', 'stg', 'test'}
-        if env and env.lower() in test_envs and type and prompt_file.parent.name == "Test":
-            print(f"\n檢測到 Test 環境，準備移動檔案...")
+        # 判斷是否需要移動檔案 (僅在 env == 'prod' 且檔案在 Test/ 時)
+        if env and env.lower() == 'prod' and type and prompt_file.parent.name == "Test":
+            print(f"\nProd environment detected and file in Test/, moving file...")
             moved_file = self.move_test_file_to_prompt(prompt_file, prompt_name, type)
             if moved_file:
                 prompt_file = moved_file
             else:
-                print(f"✗ 無法移動檔案，停止處理")
+                print(f"[X] Failed to move file, stopping")
                 return
         
         extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
@@ -228,32 +251,39 @@ class ImgBBUploader:
         image_files = sorted(list(image_files_set))
         
         if not image_files:
-            print("✓ 沒有找到需要上傳的圖片")
+            print("[V] No images found to upload")
             return
         
-        print(f"\n找到 {len(image_files)} 張圖片")
-        print(f"目標 prompt 檔案: {prompt_file.name}")
+        print(f"\nFound {len(image_files)} images")
+        try:
+            print(f"Target prompt file: {prompt_file.name}")
+        except UnicodeEncodeError:
+            print(f"Target prompt file: (encoding error)")
         print("=" * 60)
         
         for idx, image_path in enumerate(image_files, 1):
-            print(f"\n[{idx}/{len(image_files)}] 處理: {image_path.name}")
+            print(f"\n[{idx}/{len(image_files)}] Processing: {image_path.name}")
             
-            print("  上傳中...", end=' ', flush=True)
+            print("  Uploading...", end=' ', flush=True)
             upload_result = self.upload_image(image_path)
             
             if not upload_result['success']:
-                print(f"✗ 上傳失敗: {upload_result['error']}")
+                print(f"[X] Upload failed: {upload_result['error']}")
                 continue
             
             image_url = upload_result['url']
-            print(f"✓ 成功: {image_url}")
+            print(f"[V] Success: {image_url}")
             
             is_first_image = idx == 1
             if self.insert_image_url(prompt_file, image_url, image_path.name, is_first_image):
-                print(f"  ✓ 已插入 URL 到 {prompt_file.name}")
+                try:
+                    print(f"  [V] Inserted URL into {prompt_file.name}")
+                except UnicodeEncodeError:
+                    print(f"  [V] Inserted URL into file")
         
         # 處理完成後，刪除 Local_Media 中的所有媒體檔案
         self.cleanup_media_files()
+
 
 
 def load_config(config_file: str = 'config/imgbb_config.json') -> Optional[Dict]:
@@ -291,16 +321,16 @@ def main():
     parser.add_argument(
         '--env',
         type=str,
-        choices=['dev', 'stg', 'test'],
+        choices=['dev', 'stg', 'test', 'prod'],
         default=None,
-        help='環境變數：dev/stg/test，與 --type 一起使用時會從 Test/ 資料夾找檔案並移動'
+        help='環境變數：dev/stg/test/prod。dev/stg/test 會在 Test/ 資料夾更新；prod 或不指定則在 Prompt/ 資料夾更新。'
     )
     parser.add_argument(
         '--type',
         type=str,
         choices=['image', 'video'],
         default=None,
-        help='類型：image/video，與 --env 一起使用時會移動檔案到對應的 Prompt 資料夾'
+        help='類型：image/video。當從 Test/ 移動到 Prompt/ 時為必填。'
     )
     
     args = parser.parse_args()
@@ -309,13 +339,8 @@ def main():
     print("自動上傳圖片到 ImgBB 並插入 URL 工具")
     print("=" * 60)
     
-    if args.env and not args.type:
-        print("✗ 使用 --env 時必須同時指定 --type")
-        return
-    
-    if args.type and not args.env:
-        print("✗ 使用 --type 時必須同時指定 --env")
-        return
+    # 檢查邏輯：如果是 prod 且檔案在 Test/，必須指定 type 才能移動
+    # 這裡先不做過多限制，交給 process_all_images 判斷
     
     config = load_config()
     if not config:

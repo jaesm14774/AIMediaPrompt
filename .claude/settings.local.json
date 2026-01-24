@@ -16,7 +16,18 @@
       "Bash(findstr:*)",
       "Bash(if not exist \".claude\\\\skills\\\\auto-produce-prompt\" mkdir .claudeskillsauto-produce-prompt)",
       "Bash(move:*)",
-      "Skill(auto-produce-prompt)"
+      "Skill(auto-produce-prompt)",
+      "Skill(auto-daily-publish)",
+      "Skill(generate-image)",
+      "Bash(npx -y bun:*)",
+      "Bash(powershell.exe -NoProfile -Command \"npx -y bun ''C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/.claude/skills/generate-image/scripts/main.ts'' --prompt ''A dramatic cinematic photograph of Kirby lying awake in bed at 3 AM, staring at ceiling with wide eyes, body tense and restless, surrounded by a chaotic weather storm manifesting the internal struggle: violent golden lightning-ideas crackling through the room, but immediately retreating into bashful pink thunder-clouds the moment they appear, creating a flickering on-off visual rhythm. The bedroom is in complete disarray from the emotional weather chaos: sheets violently billowing from thought-winds, notebook pages flying and swirling in the creative tornado, scattered sketches plastering against walls, desk lamp swaying wildly casting dramatic moving shadows. The weather creates intense visible conflict golden lightning-ideas illuminate the room in sharp flashes before being smothered by pink shyness-clouds; half-written thoughts materialize as glowing text fragments in mid-air but dissolve into pink mist before completion; brilliant idea-symbols burst forth then immediately curl up and hide. The character expression shows the agony: eyes wide open, mouth slightly agape in exhausted frustration, one hand reaching toward a brilliant idea-lightning bolt, the other hand covering face in shy retreat. Hair windswept by the thought-storm. Body language torn between sitting up to capture ideas and curling up to hide from self-doubt. Dramatic high-contrast lighting: intense golden lightning flashes against deep purple-black night, with intermittent soft pink glow-and-fade from shyness-clouds. Volumetric storm effects with visible weather violence. Dynamic diagonal composition emphasizing chaos and movement. Shot from a dramatic low-angle capturing the ceiling storm and bed simultaneously. Cinematic color grading: storm movie aesthetic with saturated golds, deep magentas, and inky blacks. Motion blur on weather elements, sharp focus on agonized expression. Film grain, anamorphic lens flare from lightning strikes. 4K resolution. Visual style inspired by disaster movie cinematography meets Pixar Inside Out emotional intensity.'' --image ''C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/Local_Media/cover-shy-insomnia-creative-storm.png''\")",
+      "Skill(compress-image)",
+      "Bash(powershell.exe:*)",
+      "Skill(viral-score)",
+      "Bash(ls:*)",
+      "Bash(bun:*)",
+      "Skill(post-to-fb)",
+      "Bash(tasklist:*)"
     ]
   }
 }

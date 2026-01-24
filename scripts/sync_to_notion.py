@@ -7,11 +7,18 @@
 import json
 import argparse
 import re
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from notion_client import Client
 import time
 import hashlib
+
+# 設置輸出編碼為 UTF-8，避免 Windows 控制台編碼問題
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 class NotionSyncer:
     def __init__(self, api_key: str, database_id: str = None, page_id: str = None):

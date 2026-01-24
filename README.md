@@ -31,30 +31,31 @@ python scripts/auto_upload_imgbb.py <prompt檔案名稱> [--env <環境>] [--typ
 
 **參數說明：**
 - `prompt檔案名稱`: prompt 檔案名稱（不含副檔名，檔案格式為 .md）
-- `--env`: 環境變數（可選），可選值：`dev`、`stg`、`test`，與 `--type` 一起使用時會從 `Test/` 資料夾找檔案並自動移動到對應的 Prompt 資料夾
-- `--type`: 類型（可選），可選值：`image`、`video`，與 `--env` 一起使用時會移動檔案到對應的 Prompt 資料夾
+- `--env`: 環境變數（可選），可選值：`dev`、`stg`、`test`、`prod`
+  - `dev/stg/test`: 在 `Test/` 資料夾尋找並更新檔案（不移動檔案）。
+  - `prod` 或不指定: 在 `Prompt/` 相關資料夾尋找並更新檔案。
+  - 當使用 `--env prod` 且檔案位於 `Test/` 時，會配合 `--type` 自動移動到對應的 Prompt 資料夾。
+- `--type`: 類型（可選），可選值：`image`、`video`
+  - 當需要從 `Test/` 移動檔案到 `Prompt/` 時（即使用 `--env prod` 且檔案在 `Test/`）為必填。
 
 **範例：**
 ```bash
-# 基本用法（從 Prompt/Image 或 Prompt/Video 找檔案）
-python scripts/auto_upload_imgbb.py 貪吃蛇
-python scripts/auto_upload_imgbb.py "One leaf, one world"
+# 基本用法（從 Prompt/Image 或 Prompt/Video 找檔案並更新）
+python scripts/auto_upload_imgbb.py 睡眠戰場微型史詩
 
-# Test 環境用法（從 Test/ 資料夾找檔案並移動到 Prompt/Image）
-python scripts/auto_upload_imgbb.py "Kirby-IP-Copy-Ability" --env dev --type image
+# 使用 prod 環境（如果檔案在 Test/ 則移動到 Prompt/Image 並更新；如果已在 Prompt/ 則直接更新）
+python scripts/auto_upload_imgbb.py "睡眠戰場微型史詩" --env prod --type image
 
-# Test 環境用法（從 Test/ 資料夾找檔案並移動到 Prompt/Video）
-python scripts/auto_upload_imgbb.py "test-video" --env stg --type video
+# Test 環境用法（僅在 Test/ 資料夾找檔案並更新，不移動）
+python scripts/auto_upload_imgbb.py "Kirby-IP-Copy-Ability" --env dev
 ```
 
-**Test 環境功能說明：**
-- 當使用 `--env`（dev/stg/test）且 `--type`（image/video）時：
-  - 腳本會先從 `Test/` 資料夾尋找指定的 prompt 檔案
-  - 找到後會自動將檔案移動到對應的 Prompt 資料夾：
-    - `--type image` → 移動到 `Prompt/Image`
-    - `--type video` → 移動到 `Prompt/Video`
-  - 如果目標位置已存在同名檔案，會詢問是否覆蓋
-  - 移動完成後再進行圖片上傳和 URL 插入
+**環境功能說明：**
+- **Production (prod 或未指定)**:
+  - 優先檢查 `Test/` 是否有同名檔案。如果有，則根據 `--type` 將其移動到 `Prompt/Image` 或 `Prompt/Video`。
+  - 如果 `Test/` 沒有，則直接在 `Prompt/` 子資料夾中搜尋並更新。
+- **Testing (dev/stg/test)**:
+  - 僅在 `Test/` 資料夾中尋找檔案並更新內容，**不會**將檔案移出 `Test/` 資料夾。
 
 ### 4. 查看結果
 
@@ -62,6 +63,34 @@ python scripts/auto_upload_imgbb.py "test-video" --env stg --type video
 - 上傳所有圖片到 ImgBB
 - 將圖片 URL 插入到指定的 prompt 檔案末尾
 - 第一張圖片會添加 `## 範例圖片` 標題
+
+## Gemini 圖片生成與發布流程
+
+本專案採用高品質圖片生成與發布流程，核心原則如下：
+
+### 1. 原始畫質保證 (Original Quality)
+為了確保最佳視覺效果，所有透過 Gemini 生成的圖片**均不進行壓縮處理**。我們保留 Gemini 產出的原始畫質，跳過 WebP 或其他壓縮步驟，直接以 PNG/JPG 原始格式發布。
+
+### 2. 嚴格品質篩選 (S-Grade Only)
+我們對內容品質有極高要求，只有達到 **S 級 (9.0-10.0 分)** 的內容才具備發布資格。
+- **S 級 (9.0-10.0)**: **唯一通過標準**，立即發布。
+- **A 級 (8.0-8.9)**: 優秀但未達標，不予發布，需進一步優化。
+- **B 級及以下**: 不予發布，建議重新生成。
+
+### 3. 執行指令
+
+```bash
+# 完整自動化流程（自動生成、評估、發布）
+/auto-daily-publish --generate "主題" --platforms fb,notion
+```
+
+### 4. 目錄結構更新
+
+- `Local_Media/`: 存放原始畫質配圖。
+- `.claude/skills/`: 包含各項自動化技能邏輯。
+- `Post/shared/`: 僅存放通過 S 級評估並已發布的內容。
+
+---
 
 ## 目錄結構
 
@@ -295,8 +324,8 @@ python scripts/sync_to_notion.py --full
 3. 確保 prompt 檔案（.md 格式）存在於以下位置之一：
    - `Prompt/Image` 或 `Prompt/Video` 資料夾
    - `Prompt/Image/Shared` 或 `Prompt/Video/Shared` 資料夾
-   - `Test/` 資料夾（使用 `--env` 和 `--type` 參數時）
-4. 使用 `--env` 和 `--type` 參數時，檔案會自動從 `Test/` 移動到對應的 Prompt 資料夾
+   - `Test/` 資料夾（使用 `--env` 參數時）
+4. 使用 `--env prod` 和 `--type` 參數時，檔案會自動從 `Test/` 移動到對應的 Prompt 資料夾
 5. 圖片會依檔名排序後依序處理
 6. 支援的圖片格式：PNG, JPG, JPEG, GIF, WEBP
 
@@ -310,4 +339,51 @@ python scripts/sync_to_notion.py --full
 4. 狀態檔案 `config/notion_sync_state.json` 會自動生成，用於追蹤同步狀態，請勿手動修改
 5. 如果檔案從未分享移動到 shared 資料夾（或相反），會自動更新顏色標記
 6. 支援的 Markdown 格式會自動轉換為 Notion 格式（圖片、連結、粗體、斜體、標題）
+
+## Gemini 圖片生成功能
+
+此工具可以使用 Gemini Web 介面自動生成圖片。
+
+### 執行方式
+
+```bash
+npx -y bun .claude/skills/generate-image/scripts/main.ts --prompt "你的圖片描述" --image "輸出路徑.png"
+```
+
+**參數說明：**
+- `--prompt`, `-p`: 圖片描述。
+- `--image`: 輸出路徑（預設為 `generated.png`）。
+
+**主要更新：**
+- **修正圖片定位邏輯**：不再依賴不穩定的 CSS 選擇器，改為直接使用偵測到的圖片 URL 定位元素，提高截圖成功率。
+- **優化捲動行為**：使用 `instant` 捲動模式，避免動畫延遲導致的截圖偏差。
+- **增強渲染檢查**：加入寬高偵測，確保圖片完全渲染後才進行截圖。
+
+### Facebook 自動發文功能 (post-to-fb)
+
+此工具使用 Chrome DevTools Protocol (CDP) 自動發布內容到 Facebook 粉專或個人頁面，可繞過反自動化機制並保持登入狀態。
+
+#### 執行方式
+
+```bash
+# 基本發布（預覽模式）
+npx -y bun .claude/skills/post-to-fb/scripts/fb-browser.ts "貼文內容" --target personal
+
+# 發布到粉專並上傳圖片（正式發布）
+npx -y bun .claude/skills/post-to-fb/scripts/fb-browser.ts "貼文內容" --image "path/to/img.png" --target page --page-name "你的粉專名稱" --submit
+```
+
+**參數說明：**
+- `[內容]`: 貼文文字內容。
+- `--image`: 配圖路徑（可多次使用，最多 4 張）。
+- `--target`: `page` (粉專) 或 `personal` (個人)。
+- `--page-name`: 當 target 為 page 時，指定粉專名稱或 ID。
+- `--submit`: 實際執行點擊「發布」按鈕。如果不加此參數，則停留在發布預覽介面。
+- `--profile`: 指定自定義 Chrome Profile 路徑（預設儲存於 AppData）。
+
+**主要特點：**
+- **繞過偵測**：連接真實 Chrome 瀏覽器，非無頭模式 (Headless)，安全性更高。
+- **自動上傳**：修正了 CDP 檔案上傳邏輯，支援自動附加圖片。
+- **持久化登入**：第一次手動登入後，後續執行會自動載入 Session。
+
 

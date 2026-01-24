@@ -28,6 +28,7 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+nul
 
 # 臨時檔案
 *.tmp

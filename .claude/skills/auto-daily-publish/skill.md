@@ -101,8 +101,8 @@
 │   └────────────────────────────────────────────────────────────┘ │
 │                                                                 │
 │   ┌─ 如果 platforms 包含 notion ─────────────────────────────┐ │
-│   │  1. 執行 python scripts/auto_upload_imgbb.py [Prompt]      │ │
-│   │     (將圖片上傳至 ImgBB 並插入 URL 到 Prompt 檔案)          │ │
+│   │  1. 執行 python scripts/auto_upload_media.py [Prompt] --type [image/video] --env prod │ │
+│   │     (自動偵測並上傳圖片到 ImgBB、影片到 Cloudinary，並移動到正式區)  │ │
 │   │  2. 執行 python scripts/sync_to_notion.py                  │ │
 │   └────────────────────────────────────────────────────────────┘ │
 │                                                                 │
@@ -234,7 +234,7 @@
   │
   ├─ 調用 /post-to-fb
   │
-  ├─ 執行 auto_upload_imgbb.py (上傳圖片並更新 Prompt 檔案)
+  ├─ 執行 auto_upload_media.py (上傳圖片並更新 Prompt 檔案)
   │
   └─ 執行 sync_to_notion.py
 ```

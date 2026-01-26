@@ -3,7 +3,9 @@ scripts/github_config.json
 scripts/imgur_config.json
 config/notion_config.json
 config/imgbb_config.json
+config/cloudinary_config.json
 config/notion_sync_state.json
+config/publish_queue.json
 
 # URL 映射表（可選，包含本地路徑）
 github_image_urls.json
@@ -33,4 +35,5 @@ nul
 # 臨時檔案
 *.tmp
 *.log
+logs/
 Local_Media/

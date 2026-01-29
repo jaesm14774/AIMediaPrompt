@@ -73,21 +73,52 @@ python scripts/auto_upload_media.py "睡眠戰場" --env prod --type image
 
 ---
 
-## Gemini 圖片生成與發布流程
+## 🤖 Claude 自動化指令 (Skills)
 
-本專案採用高品質圖片生成與發布流程：
+本專案整合了 Claude Skills，可透過 `/` 指令實現全自動化工作流。
 
-### 1. 原始畫質保證 (Original Quality)
-所有透過 Gemini 生成的圖片**均不進行壓縮處理**，保留原始 PNG/JPG 畫質。
+### 1. 每日自動發布 (Auto Daily Publish)
 
-### 2. 嚴格品質篩選 (S-Grade Only)
-只有達到 **S 級 (9.0-10.0 分)** 的內容才具備發布資格。
+一鍵完成從內容生成、配圖、評分到發布的完整流程。
 
-### 3. 執行指令
+#### 執行指令
 ```bash
-# 手動生成與發布
-/auto-daily-publish --generate "主題" --platforms fb,notion
+/auto-daily-publish [選項]
 ```
+
+#### 參數說明
+| 參數 | 說明 | 預設值 |
+|------|------|-------|
+| `--generate <主題>` | 生成新內容後發布（調用 `/auto-produce-prompt`） | - |
+| `--platforms <平台>` | 目標平台（逗號分隔：`fb,notion`） | `fb,notion` |
+| `--min-score <分數>` | 最低發布分數（必須為 S 級才能發布） | `9.0` |
+| `--max-posts <數量>` | 每次最多發布數量 | `1` |
+| `--page-name <名稱>` | FB 粉絲專頁名稱（發布到 FB 時必填） | - |
+| `--dry-run` | 模擬執行，不實際發布 | - |
+
+#### 常用範例
+```bash
+# 生成新主題並同步到 FB 與 Notion
+/auto-daily-publish --generate "貓咪辦公" --platforms fb,notion --page-name "AI Art Lab"
+
+# 僅發布已在 Post/Test/ 資料夾中且評分達標的內容
+/auto-daily-publish --platforms fb,notion --page-name "AI Art Lab"
+
+# 僅同步到 Notion
+/auto-daily-publish --platforms notion
+
+# 模擬執行（檢查流程是否正確）
+/auto-daily-publish --dry-run
+```
+
+#### 自動化流程說明
+1. **準備內容**：讀取 `Post/Test/` 檔案，若有 `--generate` 則即時生成。
+2. **生成配圖**：調用 `/generate-image` 為內容生成高品質配圖。
+3. **品質評估**：調用 `/viral-score` 進行評分，僅 **S 級 (9.0+)** 內容會進入發布佇列。
+4. **執行發布**：
+   - **Facebook**：自動發布貼文與配圖。
+   - **Notion**：上傳媒體到 CDN (ImgBB/Cloudinary) 並同步到 Notion 資料庫。
+5. **檔案歸檔**：發布成功後，檔案將自動從 `Post/Test/` 移動至 `Post/shared/`。
 
 ---
 

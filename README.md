@@ -1,193 +1,250 @@
 # AIMediaPrompt
 
-自動上傳圖片與影片並插入 URL 到 prompt 檔案的工具。
+自動上傳圖片與影片到雲端，並同步至 Notion 與 Facebook 的工具。
 
-## 功能說明
+## 目錄
 
-- **媒體上傳**：自動上傳 `Local_Media` 資料夾中的圖片到 ImgBB，影片到 Cloudinary。
-- **自動插入**：將媒體 URL 插入到指定的 prompt 檔案中（支援 .md 格式）。
-- **格式支援**：
-  - 圖片：PNG, JPG, JPEG, GIF, WEBP, BMP
-  - 影片：MP4, WEBM, MOV, AVI, MKV
-- **Notion 同步**：將 Git 中的 prompt 檔案同步到 Notion（支援可展開列表格式與紅色標記已分享內容）。
-- **自動發布**：整合 Facebook 自動發文功能與每日定時排程。
+- [快速開始](#快速開始)
+- [支援的媒體格式與服務限制](#支援的媒體格式與服務限制)
+- [設定 API 金鑰](#設定-api-金鑰)
+- [上傳媒體到雲端](#上傳媒體到雲端)
+- [同步內容到 Notion](#同步內容到-notion)
+- [使用 Cursor Subagent 執行自動化](#使用-cursor-subagent-執行自動化)
+- [設定每日自動發布排程](#設定每日自動發布排程)
+- [目錄結構](#目錄結構)
+- [常見問題](#常見問題)
 
-## 使用方式
+---
 
-### 1. 設定 API Key
-
-#### 圖片上傳 (ImgBB)
-1. 取得 API Key: https://api.imgbb.com/
-2. 複製 `config/imgbb_config.example.json` 為 `config/imgbb_config.json` 並填入 Key。
-
-#### 影片上傳 (Cloudinary)
-1. 註冊帳號：https://cloudinary.com/users/register_free
-2. 取得 **Cloud Name**, **API Key**, **API Secret**。
-3. 複製 `config/cloudinary_config.example.json` 為 `config/cloudinary_config.json` 並填入資訊。
-
-### 2. 安裝依賴
+## 快速開始
 
 ```bash
+# 1. 安裝依賴
 pip install -r requirements.txt
-# 或手動安裝必要套件
-pip install cloudinary requests
+
+# 2. 設定 API 金鑰（複製範例檔並填入）
+cp config/imgbb_config.example.json config/imgbb_config.json
+cp config/cloudinary_config.example.json config/cloudinary_config.json
+
+# 3. 將媒體放入 Local_Media/ 資料夾
+
+# 4. 執行上傳
+python scripts/auto_upload_media.py <prompt檔案名稱> --type image
 ```
 
-### 3. 準備媒體檔案
+---
 
-將要上傳的圖片或影片放入 `Local_Media` 資料夾中。
-**注意：建議每次執行僅放一種型態或一個主題的媒體。**
+## 支援的媒體格式與服務限制
 
-### 4. 執行上傳腳本
+| 媒體類型 | 支援格式 | 上傳服務 | 大小限制 | 費用 |
+|---------|---------|---------|---------|-----|
+| 圖片 | PNG, JPG, JPEG, GIF, WEBP, BMP | ImgBB | 32MB | 免費 |
+| 影片 | MP4, WEBM, MOV, AVI, MKV | Cloudinary | 100MB, 25GB/月 | 免費 |
+| 影片 | MP4, WEBM, MOV, AVI, MKV | Imgur | 200MB（匿名限制） | 免費 |
+
+**影片建議**：解析度 1080p 以下，格式 MP4 (H.264)，長度 5-10 秒。
+
+---
+
+## 設定 API 金鑰
+
+### 圖片上傳需要 ImgBB API Key
+
+1. 前往 https://api.imgbb.com/ 取得 API Key
+2. 複製設定檔並填入金鑰：
 
 ```bash
-# 上傳圖片或影片（腳本會自動偵測類型）
+cp config/imgbb_config.example.json config/imgbb_config.json
+```
+
+### 影片上傳需要 Cloudinary 憑證
+
+1. 註冊帳號：https://cloudinary.com/users/register_free
+2. 取得 **Cloud Name**、**API Key**、**API Secret**
+3. 複製設定檔並填入：
+
+```bash
+cp config/cloudinary_config.example.json config/cloudinary_config.json
+```
+
+### Notion 同步需要 Integration Token
+
+1. 前往 [Notion Integrations](https://www.notion.so/my-integrations) 創建 Integration
+2. 在目標 Database 或 Page 的「Connections」中加入該 Integration
+3. 複製設定檔並填入 `api_key` 與 `database_id`：
+
+```bash
+cp config/notion_config.example.json config/notion_config.json
+```
+
+---
+
+## 上傳媒體到雲端
+
+### 基本指令
+
+```bash
 python scripts/auto_upload_media.py <prompt檔案名稱> [--env <環境>] [--type <類型>]
 ```
 
-**參數說明：**
-- `prompt檔案名稱`: prompt 檔案名稱（不含副檔名，檔案格式為 .md）
-- `--env`: 環境變數，可選值：`dev`、`stg`、`test`、`prod`
-  - `dev/stg/test`: 在 `Test/` 資料夾尋找並更新檔案（不移動檔案）。
-  - `prod` 或不指定: 在 `Prompt/` 相關資料夾尋找並更新。若檔案在 `Test/` 會配合 `--type` 移動到對應目錄。
-- `--type`: 類型，可選值：`image`、`video`（移動檔案時必填）。
+### 參數說明
 
-**範例：**
+| 參數 | 說明 | 可選值 |
+|-----|------|-------|
+| `prompt檔案名稱` | Prompt 檔案名稱（不含 .md 副檔名） | - |
+| `--env` | 執行環境 | `dev`, `stg`, `test`, `prod`（預設） |
+| `--type` | 媒體類型（移動檔案時必填） | `image`, `video` |
+
+### 環境差異
+
+| 環境 | 檔案搜尋位置 | 處理後行為 |
+|-----|------------|----------|
+| `dev` / `stg` / `test` | `Test/` 資料夾 | 原地更新，不移動檔案 |
+| `prod`（預設） | `Prompt/` 相關資料夾 | 依 `--type` 移動至對應目錄 |
+
+### 使用範例
+
 ```bash
-# 上傳影片並更新 Test 中的檔案
+# 測試環境：上傳影片並更新 Test/ 中的檔案
 python scripts/auto_upload_media.py "午睡危機" --env test --type video
 
-# 正常發布流程（從 Test 移動到 Prompt/Image）
+# 正式環境：從 Test/ 移動到 Prompt/Image/ 並上傳
 python scripts/auto_upload_media.py "睡眠戰場" --env prod --type image
 ```
 
----
-
-## 🎯 支援的服務與限制
-
-| 媒體類型 | 服務 | 限制 | 成本 |
-|---------|-----|------|-----|
-| **圖片** | ImgBB | 單檔 32MB | 免費 |
-| **影片** | Cloudinary | 單檔 100MB, 25GB/月 | 免費 |
-| **影片** | Imgur | 單檔 200MB (匿名限制) | 免費 |
+**注意**：`Local_Media/` 處理完成後會自動清空。建議每次僅放同一主題的媒體。
 
 ---
 
-## 🤖 Claude 自動化指令 (Skills)
+## 同步內容到 Notion
 
-本專案整合了 Claude Skills，可透過 `/` 指令實現全自動化工作流。
+### 增量同步（僅更新變動內容）
 
-### 1. 每日自動發布 (Auto Daily Publish)
+```bash
+python scripts/sync_to_notion.py
+```
 
-一鍵完成從內容生成、配圖、評分到發布的完整流程。
+### 完整同步（清空後重新上傳）
 
-#### 執行指令
+```bash
+python scripts/sync_to_notion.py --full
+```
+
+同步功能支援可展開列表格式，並以紅色標記已分享內容。
+
+---
+
+## 使用 Cursor Subagent 執行自動化
+
+### 媒體自動化專家 (Media Automation Expert)
+
+在 Cursor 中輸入 `@media-automation-expert` 並描述任務，即可啟動端到端的媒體創作流程。
+
+**工作流程**：
+
+| 階段 | 執行內容 |
+|-----|---------|
+| Phase 1 內容創作 | Research → Generate → Evaluate → Tutorial |
+| Phase 2 圖片處理 | Generate Image（保持原始畫質） |
+| Phase 3 發布 | Viral Score → Post to FB → Upload Media → Sync Notion |
+
+**品質標準**：僅 S 級（9.0 分以上）內容才能發布。所有輸出使用繁體中文。
+
+### 每日自動發布指令
+
 ```bash
 /auto-daily-publish [選項]
 ```
 
-#### 參數說明
 | 參數 | 說明 | 預設值 |
-|------|------|-------|
-| `--generate <主題>` | 生成新內容後發布（調用 `/auto-produce-prompt`） | - |
-| `--platforms <平台>` | 目標平台（逗號分隔：`fb,notion`） | `fb,notion` |
-| `--min-score <分數>` | 最低發布分數（必須為 S 級才能發布） | `9.0` |
+|-----|------|-------|
+| `--generate <主題>` | 生成新內容後發布 | - |
+| `--platforms <平台>` | 目標平台（逗號分隔） | `fb,notion` |
+| `--min-score <分數>` | 最低發布分數 | `9.0` |
 | `--max-posts <數量>` | 每次最多發布數量 | `1` |
-| `--page-name <名稱>` | FB 粉絲專頁名稱（發布到 FB 時必填） | - |
+| `--page-name <名稱>` | FB 粉絲專頁名稱 | - |
 | `--dry-run` | 模擬執行，不實際發布 | - |
 
-#### 常用範例
+**範例**：
+
 ```bash
-# 生成新主題並同步到 FB 與 Notion
+# 生成新主題並發布到 FB 與 Notion
 /auto-daily-publish --generate "貓咪辦公" --platforms fb,notion --page-name "AI Art Lab"
 
-# 僅發布已在 Post/Test/ 資料夾中且評分達標的內容
+# 僅發布 Post/Test/ 中已達標的內容
 /auto-daily-publish --platforms fb,notion --page-name "AI Art Lab"
 
-# 僅同步到 Notion
-/auto-daily-publish --platforms notion
-
-# 模擬執行（檢查流程是否正確）
+# 模擬執行檢查流程
 /auto-daily-publish --dry-run
 ```
 
-#### 自動化流程說明
-1. **準備內容**：讀取 `Post/Test/` 檔案，若有 `--generate` 則即時生成。
-2. **生成配圖**：調用 `/generate-image` 為內容生成高品質配圖。
-3. **品質評估**：調用 `/viral-score` 進行評分，僅 **S 級 (9.0+)** 內容會進入發布佇列。
-4. **執行發布**：
-   - **Facebook**：自動發布貼文與配圖。
-   - **Notion**：上傳媒體到 CDN (ImgBB/Cloudinary) 並同步到 Notion 資料庫。
-5. **檔案歸檔**：發布成功後，檔案將自動從 `Post/Test/` 移動至 `Post/shared/`。
+**自動化流程**：
+
+1. 讀取 `Post/Test/` 檔案（或以 `--generate` 即時生成）
+2. 調用 `/generate-image` 生成配圖
+3. 調用 `/viral-score` 評分，僅 S 級進入發布佇列
+4. 發布到 Facebook 與 Notion
+5. 完成後將檔案從 `Post/Test/` 移動至 `Post/shared/`
 
 ---
 
-## 📅 每日自動發布排程 (Windows)
+## 設定每日自動發布排程
 
-**1. 以管理員身份執行 PowerShell**
-**2. 執行設定腳本**
+### Windows 排程設定
+
+以管理員身份執行 PowerShell：
+
 ```powershell
 .\scripts\setup_scheduler.ps1 -Time "10:00" -Theme "AI主題" -Platforms "fb,notion"
 ```
-**3. 管理任務**
-- 查看：`Get-ScheduledTask -TaskName "AIMediaPrompt-DailyPublish"`
-- 立即執行：`Start-ScheduledTask -TaskName "AIMediaPrompt-DailyPublish"`
+
+### 管理排程任務
+
+```powershell
+# 查看任務
+Get-ScheduledTask -TaskName "AIMediaPrompt-DailyPublish"
+
+# 立即執行
+Start-ScheduledTask -TaskName "AIMediaPrompt-DailyPublish"
+```
 
 ---
 
-## 📋 目錄結構
+## 目錄結構
 
 ```
 AIMediaPrompt/
-├── Local_Media/          # 放置要上傳的媒體 (圖片/影片)
-├── Test/                 # 測試用的 prompt 檔案
+├── Local_Media/              # 放置待上傳的媒體
+├── Test/                     # 測試用 prompt 檔案
 ├── Prompt/
-│   ├── Image/            # 圖片 prompt 存放位置
-│   └── Video/            # 影片 prompt 存放位置
+│   ├── Image/                # 圖片 prompt
+│   └── Video/                # 影片 prompt
+├── Post/
+│   ├── Test/                 # 待發布內容
+│   └── shared/               # 已發布內容
 ├── scripts/
-│   ├── auto_upload_media.py  # 核心媒體上傳腳本
+│   ├── auto_upload_media.py  # 媒體上傳腳本
 │   ├── sync_to_notion.py     # Notion 同步腳本
 │   └── setup_scheduler.ps1   # 排程設定腳本
-├── config/               # 配置文件 (ImgBB, Cloudinary, Notion)
+├── config/                   # API 設定檔
 └── README.md
 ```
 
 ---
 
-## 🔗 Notion 同步功能
+## 常見問題
 
-### 1. 設定 Notion API
-1. 前往 [Notion Integrations](https://www.notion.so/my-integrations) 創建 Integration 並取得 Token。
-2. 授權該 Integration 訪問您的 Database 或 Page。
-3. 複製 `config/notion_config.example.json` 為 `config/notion_config.json` 並填入 `api_key` 與 `database_id` (或 `page_id`)。
+### 媒體上傳失敗
 
-### 2. 執行同步
-```bash
-# 增量同步（僅更新變動內容，速度快）
-python scripts/sync_to_notion.py
+| 問題 | 解決方案 |
+|-----|---------|
+| API 驗證錯誤 | 檢查 `config/` 下的 API Key 是否正確 |
+| 檔案太大 | 圖片需小於 32MB，影片需小於 100MB |
+| Cloudinary 錯誤 | 執行 `pip install cloudinary` 確認安裝 |
 
-# 完整同步（清空後重新上傳）
-python scripts/sync_to_notion.py --full
-```
+### Notion 同步失敗
 
----
-
-## 🔍 常見問題與故障排除
-
-### 媒體上傳問題
-- **上傳失敗**：檢查 API Key、網路連線、以及檔案是否超過大小限制 (圖片 32MB / 影片 100MB)。
-- **Cloudinary 錯誤**：確認 `pip install cloudinary` 已執行且配置正確。
-
-### Notion 同步問題
-- **404/Unauthorized**：確認 Notion 頁面已在「Connections」中加入該 Integration。
-- **ID 格式錯誤**：直接貼上 Notion 頁面的完整 URL 即可，腳本會自動處理。
-
----
-
-## ⚠️ 注意事項
-
-1. **品質第一**：僅發布 S 級內容。
-2. **自動清理**：`Local_Media` 處理完後會自動清空本機檔案。
-3. **影片建議**：解析度 1080p 以下，格式 MP4 (H.264)，長度 5-10 秒為佳。
-
-詳細內容請參閱代碼註釋與各腳本說明。
+| 問題 | 解決方案 |
+|-----|---------|
+| 404 / Unauthorized | 確認頁面已在「Connections」中加入 Integration |
+| ID 格式錯誤 | 直接貼上 Notion 頁面完整 URL，腳本會自動處理 |

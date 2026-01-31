@@ -272,13 +272,13 @@ def move_test_file_to_prompt(test_file: Path, prompt_name: str, media_type: str)
         print(f"❌ 移動失敗: {e}")
         return None
 
-def move_post_test_to_shared(prompt_name: str) -> bool:
+def move_post_test_to_post(prompt_name: str) -> bool:
     """將 Post/Test/ 的教學文移動到 Post/shared/"""
     test_post_dir = Path("Post/Test")
-    shared_post_dir = Path("Post/shared")
+    post_dir = Path("Post")
 
-    if not shared_post_dir.exists():
-        shared_post_dir.mkdir(parents=True, exist_ok=True)
+    if not post_dir.exists():
+        post_dir.mkdir(parents=True, exist_ok=True)
 
     # 尋找匹配的教學文（可能有日期前綴）
     matching_files = list(test_post_dir.glob(f"*{prompt_name}*.md"))
@@ -288,11 +288,11 @@ def move_post_test_to_shared(prompt_name: str) -> bool:
         return False
 
     for test_file in matching_files:
-        target_file = shared_post_dir / test_file.name
+        target_file = post_dir / test_file.name
 
         try:
             shutil.move(str(test_file), str(target_file))
-            print(f"✅ 已移動教學文: {test_file.name} → Post/shared/")
+            print(f"✅ 已移動教學文: {test_file.name} → Post/")
         except Exception as e:
             print(f"❌ 移動教學文失敗: {e}")
             return False
@@ -400,7 +400,7 @@ def main():
 
         # 同時移動 Post/Test/ 的教學文到 Post/shared/
         print(f"\n📝 檢查是否有對應的教學文需要移動...")
-        move_post_test_to_shared(args.prompt_name)
+        move_post_test_to_post(args.prompt_name)
 
     # 建立上傳器
     uploader = MediaUploader(

@@ -1,6 +1,6 @@
 # Create Tutorial Post
 
-將 AI Prompt Template 轉換為雙語教學文，優化 Instagram 演算法與 Google SEO。
+將 AI Prompt Template 轉換為雙語教學文，搭配三語 SEO Discovery Block，最大化 Instagram 內部搜尋與 Google 外部索引的雙平台可發現性。
 
 ## 核心目標
 
@@ -60,7 +60,7 @@
 2. **BILINGUAL**: 標題格式為「繁體中文 | English」，內文中文先、英文後
 3. **CORE CONTENT**: Template 和 Example 必須完整保留，不得修改
 4. **VISUAL HIERARCHY**: 使用 emoji 作為區塊分隔
-5. **DYNAMIC HASHTAGS**: 根據具體主題生成 5-8 個標籤
+5. **TRILINGUAL SEO BLOCK**: 教學文末尾附加三語 SEO Discovery Block（emojis + alt text + 15-20 個三語 hashtags）
 
 ### 完整格式結構
 
@@ -100,34 +100,85 @@
 
 ---
 
-(生成 5-8 個獨特標籤：2 個利基主題、2 個 SEO/趨勢、2 個社群特定、1 個工具特定)
+🔍 **SEO Discovery Block**
+
+[Line 1: 3-5 個代表核心主題的 emoji]
+[Line 2: 15-20 個三語策略性 hashtags，空格分隔]
 ```
 
-## Hashtag 生成策略
+## SEO Discovery Block 生成策略
 
-### 標籤分類（5-8 個）
+### 核心原則
 
-1. **Niche Tags (2個)** - 精確定位核心主題
-   - 範例：#Kirby #GameArtAnimation
+**Keyword Primacy（關鍵字優先）**
+Caption 和 alt text 中的自然語言關鍵字是搜尋發現的主要驅動力，hashtags 是次要分類工具。
 
-2. **SEO/Trending Tags (2個)** - 搜尋優化與趨勢
-   - 範例：#AIVideoPrompts #GenerativeArtTutorial
+**Trilingual Parallelism（三語平行）**
+用英文、繁體中文、日文的在地化關鍵字表達核心概念。不是直接翻譯，而是使用各語言母語者「實際會搜尋」的詞彙。
+- 範例：英文 "cafe hopping" = 日文 #カフェ巡り = 繁中 #咖啡廳打卡
 
-3. **Community Tags (2個)** - 社群互動
-   - 範例：#AIArtCommunity #PromptEngineering
+**Dual Optimization（雙平台優化）**
+同時針對 Instagram AI 排名系統和 Google 外部索引進行優化，將每篇貼文視為長期 SEO 資產。
 
-4. **Tool-Specific Tag (1個)** - 工具專屬
+**AI Signal Optimization（AI 信號優化）**
+Instagram 的 AI 系統會分析 caption、alt text、圖片元資料和圖上文字，所有元素之間需要語義一致性。
+
+---
+
+### SEO Discovery Block 格式（嚴格三行）
+
+**Line 1 — Emoji（3-5 個）**
+代表核心主題的 emoji，與 alt text 和 hashtags 語義一致。
+
+**Line 2 — Hashtags（15-20 個）**
+空格分隔，三語策略性分佈：
+
+### 標籤策略性分佈（15-20 個）
+
+1. **Primary Keywords（3-4 個）** - 核心主題直接描述詞
+   - 三語覆蓋主要概念
+   - 範例：#KirbyArt #AI繪圖 #カービィイラスト
+
+2. **Niche Long-tail（5-7 個）** - 多詞組長尾精準搜尋
+   - 代表單一可搜尋概念的多字組合
+   - 範例：#ChibiCharacterDesign #AI角色生成教學 #ゲームキャラクターアート
+   - 目標：高意圖、低競爭的特定搜尋
+
+3. **Community/Style（3-5 個）** - 興趣社群與美學風格連接器
+   - 連接既有高互動利基社群
+   - 範例：#kawaiiaesthetic #ドット絵好きと繋がりたい #像素藝術
+
+4. **Trending/Seasonal（1-2 個）** - 時效性趨勢標籤
+   - 結合當前熱門趨勢提升即時曝光
+   - 範例：#AIArt2026 #GenerativeArtTrend
+
+5. **Tool-Specific（1-2 個）** - 工具專屬標籤
    - 範例：#NanoBananaPro #Midjourney #Veo3
-
-5. **Optional Bilingual Tag (1個)** - 雙語標籤
-   - 範例：#AI繪圖教學 #AI藝術
 
 ### 標籤品質標準
 
-- ✅ 每個標籤都與內容高度相關
-- ✅ 混合高流量（trending）和低競爭（niche）標籤
-- ✅ 避免過度通用的標籤（如 #AI #Art）
-- ✅ 使用駝峰式命名（#AIArtTutorial）而非全小寫
+- ✅ **語義一致性**：hashtags 與 alt text 關鍵字對齊，強化 AI 信號
+- ✅ **文化在地化**：每個語言版本反映真實使用者搜尋行為，不是直譯
+- ✅ **長尾優先**：優先使用多字組合 hashtag 而非單字泛用標籤
+- ✅ **無冗餘跨語翻譯**：除非文化上有特殊意義，否則不重複翻譯同一概念
+- ✅ **每個標籤有獨立策略目的**：質量優於數量
+- ❌ 禁止過度通用標籤（如 #AI #Art #cute）
+- ❌ 禁止三個語言都翻譯同一個意思（選擇最適合該語言的不同面向）
+
+### 三語分配建議
+
+| 語言 | 佔比 | 用途 |
+|------|------|------|
+| English | 50-60% (3-8 個) | 全球搜尋覆蓋、Google SEO 主力 |
+| 繁體中文 | 20-30% (3-5 個) | 華語圈社群連接、在地 SEO |
+| 日文 | 15-20% (2-4 個) | 日本市場滲透、動漫/遊戲文化圈 |
+
+### 範例 SEO Discovery Block
+
+```
+🎮🩷✨🕹️😆
+#NanoBananaPro #RetroConsoleKawaii #ChibiSqueezeArt #KirbyFanArt #AIイラスト #GameBoyAesthetic #AI繪圖教學 #ゲームボーイアート #CharacterDesignChallenge #可愛角色插畫 #ドット絵風 #PromptEngineering #SqueezableArt #AIArtTutorial #復古遊戲機萌圖 #カービィ #GenerativeArt2026
+```
 
 ## Hook 撰寫策略
 
@@ -299,8 +350,11 @@ YYYY-MM-DD-[Template名稱簡化].md
 - ✅ **Engagement** - Hook 要能在 3 秒內抓住注意力
 - ✅ **Clarity** - Template 和 Example 清晰易懂
 - ✅ **Actionable** - 參數解析和專家建議具體可操作
-- ✅ **SEO-Optimized** - 包含相關關鍵字和 2026 趨勢標籤
-- ✅ **Bilingual** - 中英文內容完整且自然
+- ✅ **Trilingual SEO** - SEO Discovery Block 涵蓋英文/繁中/日文三語，alt text 100-125 字元
+- ✅ **Semantic Coherence** - Emoji、alt text、hashtags 之間語義一致，強化 AI 排名信號
+- ✅ **Bilingual Content** - 教學文本體中英文內容完整且自然
+- ✅ **Long-tail Focus** - Hashtags 以多字組長尾標籤為主，避免泛用單字標籤
+- ✅ **Cultural Localization** - 三語標籤各自反映在地搜尋行為，不是直譯
 - ✅ **Original** - Hashtags 和互動問題根據具體內容客製化
 
 ## 範例輸出
@@ -313,9 +367,9 @@ YYYY-MM-DD-[Template名稱簡化].md
 風格：Nintendo Game Style
 檔案：Post/2026-01-03-Everything-Kirby-Transformation.md
 
-生成的 Hashtags:
-#KirbyTransformation #AIVideoPrompts2026 #GameArtAnimation
-#SoraAI #AIArtCommunity #PromptEngineering #萬物皆Kirby
+SEO Discovery Block:
+🩷🎮✨🌟🫧
+ #NanoBananaPro #KirbyTransformation #AIキャラクター変身 #AI角色變身教學 #GameArtAnimation #NintendoFanArt #PromptEngineering #カービィ変身アニメ #AIVideoPrompts2026 #GenerativeAnimation #ゲームアート #ChibiTransformation #AIArtCommunity #AI繪圖教學 #CharacterMorphing #可愛動畫教學
 ```
 
 ## 注意事項
@@ -326,3 +380,6 @@ YYYY-MM-DD-[Template名稱簡化].md
 - Hashtags 必須根據具體內容生成，不使用通用模板
 - 中英文內容應自然流暢，避免機翻感
 - 每個教學文都應該是獨特的，根據 Template 的特性客製化
+- **SEO Discovery Block 是必要區塊**，必須出現在教學文最末尾
+- **日文標籤必須使用母語者的自然搜尋習慣**，不是英文或中文的直譯（例：用 #カフェ巡り 而非 #カフェホッピング）
+- **三語標籤應各自涵蓋主題的不同面向**，避免同一個概念翻譯三次

@@ -79,7 +79,10 @@ Phase 3: 品質評估與發布
 ```
 - **僅 S 級才執行**
 - **規則**：Template 和 Example 必須 100% 保留原始內容
-- **輸出**：`Post/[日期]-[名稱].md`
+- **輸出**：`Post/Test/[日期]-[中文名稱].md`
+- **命名規則（CRITICAL）**：教學文檔名必須與 Prompt 檔名完全對齊
+  - ✅ Prompt: `吸入大法房間清潔.md` → 教學文: `2026-01-31-吸入大法房間清潔.md`
+  - ❌ Prompt: `吸入大法房間清潔.md` → 教學文: `2026-01-31-Inhale-Room-Cleaning.md`
 
 ### 1.5 Auto-Produce Prompt（一鍵 Phase 1）
 ```bash
@@ -139,16 +142,40 @@ python scripts/sync_to_notion.py
 /auto-daily-publish --dry-run
 ```
 
-## 路徑規範
+## 路徑規範（CRITICAL）
 
-| 路徑 | 用途 |
-|-----|------|
-| `Test/` | 生成的 Prompt Template |
-| `Post/Test/` | 待發布教學文 |
-| `Post/shared/` | 已發布教學文 |
-| `Local_Media/` | 本地圖片（上傳後清空） |
-| `Prompt/Image/Shared/` | 已發布圖片 Prompt |
-| `Prompt/Video/Shared/` | 已發布影片 Prompt |
+**嚴格遵守以下路徑規則，違反將導致工作流程錯誤！**
+
+| 階段 | 路徑 | 用途 | 何時使用 |
+|-----|------|------|---------|
+| **創建** | `Test/` | 新建的 Prompt Template | `/generate-prompt` 輸出位置 |
+| **創建** | `Post/Test/` | 待發布教學文 | `/create-tutorial` 輸出位置 |
+| **發布後** | `Post/shared/` | 已發布教學文 | 發布成功後移動 |
+| **發布後** | `Prompt/Image/Shared/` | 已發布圖片 Prompt | 發布成功後移動 |
+| **發布後** | `Prompt/Video/Shared/` | 已發布影片 Prompt | 發布成功後移動 |
+| **暫存** | `Local_Media/` | 本地圖片 | 上傳後清空 |
+
+### 路徑錯誤警告
+
+**禁止直接創建到以下位置**：
+- ❌ `Prompt/Image/` — 這是已發布內容，新建請用 `Test/`
+- ❌ `Prompt/Video/` — 這是已發布內容，新建請用 `Test/`
+- ❌ `Post/shared/` — 這是已發布內容，新建請用 `Post/Test/`
+
+**正確流程**：
+```
+新建 Prompt → Test/[中文名稱].md
+評估通過後 → Post/Test/2026-xx-xx-[中文名稱].md（教學文）
+發布成功後 → 移動到 Prompt/*/Shared/ 和 Post/shared/
+```
+
+**命名對齊範例**：
+```
+Prompt: Test/吸入大法房間清潔.md
+教學文: Post/Test/2026-01-31-吸入大法房間清潔.md
+發布後: Post/shared/2026-01-31-吸入大法房間清潔.md
+       Prompt/Video/Shared/吸入大法房間清潔.md
+```
 
 ## 自動優化循環規則
 
@@ -178,12 +205,12 @@ else: 標記「需人工介入」，繼續下一個主題
 /auto-produce-prompt "Kirby"
 
 # Phase 2
-/generate-image "Post/Test/2026-01-30-Kirby-xxx.md" --auto --style playful
+/generate-image "Post/Test/2026-01-30-吸入大法房間清潔.md" --auto --style playful
 
 # Phase 3
-/viral-score "Post/Test/2026-01-30-Kirby-xxx.md" --image cover.png
-/post-to-fb "Post/Test/2026-01-30-Kirby-xxx.md" --image cover.png --target page --page-name "AI Art Lab" --submit
-python scripts/auto_upload_media.py "Kirby-xxx" --type image --env prod
+/viral-score "Post/Test/2026-01-30-吸入大法房間清潔.md" --image cover.png
+/post-to-fb "Post/Test/2026-01-30-吸入大法房間清潔.md" --image cover.png --target page --page-name "AI Art Lab" --submit
+python scripts/auto_upload_media.py "吸入大法房間清潔" --type image --env prod
 python scripts/sync_to_notion.py
 ```
 

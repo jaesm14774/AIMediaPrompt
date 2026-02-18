@@ -27,7 +27,8 @@
       "Bash(ls:*)",
       "Bash(bun:*)",
       "Skill(post-to-fb)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "WebFetch(domain:zh.wikipedia.org)"
     ]
   }
 }

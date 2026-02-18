@@ -20,6 +20,10 @@ if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
+# Notion API: rich_text text.content 單段上限 2000 字元
+NOTION_RICH_TEXT_MAX_LEN = 2000
+
+
 class NotionSyncer:
     def __init__(self, api_key: str, database_id: str = None, page_id: str = None):
         self.notion = Client(auth=api_key)
@@ -627,6 +631,26 @@ class NotionSyncer:
             }
         }
     
+    def _split_rich_text_item(self, content: str, annotations: Dict = None, link: Dict = None) -> List[Dict]:
+        """將超長文字分割為多個 rich_text 項目（Notion 單段上限 2000 字元）"""
+        if len(content) <= NOTION_RICH_TEXT_MAX_LEN:
+            item = {"type": "text", "text": {"content": content}}
+            if link:
+                item["text"]["link"] = link
+            if annotations:
+                item["annotations"] = annotations
+            return [item]
+        result = []
+        for i in range(0, len(content), NOTION_RICH_TEXT_MAX_LEN):
+            chunk = content[i:i + NOTION_RICH_TEXT_MAX_LEN]
+            item = {"type": "text", "text": {"content": chunk}}
+            if link:
+                item["text"]["link"] = link
+            if annotations:
+                item["annotations"] = annotations
+            result.append(item)
+        return result
+    
     def parse_rich_text(self, text: str) -> List[Dict]:
         """解析 Markdown 格式文字為 Notion rich text（支援連結、粗體、斜體）"""
         if not text:
@@ -651,57 +675,30 @@ class NotionSyncer:
                 matches.append(('italic', italic_match.start(), italic_match))
             
             if not matches:
-                # 沒有更多格式，添加剩餘文字
                 if remaining:
-                    rich_text.append({
-                        "type": "text",
-                        "text": {"content": remaining}
-                    })
+                    rich_text.extend(self._split_rich_text_item(remaining))
                 break
             
             # 排序找出最早的匹配
             matches.sort(key=lambda x: x[1])
             match_type, match_pos, match = matches[0]
             
-            # 添加格式前的普通文字
             if match_pos > 0:
-                rich_text.append({
-                    "type": "text",
-                    "text": {"content": remaining[:match_pos]}
-                })
+                rich_text.extend(self._split_rich_text_item(remaining[:match_pos]))
             
-            # 處理匹配的格式
             if match_type == 'link':
                 link_text = match.group(1)
                 link_url = match.group(2)
-                rich_text.append({
-                    "type": "text",
-                    "text": {
-                        "content": link_text,
-                        "link": {"url": link_url}
-                    }
-                })
+                rich_text.extend(self._split_rich_text_item(link_text, link={"url": link_url}))
                 remaining = remaining[match.end():]
-            
             elif match_type == 'bold':
-                bold_text = match.group(1)
-                rich_text.append({
-                    "type": "text",
-                    "text": {"content": bold_text},
-                    "annotations": {"bold": True}
-                })
+                rich_text.extend(self._split_rich_text_item(match.group(1), annotations={"bold": True}))
                 remaining = remaining[match.end():]
-            
             elif match_type == 'italic':
-                italic_text = match.group(1)
-                rich_text.append({
-                    "type": "text",
-                    "text": {"content": italic_text},
-                    "annotations": {"italic": True}
-                })
+                rich_text.extend(self._split_rich_text_item(match.group(1), annotations={"italic": True}))
                 remaining = remaining[match.end():]
         
-        return rich_text if rich_text else [{"type": "text", "text": {"content": text}}]
+        return rich_text if rich_text else self._split_rich_text_item(text)
     
     def text_to_blocks(self, text: str) -> List[Dict]:
         """將 Markdown 內容轉換為 Notion blocks（支援圖片、連結、格式）"""

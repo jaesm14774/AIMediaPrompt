@@ -210,7 +210,7 @@ move "Post/[檔名].md" "Post/Test/[檔名].md"
 
 **輸出確認**：
 ```
-✓ 教學文已移動：Post/Test/2026-01-07-Kirby-Absurd-Professional.md
+✓ 教學文已移動：Post/Test/2026-01-07-Kirby-荒謬職場.md
 ```
 
 ---
@@ -236,21 +236,21 @@ move "Post/[檔名].md" "Post/Test/[檔名].md"
    ├─ 初次評分：C 級 (6.5/10)
    ├─ 優化次數：2 次
    ├─ 最終評分：A 級 (8.5/10)
-   ├─ 檔案：Post/Test/2026-01-07-Kirby-Office-Chaos.md
+   ├─ 檔案：Post/Test/2026-01-07-Kirby-荒謬職場.md
    └─ 狀態：✅ 已完成
 
 2. Kirby + temporal（時空錯位）
    ├─ 初次評分：B 級 (7.5/10)
    ├─ 優化次數：1 次
    ├─ 最終評分：S 級 (9.2/10)
-   ├─ 檔案：Post/Test/2026-01-07-Kirby-Renaissance-Painting.md
+   ├─ 檔案：Post/Test/2026-01-07-Kirby-文藝復興油畫.md
    └─ 狀態：✅ 已完成
 
 3. Kirby + weather（情緒天氣）
    ├─ 初次評分：A 級 (8.0/10)
    ├─ 優化次數：0 次
    ├─ 最終評分：A 級 (8.0/10)
-   ├─ 檔案：Post/Test/2026-01-07-Kirby-Emotional-Weather.md
+   ├─ 檔案：Post/Test/2026-01-07-Kirby-情緒天氣.md
    └─ 狀態：✅ 已完成
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -292,7 +292,7 @@ B 級：0 個（0%）
 ⚠️ 主題 1 需人工介入
    ├─ 初次評分：D 級 (5.0/10)
    ├─ 優化 3 次後：C 級 (6.8/10)
-   ├─ 檔案：Test/Kirby-Absurd-Professional.md（未生成教學文）
+   ├─ 檔案：Test/Kirby-荒謬職場.md（未生成教學文）
    └─ 建議：概念層面問題，建議手動調整創意方向
 ```
 
@@ -387,7 +387,7 @@ Post/shared/
 
 [主題 1/3] Kirby + absurd-professional
   ├─ 正在生成 prompt...
-  ✓ 生成完成：Test/Kirby-Office-Chaos.md
+  ✓ 生成完成：Test/Kirby-荒謬職場.md
   ├─ 正在評估...
   ✓ 評估結果：C 級 (6.5/10)
   ├─ 概念問題：缺乏荒謬視覺衝擊
@@ -403,14 +403,14 @@ Post/shared/
   │   └─ 達標！停止優化
   │
   ├─ 正在生成教學文...
-  ✓ 教學文完成：Post/2026-01-07-Kirby-Office-Chaos.md
+  ✓ 教學文完成：Post/2026-01-07-Kirby-荒謬職場.md
   ├─ 正在移動到 Post/Test/...
-  ✓ 已移動：Post/Test/2026-01-07-Kirby-Office-Chaos.md
+  ✓ 已移動：Post/Test/2026-01-07-Kirby-荒謬職場.md
   └─ 狀態：✅ 完成
 
 [主題 2/3] Kirby + temporal
   ├─ 正在生成 prompt...
-  ✓ 生成完成：Test/Kirby-Renaissance-Painting.md
+  ✓ 生成完成：Test/Kirby-文藝復興油畫.md
   ├─ 正在評估...
   ✓ 評估結果：B 級 (7.5/10)
   ├─ 觸發自動優化循環...
@@ -421,22 +421,22 @@ Post/shared/
   │   └─ 達標！停止優化
   │
   ├─ 正在生成教學文...
-  ✓ 教學文完成：Post/2026-01-07-Kirby-Renaissance-Painting.md
+  ✓ 教學文完成：Post/2026-01-07-Kirby-文藝復興油畫.md
   ├─ 正在移動到 Post/Test/...
-  ✓ 已移動：Post/Test/2026-01-07-Kirby-Renaissance-Painting.md
+  ✓ 已移動：Post/Test/2026-01-07-Kirby-文藝復興油畫.md
   └─ 狀態：✅ 完成
 
 [主題 3/3] Kirby + weather
   ├─ 正在生成 prompt...
-  ✓ 生成完成：Test/Kirby-Emotional-Weather.md
+  ✓ 生成完成：Test/Kirby-情緒天氣.md
   ├─ 正在評估...
   ✓ 評估結果：A 級 (8.0/10)
   ├─ 無需優化，直接生成教學文
   │
   ├─ 正在生成教學文...
-  ✓ 教學文完成：Post/2026-01-07-Kirby-Emotional-Weather.md
+  ✓ 教學文完成：Post/2026-01-07-Kirby-情緒天氣.md
   ├─ 正在移動到 Post/Test/...
-  ✓ 已移動：Post/Test/2026-01-07-Kirby-Emotional-Weather.md
+  ✓ 已移動：Post/Test/2026-01-07-Kirby-情緒天氣.md
   └─ 狀態：✅ 完成
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -368,7 +368,7 @@ def main():
             original_in_test = True
         else:
             # 在 Prompt/ 中尋找
-            for folder in ['Prompt/Image', 'Prompt/Video', 'Prompt/Image/Shared', 'Prompt/Video/Shared']:
+            for folder in ['Prompt/Image', 'Prompt/Video', 'Prompt/Image/shared', 'Prompt/Video/shared']:
                 candidate = Path(f"{folder}/{args.prompt_name}.md")
                 if candidate.exists():
                     prompt_file = candidate

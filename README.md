@@ -8,6 +8,7 @@
 - [支援的媒體格式與服務限制](#支援的媒體格式與服務限制)
 - [設定 API 金鑰](#設定-api-金鑰)
 - [上傳媒體到雲端](#上傳媒體到雲端)
+- [一鍵發布到 Facebook / Twitter](#一鍵發布到-facebook--twitter)
 - [同步內容到 Notion](#同步內容到-notion)
 - [使用 Cursor Subagent 執行自動化](#使用-cursor-subagent-執行自動化)
 - [設定每日自動發布排程](#設定每日自動發布排程)
@@ -113,6 +114,63 @@ python scripts/auto_upload_media.py "睡眠戰場" --env prod --type image
 ```
 
 **注意**：`Local_Media/` 處理完成後會自動清空。建議每次僅放同一主題的媒體。
+
+---
+
+## 一鍵發布到 Facebook / Twitter
+
+將 Post/.md 與 Local_Media 圖檔一鍵發布到 Facebook、Twitter，完成後自動移動至 shared/。
+
+### 前置設定
+
+```bash
+# Facebook（粉絲專頁 Graph API）
+cp config/social_media/credentials/facebook.env.example config/social_media/credentials/facebook.env
+# 填入 FB_PAGE_ID、FB_PAGE_ACCESS_TOKEN
+
+# Twitter
+cp config/social_media/credentials/twitter.env.example config/social_media/credentials/twitter.env
+# 填入 TWITTER_API_KEY、TWITTER_API_SECRET、TWITTER_ACCESS_TOKEN、TWITTER_ACCESS_TOKEN_SECRET
+```
+
+### 使用方式
+
+```bash
+# 1. 將媒體放入 Local_Media/
+# 2. 執行發布
+python scripts/publish_to_social.py <Post檔名或關鍵字> [--prompt <Prompt名稱>] [--type image|video]
+```
+
+### 參數說明
+
+| 參數 | 說明 |
+|-----|------|
+| `post` | Post 檔名、路徑或關鍵字（如 `Nightmare-Office-Mirror`） |
+| `--prompt` | 對應 Prompt 名稱，用於發布後移動到 shared/ |
+| `--type` | `image` 或 `video`，與 `--prompt` 搭配使用 |
+| `--platforms` | 平台，預設 `fb,twitter` |
+| `--media-dir` | 媒體目錄，預設 `Local_Media` |
+| `--dry-run` | 僅預覽，不實際發布 |
+| `--no-move` | 發布後不移動檔案 |
+
+### 範例
+
+```bash
+# 發布到 FB + Twitter，完成後移動 Post 與 Prompt
+python scripts/publish_to_social.py "惡夢加班鏡像" --prompt 惡夢加班鏡像 --type image
+
+# 僅發布到 Twitter
+python scripts/publish_to_social.py "2026-02-19-Expulsion" --platforms twitter
+
+# 預覽模式
+python scripts/publish_to_social.py "午睡危機" --dry-run
+```
+
+### 發布後行為
+
+- Post/.md → Post/shared/
+- Prompt/Image/xxx.md 或 Prompt/Video/xxx.md → 對應 shared/
+- Local_Media 中的媒體會在上傳成功後清空
 
 ---
 
@@ -233,6 +291,13 @@ AIMediaPrompt/
 ---
 
 ## 常見問題
+
+### Facebook 發布失敗
+
+| 問題 | 解決方案 |
+|-----|---------|
+| `(#100) global id is not allowed` | 已改用 `me` 端點，確認使用 Page Access Token |
+| `(#10) Application does not have permission` | 多影片同貼文需 `pages_manage_ads`；無此權限時會 fallback 為逐支發布 |
 
 ### 媒體上傳失敗
 

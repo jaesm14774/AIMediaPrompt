@@ -96,8 +96,8 @@ class NotionSyncer:
             return None
     
     def normalize_path(self, file_path: str) -> str:
-        """標準化路徑，統一 shared/Shared 的大小寫"""
-        # 將路徑中的 Shared 統一為 shared（小寫）
+        """標準化路徑，統一 shared/shared 的大小寫"""
+        # 將路徑中的 shared 統一為 shared（小寫）
         parts = file_path.split('\\')
         normalized_parts = []
         for part in parts:
@@ -124,10 +124,10 @@ class NotionSyncer:
                     prompts.append((title, content, 'Image', False, file_path))
                     seen_files.add(file_name)
         
-        # Image/shared 或 Image/Shared 資料夾下的檔案
+        # Image/shared 或 Image/shared 資料夾下的檔案
         shared_image_dirs = [
             self.image_dir / 'shared',
-            self.image_dir / 'Shared'
+            self.image_dir / 'shared'
         ]
         for shared_dir in shared_image_dirs:
             if shared_dir.exists():
@@ -157,10 +157,10 @@ class NotionSyncer:
                     prompts.append((title, content, 'Video', False, file_path))
                     seen_files.add(file_name)
         
-        # Video/shared 或 Video/Shared 資料夾下的檔案
+        # Video/shared 或 Video/shared 資料夾下的檔案
         shared_video_dirs = [
             self.video_dir / 'shared',
-            self.video_dir / 'Shared'
+            self.video_dir / 'shared'
         ]
         for shared_dir in shared_video_dirs:
             if shared_dir.exists():

@@ -268,9 +268,9 @@ AIMediaPrompt/
 │
 ├── Prompt/
 │   ├── Image/                         # 圖片 Prompt
-│   │   └── Shared/                    # 已發布
+│   │   └── shared/                    # 已發布
 │   └── Video/                         # 影片 Prompt
-│       └── Shared/                    # 已發布
+│       └── shared/                    # 已發布
 │
 ├── Post/
 │   ├── Test/                          # 待發布教學文

@@ -151,8 +151,8 @@ python scripts/sync_to_notion.py
 | **創建** | `Test/` | 新建的 Prompt Template | `/generate-prompt` 輸出位置 |
 | **創建** | `Post/Test/` | 待發布教學文 | `/create-tutorial` 輸出位置 |
 | **發布後** | `Post/shared/` | 已發布教學文 | 發布成功後移動 |
-| **發布後** | `Prompt/Image/Shared/` | 已發布圖片 Prompt | 發布成功後移動 |
-| **發布後** | `Prompt/Video/Shared/` | 已發布影片 Prompt | 發布成功後移動 |
+| **發布後** | `Prompt/Image/shared/` | 已發布圖片 Prompt | 發布成功後移動 |
+| **發布後** | `Prompt/Video/shared/` | 已發布影片 Prompt | 發布成功後移動 |
 | **暫存** | `Local_Media/` | 本地圖片 | 上傳後清空 |
 
 ### 路徑錯誤警告
@@ -166,7 +166,7 @@ python scripts/sync_to_notion.py
 ```
 新建 Prompt → Test/[中文名稱].md
 評估通過後 → Post/Test/2026-xx-xx-[中文名稱].md（教學文）
-發布成功後 → 移動到 Prompt/*/Shared/ 和 Post/shared/
+發布成功後 → 移動到 Prompt/*/shared/ 和 Post/shared/
 ```
 
 **命名對齊範例**：
@@ -174,7 +174,7 @@ python scripts/sync_to_notion.py
 Prompt: Test/吸入大法房間清潔.md
 教學文: Post/Test/2026-01-31-吸入大法房間清潔.md
 發布後: Post/shared/2026-01-31-吸入大法房間清潔.md
-       Prompt/Video/Shared/吸入大法房間清潔.md
+       Prompt/Video/shared/吸入大法房間清潔.md
 ```
 
 ## 自動優化循環規則

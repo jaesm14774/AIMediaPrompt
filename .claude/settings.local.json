@@ -28,7 +28,13 @@
       "Bash(bun:*)",
       "Skill(post-to-fb)",
       "Bash(tasklist:*)",
-      "WebFetch(domain:zh.wikipedia.org)"
+      "WebFetch(domain:zh.wikipedia.org)",
+      "Bash(if [ -d \"C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/Test\" ])",
+      "Bash(then echo \"EXISTS\")",
+      "Bash(else mkdir -p \"C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/Test\")",
+      "Bash(fi)",
+      "Bash(if [ -d \"C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/Post/Test\" ])",
+      "Bash(else mkdir -p \"C:/Users/jaesm14774/Desktop/self_project/AIMediaPrompt/Post/Test\")"
     ]
   }
 }

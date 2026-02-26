@@ -88,17 +88,24 @@ def find_post_file(name_or_path: str) -> Optional[Path]:
 
 
 def find_prompt_file(prompt_name: str) -> Optional[Tuple[Path, str]]:
-    """找到 Prompt 檔，回傳 (路徑, 'image'|'video')"""
+    """找到 Prompt 檔，回傳 (路徑, 'image'|'video')，不搜尋 shared/"""
     for media_type, folder in [('image', 'Prompt/Image'), ('video', 'Prompt/Video')]:
         base = PROJECT_ROOT / folder
-        for sub in ['', 'shared']:
-            candidate = base / sub / f"{prompt_name}.md"
-            if candidate.exists():
-                return (candidate, media_type)
-        for f in base.rglob("*.md"):
-            if prompt_name in f.stem:
+        candidate = base / f"{prompt_name}.md"
+        if candidate.exists():
+            return (candidate, media_type)
+        for f in base.iterdir():
+            if f.is_file() and f.suffix == '.md' and prompt_name in f.stem:
                 return (f, media_type)
     return None
+
+
+def _extract_prompt_name(post_path: Path) -> str:
+    """從 Post 檔名去掉日期前綴，取得對應 Prompt 名稱
+    例：2026-02-14-情人節-愛心充電中.md → 情人節-愛心充電中"""
+    stem = post_path.stem
+    match = re.match(r'^\d{4}-\d{2}-\d{2}-(.+)$', stem)
+    return match.group(1) if match else stem
 
 
 def collect_media(media_dir: Path, limit: int = 4) -> List[Path]:
@@ -249,8 +256,50 @@ def publish_facebook(caption: str, hashtags: str, media_paths: List[Path], confi
     return False
 
 
+def _twitter_wait_video(api, media_id: int, max_wait: int = 300) -> None:
+    """等待 Twitter 影片處理完成"""
+    import time
+    start = time.time()
+    while time.time() - start < max_wait:
+        try:
+            status = api.get_media_upload_status(media_id)
+            if status.processing_info:
+                state = status.processing_info.get('state', '')
+                if state == 'succeeded':
+                    return
+                if state == 'failed':
+                    msg = status.processing_info.get('error', {}).get('message', 'unknown')
+                    raise RuntimeError(f"Video processing failed: {msg}")
+                time.sleep(status.processing_info.get('check_after_secs', 5))
+            else:
+                return
+        except Exception as e:
+            if 'processing_info' not in str(e):
+                raise
+            time.sleep(5)
+    raise TimeoutError(f"Video processing timeout ({max_wait}s)")
+
+
+def _extract_rate_limit_wait(error, default: int = 60) -> int:
+    """從 429 錯誤中提取等待秒數"""
+    try:
+        if hasattr(error, 'response') and error.response is not None:
+            headers = error.response.headers
+            if 'x-rate-limit-reset' in headers:
+                import time as _t
+                wait = max(int(headers['x-rate-limit-reset']) - int(_t.time()), 0) + 10
+                if wait > 0:
+                    return wait
+            if 'retry-after' in headers:
+                return int(headers['retry-after']) + 10
+    except Exception:
+        pass
+    return default
+
+
 def publish_twitter(caption: str, hashtags: str, media_paths: List[Path], config: dict) -> bool:
-    """使用 Tweepy 發布到 Twitter"""
+    """使用 Twitter API v2 create_tweet + v1.1 media_upload，
+    v2 失敗時 fallback 到 v1.1 update_status（參考 mediaoverload）"""
     required = ['TWITTER_API_KEY', 'TWITTER_API_SECRET', 'TWITTER_ACCESS_TOKEN', 'TWITTER_ACCESS_TOKEN_SECRET']
     if not all(config.get(k) for k in required):
         print("[Warn] Twitter not configured (config/social_media/credentials/twitter.env)")
@@ -258,43 +307,154 @@ def publish_twitter(caption: str, hashtags: str, media_paths: List[Path], config
 
     try:
         import tweepy
+        import time
     except ImportError:
         print("[Error] pip install tweepy")
         return False
+
+    api_key = config['TWITTER_API_KEY']
+    api_secret = config['TWITTER_API_SECRET']
+    access_token = config['TWITTER_ACCESS_TOKEN']
+    access_secret = config['TWITTER_ACCESS_TOKEN_SECRET']
+    bearer_token = config.get('TWITTER_BEARER_TOKEN') or None
 
     text = f"{caption}\n{hashtags}" if hashtags else caption
     if len(text) > 280:
         text = text[:277] + "..."
 
     auth = tweepy.OAuth1UserHandler(
-        config['TWITTER_API_KEY'], config['TWITTER_API_SECRET'],
-        config['TWITTER_ACCESS_TOKEN'], config['TWITTER_ACCESS_TOKEN_SECRET']
+        consumer_key=api_key, consumer_secret=api_secret,
+        access_token=access_token, access_token_secret=access_secret
     )
-    api = tweepy.API(auth, wait_on_rate_limit=False)
-    media_ids = []
+    api_v1 = tweepy.API(auth, wait_on_rate_limit=False)
 
-    for mp in media_paths[:4]:
+    client_v2 = tweepy.Client(
+        consumer_key=api_key, consumer_secret=api_secret,
+        access_token=access_token, access_token_secret=access_secret,
+        bearer_token=bearer_token,
+        wait_on_rate_limit=False
+    )
+
+    # --- 媒體上傳（v1.1）---
+    media_ids = []
+    for idx, mp in enumerate(media_paths[:4]):
         if not mp.exists():
+            print(f"[Warn] Media file not found: {mp}")
             continue
         try:
+            if idx > 0:
+                time.sleep(2)
             if mp.suffix.lower() == '.mp4':
-                media = api.media_upload(str(mp), media_category='tweet_video')
+                media = api_v1.media_upload(str(mp), media_category='tweet_video')
+                print(f"[Info] Twitter video uploaded, waiting for processing...")
+                _twitter_wait_video(api_v1, media.media_id)
             else:
-                media = api.media_upload(str(mp))
+                media = api_v1.media_upload(str(mp))
             media_ids.append(media.media_id)
+            print(f"[OK] Twitter media uploaded: {mp.name} (media_id: {media.media_id})")
+        except tweepy.TooManyRequests as e:
+            wait = _extract_rate_limit_wait(e)
+            print(f"[Warn] Media upload rate limit, waiting {wait}s...")
+            time.sleep(wait)
+            try:
+                if mp.suffix.lower() == '.mp4':
+                    media = api_v1.media_upload(str(mp), media_category='tweet_video')
+                    _twitter_wait_video(api_v1, media.media_id)
+                else:
+                    media = api_v1.media_upload(str(mp))
+                media_ids.append(media.media_id)
+                print(f"[OK] Twitter media retry ok: {mp.name}")
+            except Exception as retry_err:
+                print(f"[Warn] Media retry failed {mp.name}: {retry_err}")
         except Exception as e:
             print(f"[Warn] Twitter media upload failed {mp.name}: {e}")
 
-    try:
-        if media_ids:
-            api.update_status(status=text, media_ids=media_ids)
-        else:
-            api.update_status(status=text)
-        print("[OK] Twitter published")
-        return True
-    except Exception as e:
-        print(f"[Error] Twitter failed: {e}")
-        return False
+    if len(media_ids) > 4:
+        media_ids = media_ids[:4]
+
+    # --- 發布推文：v2 → v1.1 fallback ---
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            if media_ids:
+                tweet = client_v2.create_tweet(text=text, media_ids=media_ids)
+            else:
+                tweet = client_v2.create_tweet(text=text)
+
+            if tweet.data:
+                tid = tweet.data['id']
+                print(f"[OK] Twitter published (v2), Tweet ID: {tid}, URL: https://twitter.com/i/web/status/{tid}")
+                return True
+            print("[Error] Twitter v2: no tweet data returned")
+            return False
+
+        except tweepy.TooManyRequests as e:
+            wait = _extract_rate_limit_wait(e)
+            if attempt < max_retries - 1:
+                print(f"[Warn] Twitter rate limit, waiting {wait}s ({attempt+1}/{max_retries})")
+                time.sleep(wait)
+            else:
+                print(f"[Error] Twitter rate limit exceeded after {max_retries} retries")
+                return False
+
+        except (tweepy.Forbidden, tweepy.TweepyException) as e:
+            is_forbidden = isinstance(e, tweepy.Forbidden)
+            detail = ""
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    detail = e.response.json()
+                except Exception:
+                    detail = e.response.text[:300] if e.response.text else ""
+            print(f"[Warn] Twitter v2 failed ({'403 Forbidden' if is_forbidden else type(e).__name__}): {detail or e}")
+
+            # Fallback: v1.1 update_status
+            print("[Info] Trying v1.1 fallback...")
+            try:
+                if media_ids:
+                    v1_tweet = api_v1.update_status(status=text, media_ids=media_ids)
+                else:
+                    v1_tweet = api_v1.update_status(status=text)
+                print(f"[OK] Twitter published (v1.1 fallback), Tweet ID: {v1_tweet.id}, URL: https://twitter.com/{v1_tweet.user.screen_name}/status/{v1_tweet.id}")
+                return True
+            except tweepy.TooManyRequests as v1_rate_err:
+                wait = _extract_rate_limit_wait(v1_rate_err, default=120)
+                print(f"[Warn] v1.1 rate limit, waiting {wait}s...")
+                time.sleep(wait)
+                try:
+                    if media_ids:
+                        v1_tweet = api_v1.update_status(status=text, media_ids=media_ids)
+                    else:
+                        v1_tweet = api_v1.update_status(status=text)
+                    print(f"[OK] Twitter published (v1.1 retry), Tweet ID: {v1_tweet.id}")
+                    return True
+                except Exception as v1_retry_err:
+                    print(f"[Error] v1.1 retry failed: {v1_retry_err}")
+            except Exception as v1_err:
+                print(f"[Error] v1.1 fallback also failed: {v1_err}")
+
+            if is_forbidden:
+                print("[Fix] 請至 https://developer.x.com/en/portal/dashboard 檢查：")
+                print("  1. App Settings → User authentication settings → Set up / Edit")
+                print("  2. App permissions 改為 'Read and write'")
+                print("  3. Type of App 選 'Web App, Automated App or Bot'")
+                print("  4. Callback URL 填 https://example.com/callback")
+                print("  5. Keys and tokens → Regenerate Access Token & Secret")
+                print("  6. 更新 config/social_media/credentials/twitter.env")
+            return False
+
+        except Exception as e:
+            detail = ""
+            if hasattr(e, 'response') and getattr(e, 'response', None) is not None:
+                try:
+                    detail = e.response.json()
+                except Exception:
+                    detail = getattr(e.response, 'text', '')[:300]
+            print(f"[Error] Twitter failed: {e}")
+            if detail:
+                print(f"[Detail] {detail}")
+            return False
+
+    return False
 
 
 def move_to_shared(post_path: Path, prompt_path: Optional[Path], media_type: Optional[str]) -> None:
@@ -380,12 +540,15 @@ def main():
 
     if success and not args.no_move:
         prompt_path, media_type = None, None
-        if args.prompt:
-            found = find_prompt_file(args.prompt)
-            if found:
-                prompt_path, media_type = found
-            elif args.type:
-                media_type = args.type
+        search_name = args.prompt if args.prompt else _extract_prompt_name(post_path)
+        found = find_prompt_file(search_name)
+        if found:
+            prompt_path, media_type = found
+            print(f"[Info] Auto-matched Prompt: {prompt_path.relative_to(PROJECT_ROOT)} ({media_type})")
+        elif args.type:
+            media_type = args.type
+        else:
+            print(f"[Warn] No matching Prompt found for '{search_name}'")
         move_to_shared(post_path, prompt_path, media_type)
 
     if media_paths and success:

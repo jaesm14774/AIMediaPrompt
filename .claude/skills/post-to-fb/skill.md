@@ -2,10 +2,6 @@
 
 自動發布內容到 Facebook 粉專或個人頁面，使用 Chrome DevTools Protocol 繞過反自動化機制。
 
-## 語言要求
-
-**CRITICAL**：所有中文輸出必須使用**繁體中文**，嚴禁使用簡體中文。
-
 ## 使用方式
 
 ```bash

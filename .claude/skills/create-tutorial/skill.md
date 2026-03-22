@@ -322,32 +322,6 @@ Did you succeed? Share the biggest challenge you faced!
 What tutorial next? Pokemon evolution? Disney style?
 ```
 
-## 檔案命名規則
-
-### 格式
-
-```
-YYYY-MM-DD-[Template名稱簡化].md
-```
-
-### 簡化規則
-
-- **CRITICAL：檔名語言必須與 Prompt Template 檔名一致**
-- 如果 Prompt 檔名是中文，Post 檔名也用中文
-- 如果 Prompt 檔名是英文，Post 檔名也用英文
-- **禁止自行翻譯語言**（中文 Prompt 不要翻成英文 Post）
-- 移除特殊字元
-- 保留核心關鍵字
-- 使用連字號分隔
-- 最多 3-5 個關鍵字
-
-### 範例
-
-- `萬物皆Kirby-日常物體顯現.md` → `2026-01-03-萬物皆Kirby-日常物體顯現.md`
-- `午睡危機.md` → `2026-01-24-午睡危機.md`
-- `被逐出年假伊甸園.md` → `2026-02-19-被逐出年假伊甸園.md`
-- `StoneAge-Dino-Ride.md` → `2026-02-15-StoneAge-Dino-Ride.md`
-
 ## 質量標準
 
 每個生成的教學文必須：

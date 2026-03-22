@@ -1,0 +1,38 @@
+# Node modules inside skills
+.claude/skills/*/scripts/node_modules/
+
+# Published content (already finalized, not needed in context)
+Post/shared/
+Prompt/Image/shared/
+Prompt/Video/shared/
+
+# Legacy code
+Legacy/
+
+# Binary media files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.mp4
+*.mov
+*.avi
+*.webm
+*.bmp
+*.tiff
+*.svg
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+
+# Lock files
+package-lock.json
+
+# Config secrets
+config/*.json
+config/social_media/credentials/

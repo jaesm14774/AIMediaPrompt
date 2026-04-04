@@ -1,83 +1,75 @@
 # AI Prompt Generation Workflow
 
-完整的 AI 圖像 Prompt 生成與自動發布工作流程。
+完整的 AI Prompt 生成流程，以 `/full-pipeline` 為主。
 
-## 完整工作流程概覽
+## 唯一標準流程
+
+`/full-pipeline` 的終點一律是 **媒體上傳完成**，不是自動發布。
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            Phase 1: 內容創作                                   │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐        │
-│  │  1. Research    │────▶│  2. Generate    │────▶│  3. Evaluate    │        │
-│  │ /research-keyword│     │ /generate-prompt│     │ /evaluate-prompt│        │
-│  └─────────────────┘     └─────────────────┘     └────────┬────────┘        │
-│                                                           │                  │
-│                                                           ▼                  │
-│                                                  ┌─────────────────┐        │
-│                                                  │  4. Tutorial    │        │
-│                                                  │ /create-tutorial│        │
-│                                                  └─────────────────┘        │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            Phase 2: 圖片處理                                   │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────┐                                                         │
-│  │  5. Generate    │                                                         │
-│  │ /generate-image │ (保持原始畫質，不壓縮)                                     │
-│  └─────────────────┘                                                         │
-│                                                                              │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            Phase 3: 品質評估與發布                             │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐        │
-│  │  6. Viral Score │────▶│  7. Post to FB  │────▶│ 8. Upload Media│        │
-│  │   /viral-score  │     │   /post-to-fb   │     │auto_upload_media│        │
-│  └─────────────────┘     └─────────────────┘     └────────┬────────┘        │
-│                                                           │                  │
-│                                                           ▼                  │
-│                                                  ┌─────────────────┐        │
-│                                                  │ 9. Sync Notion  │        │
-│                                                  │  sync_to_notion │        │
-│                                                  └─────────────────┘        │
-└──────────────────────────────────────────────────────────────────────────────┘
+Phase 1：內容創作
+/research-keyword
+  → /generate-prompt
+  → /evaluate-prompt
+  → 未達 S 級：優化後重評，最多 3 次
+  → 達 S 級：/create-tutorial
+
+Phase 2：媒體生成
+/imagine-prompt
+  → image：產生 4 個 Prompt
+  → video：產生 2 個 Prompt
+  → image：python scripts/generate_media_gemini.py × 4，接受部分成功
+  → video：先生 2 張 reference 圖，再生 2 支影片；若只有部分 reference 圖成功，就只繼續成功的項目
+
+Phase 3：品質關卡與媒體上傳
+/viral-score
+  → 未達 S 級：停止，不進入上傳
+  → 達 S 級：python scripts/auto_upload_media.py
+
+手動發布
+python scripts/publish_to_social.py
 ```
+
+## Phase 定義
+
+| Phase | 內容 | 結束條件 |
+|------|------|---------|
+| Phase 1 | 研究、生成、評估、教學文產出 | 產出 `Post/Test/` 教學文 |
+| Phase 2 | 以 `imagine-prompt` 依類型產生 Prompt；圖片流程生成 4 張圖，影片流程先生 2 張 reference 圖再生成 2 支影片 | `Local_Media/<TemplateName>/` 內有對應媒體 |
+| Phase 3 | `viral-score` 評估 + `auto_upload_media.py` 上傳 | URL 寫回檔案，流程結束 |
+| 手動發布 | 使用者自行執行 `publish_to_social.py` | 發布到目標平台 |
 
 ## 一鍵自動化
 
 | 使用情境 | 推薦指令 |
 |---------|---------|
-| 完整自動化（Phase 1+2+3） | `/full-pipeline "主題" --platforms fb,notion` |
-| 只生成內容（Phase 1） | `/auto-produce-prompt "主題"` |
-| 只發布已準備好的內容（Phase 2+3） | `/auto-daily-publish --platforms fb,notion` |
-| 生成 + 發布（Phase 1+2+3 via daily-publish） | `/auto-daily-publish --generate "主題" --platforms fb,notion` |
+| 完整主流程：研究到媒體上傳 | `/full-pipeline "主題" --platforms fb` |
+| 只生成內容 | `/auto-produce-prompt "主題"` |
+| 手動發布已完成內容 | `python scripts/publish_to_social.py "PostFileName" --template "TemplateName" --platforms fb` |
+| 批次發布已準備好的內容 | `python scripts/daily_publish.py --platforms fb` |
 
 ## 快速參考
 
 | 使用情境 | 推薦指令 |
 |---------|---------|
 | 研究關鍵字 | `/research-keyword "主題"` |
-| 生成 Prompt | `/generate-prompt [類型] [主題]` |
-| 評估 Prompt | `/evaluate-prompt "檔案名稱"` |
+| 生成 Prompt Template | `/generate-prompt [類型] [主題]` |
+| 評估 Prompt Template | `/evaluate-prompt "檔案名稱"` |
 | 生成教學文 | `/create-tutorial "Template名稱"` |
-| 生成配圖 | `/generate-image "描述" --style 風格` |
-| 填充 Template | `/imagine-prompt "template.md"` |
-| 評估病毒潛力 | `/viral-score "Post 檔案" --image 圖片` |
-| 發布到 FB | `/post-to-fb "內容" --image 圖片 --submit` |
-| 同步 Notion | `python scripts/sync_to_notion.py` |
-| 上傳媒體 | `python scripts/auto_upload_media.py "名稱" --env prod` |
+| 產生衍生 Prompt | `/imagine-prompt "template.md"` |
+| 生成圖片 | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type image` |
+| 生成影片（需 reference 圖） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type video --reference-image "Local_Media/Name/01.png"` |
+| 評估病毒潛力 | `/viral-score "Post/Test/檔案.md" --type image/video --platform fb` |
+| 上傳媒體 | `python scripts/auto_upload_media.py "名稱" --env prod --type image` |
+| 手動發布 | `python scripts/publish_to_social.py "PostFileName" --template "TemplateName" --platforms fb` |
 
-## 最佳實踐
+## 強制規則
 
-1. **首次使用特定 IP 時**，先執行 `/research-keyword` 建立知識庫
-2. **生成後務必評估**，確保品質達到 S 級以上再發布
-3. **使用 `--dry-run`** 預覽發布內容，避免錯誤
-4. **控制發布頻率**，每天不超過 3-5 篇，每篇間隔至少 30 分鐘
+1. `full-pipeline` 一律只到媒體上傳，不自動發布。
+2. `viral-score` 必須達到 S 級（9.0+）才可繼續上傳。
+3. `imagine-prompt` 在圖片流程固定產生 4 個 Prompt，在影片流程固定產生 2 個 Prompt。
+4. `auto-produce-prompt` 固定產生 2 個主題，不是 3 個。
+5. 教學文一律先輸出到 `Post/Test/`。
+6. `/指令` 是 Claude skill 呼叫，`python scripts/...` 是直接執行腳本，兩者角色不同，不互相衝突。
+7. `--type video` 不可直接用文字生影片，必須先生圖片，再用圖片當 reference。
+8. 媒體生成遇到 API 不穩、限速或單筆失敗時，不要回頭重生失敗項；保留成功項繼續，僅在同一階段全部失敗時才再嘗試或標記人工介入。

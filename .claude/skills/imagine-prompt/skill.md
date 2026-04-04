@@ -1,10 +1,10 @@
-# Imagine Prompt - 基於 Template 的超級想像力 Prompt 生成器
+# Imagine Prompt - Template 想像力引擎
 
-根據使用者指定的 Prompt Template MD 檔案，僅替換 `[...]` 中的內容，其餘所有文字一字不改，發揮超級想像力生成至少 5 個令人驚嘆的 Prompt 描述。
+## TL;DR — 給 LLM 的一句話指令
 
-## 核心目標
+> **你會收到一份 Prompt Template。Template 裡有 `[...]` 或 `<...>` 佔位符。你的任務：只替換佔位符內容，其餘所有文字一字不動，依媒體類型生成不同數量的 Prompt：圖片 4 個，影片 2 個。**
 
-讓每個生成的 Prompt 都能讓人發出「挖塞，這個 prompt template 也太讚了吧！」的驚嘆，吸引大量觀眾，富有情感、美學、震撼力，讓人看完就想馬上自己嘗試。
+---
 
 ## 使用方式
 
@@ -12,248 +12,171 @@
 /imagine-prompt [prompt md 檔案名稱]
 ```
 
-**參數說明：**
-- `[prompt md 檔案名稱]`：Prompt Template 的 MD 檔名（不需完整路徑，自動搜尋）
-
 **範例：**
 ```bash
 /imagine-prompt "微縮世界.md"
-/imagine-prompt "扭蛋機裡的擠壓角色.md"
-/imagine-prompt "馬力歐.md"
+/imagine-prompt "Kirby雨天薄霧情緒水彩.md"
 ```
+
+---
+
+## 你的角色
+
+你是一位超級想像力藝術家。使用者給你一張「填空畫布」（Prompt Template），你要在空格中注入令人驚嘆的創意，讓每個生成的 Prompt 都讓人發出「哇塞！」的驚嘆。
+
+---
+
+## 鐵律（CRITICAL — 違反即失敗）
+
+| # | 規則 | 說明 |
+|---|------|------|
+| 1 | **只改佔位符** | Template 中 `[...]` 和 `<...>` 以外的所有文字、標點、空格、Markdown 標記，一個都不能動 |
+| 2 | **依媒體類型決定數量** | `Prompt/Image*` 生成 4 個完全不同主題；`Prompt/Video*` 生成 2 個完全不同主題 |
+| 3 | **禁止抄襲 Example** | 原 MD 檔中的 Example 區塊僅供理解格式，不得複製其主題或描述 |
+| 4 | **繁體中文** | 所有中文輸出使用繁體中文 |
+
+---
 
 ## 執行流程
 
-### 1. 搜尋並讀取 Prompt Template
+### Step 1 — 找到並讀取 Template
 
-**搜尋優先順序：**
-1. `Prompt/Image/shared/` 資料夾
-2. `Prompt/Video/shared/` 資料夾
-3. `Prompt/Image/` 資料夾
-4. `Prompt/Video/` 資料夾
-5. `Test/` 資料夾
+**搜尋路徑（依序）：**
+`Test/` → `Prompt/Image/` → `Prompt/Video/` → `Prompt/Image/shared/` → `Prompt/Video/shared/`
 
-**執行步驟：**
-- 根據使用者提供的檔名，在上述路徑中搜尋
-- 讀取完整的 MD 檔案內容
-- 解析出 Prompt Template 部分（主要是 `## Prompt Template` 區塊，如果沒有此標記則取整個 prompt 正文）
-- 識別所有 `[...]` 填空位置（包含 `**[...]**` 格式）
-- 識別所有 `<...>` 填空位置（部分舊模板使用此格式）
+讀取 `## Prompt Template` 區塊（若無此標記則取整個 prompt 正文）。
+
+**先判斷媒體類型與輸出數量：**
+- 來源在 `Prompt/Image/` 或 `Prompt/Image/shared/` → 生成 **4 個 Prompt**
+- 來源在 `Prompt/Video/` 或 `Prompt/Video/shared/` → 生成 **2 個 Prompt**
+- 若路徑無法判斷，預設視為圖片流程 → 生成 **4 個 Prompt**
 
 **輸出確認：**
 ```
-✓ 找到 Template：Prompt/Image/shared/微縮世界.md
-  - 填空數量：3 個
-  - 填空位置：<地上世界>、<上面的細節>、<地下的秘密>
+✓ 找到：Prompt/Image/shared/微縮世界.md
+  佔位符：3 個 — <地上世界>、<上面的細節>、<地下的秘密>
 ```
 
----
+### Step 2 — 識別佔位符
 
-### 2. 精準解析 Template 結構
+佔位符有三種寫法，全部支援：
 
-**CRITICAL 規則 - 絕對不可違反：**
+| 格式 | 範例 | 如何填 |
+|------|------|--------|
+| `[名稱 with: 說明 / "選項1" / "選項2"]` | `[情緒天氣 with: ... / "misty rain" / "snowfall"]` | 可選現有選項或自創 |
+| `**[描述...]**` 或 `[描述...]` | `**[在此填入角色動作]**` | 自由填入 |
+| `<描述說明：例如...>` | `<地上世界：例如熱帶島嶼>` | 自由填入 |
 
-- **只修改 `[...]` 或 `<...>` 中的內容**
-- **所有非填空的文字必須一模一樣，一個字、一個標點、一個空格都不能改**
-- **不得增刪任何固定文字**
-- **不得調整段落順序或格式**
-- **不得修改 Markdown 標記（如 `**`、`##` 等）**
+### Step 3 — 發揮想像力，依類型生成 Prompt
 
-**解析步驟：**
-1. 將 Template 拆分為「固定文字」和「填空區塊」
-2. 標記每個填空的位置索引
-3. 確認填空的類型：
-   - **類型 A**：`[變量名稱 with: 說明 / "選項1" / "選項2" / "選項3"]` → 可從選項中選或自創
-   - **類型 B**：`**[在此填入...]**` → 自由填入
-   - **類型 C**：`<描述說明：例如...>` → 自由填入（舊格式）
-4. 驗證：將填空替換回原文後，必須與原 Template 100% 吻合
+這是最重要的步驟。你不是在「填空」，你是在**創造世界**。
 
----
+**想像力標準 — 每個 Prompt 都必須：**
+- 讓人腦海浮現一幅令人屏息的畫面
+- 有具體、感官豐富的描述（不是「美麗的花園」，而是「月光下夜來香盛開，螢火蟲在花瓣間穿梭，露珠映射出微型星空」）
+- 藏有細看才發現的巧思細節
+- 觸動某種情感（溫暖、壯觀、幽默、奇幻、懷舊、神秘...）
+- 讓人想立刻複製去生圖
 
-### 3. 發揮超級想像力生成 5+ 個 Prompt
+**所有 Prompt 之間都必須走不同的創意方向，例如：**
 
-**CRITICAL - 想像力準則：**
+奇幻史詩 · 溫暖治癒 · 科幻未來 · 荒謬幽默 · 東方美學 · 暗黑奇幻 · 自然壯觀 · 復古懷舊 · 美食藝術 · 運動動感
 
-每個生成的 Prompt 必須達到以下標準：
+（圖片流程選 4 個差異明顯的方向；影片流程選 2 個差異明顯的方向）
 
-#### 驚嘆感檢查（全部必須 YES）
-- **「挖塞！」反應**：看到描述時會不由自主驚嘆嗎？
-- **視覺震撼**：腦海中浮現的畫面是否令人屏息？
-- **情感共鳴**：是否觸動某種情感（溫暖、壯觀、幽默、奇幻、懷舊）？
-- **想嘗試慾望**：是否讓人想立刻複製這個 prompt 去生成圖片？
-- **分享衝動**：是否讓人想立刻分享給朋友？
+### IP 角色使用策略
 
-#### 創意多樣性要求
-5 個 Prompt 必須涵蓋**完全不同的主題方向**，避免雷同：
+**可依輸出數量彈性使用著名 IP 角色：**
 
-**建議涵蓋的維度（從中選 5 個不同方向）：**
-1. **奇幻史詩** - 魔法、龍、古老文明、神話傳說
-2. **溫暖治癒** - 童年回憶、家的溫馨、自然擁抱
-3. **科幻未來** - 太空、賽博朋克、未來都市、AI 世界
-4. **荒謬幽默** - 反差萌、不可能的組合、黑色幽默
-5. **東方美學** - 水墨、禪意、武俠、傳統節慶
-6. **暗黑奇幻** - 哥德風、廢墟美學、神秘詭譎
-7. **自然壯觀** - 極光、深海、火山、雨林
-8. **復古懷舊** - 80年代、蒸汽龐克、老照片、膠片
-9. **美食藝術** - 食物的極致美學、料理即藝術
-10. **運動動感** - 極限運動、舞蹈、武術的瞬間定格
+| 使用量 | 指引 |
+|--------|------|
+| 圖片流程：1~2 個 Prompt | 可使用具名著名 IP（如 Kirby、皮卡丘、Hello Kitty、龍貓等）——讓觀眾立刻有畫面感 |
+| 影片流程：0~1 個 Prompt | 建議僅少量使用具名 IP，避免 2 支影片過度重複 |
+| 其餘 Prompt | 使用廣義角色描述（如 "a small round character"、"a tiny fluffy creature"）——保持 Template 的通用性 |
 
-#### 描述品質要求
-- **具體而生動**：不是「美麗的花園」而是「月光下盛開的夜來香花園，螢火蟲在花瓣間穿梭，露珠映射出微型星空」
-- **感官豐富**：讓人彷彿能看到、聽到、聞到、觸摸到場景
-- **細節驚喜**：藏有讓人細看才發現的小巧思
-- **情緒渲染**：每個場景都有獨特的情感氛圍
+**使用著名 IP 的時機：**
+- ✅ 該 IP 的視覺特徵能大幅強化畫面衝擊力（如 Kirby 粉色 × 極簡白底的對比）
+- ✅ 該 IP 有廣泛受眾認知度，能讓更多人立刻產生「哇！」反應
+- ✅ 角色個性/特徵與場景情境高度契合時
+- ❌ 圖片流程不得 4 個 Prompt 全部使用同一個具名 IP
+- ❌ 影片流程不得 2 個 Prompt 都使用同一個具名 IP
 
-#### 禁止事項
-- **禁止抄襲原 MD 檔中的 Example**：必須完全原創，不得使用原檔案範例中的任何主題或描述
-- **禁止平庸描述**：如「一隻可愛的貓」、「美麗的風景」→ 太無聊
-- **禁止雷同主題**：5 個 prompt 之間不能有相似主題
-- **禁止修改固定文字**：Template 中非 `[...]` / `<...>` 的部分絕對不動
+### Step 4 — 輸出
 
----
-
-### 4. 輸出格式
-
-**每個 Prompt 的輸出格式：**
+每個 Prompt 格式：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Prompt [編號] - [簡短主題標籤]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[完整的 Prompt，所有填空已替換為精心設計的內容，固定文字完全不動]
+[完整 Prompt — 佔位符已替換，固定文字原封不動]
 
 ---
-💡 創意亮點：[一句話說明這個 prompt 的驚喜之處]
+💡 創意亮點：[一句話說明驚喜之處]
 ```
 
-**最終輸出格式：**
+全部完成後：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✓ Imagine Prompt 完成
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Template：[檔名] ｜ 來源：[路徑] ｜ 類型：[image / video] ｜ 佔位符：[N] 個 ｜ 生成：[4 或 2] 個
 
-Template：[檔案名稱]
-來源：[檔案路徑]
-填空數量：[N] 個
-生成 Prompt 數量：[N] 個
-
-[依序列出所有生成的 Prompt]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-使用方式
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-複製任一 Prompt，貼到 AI 圖像生成工具中即可使用。
-每個 Prompt 都可以直接使用，不需要額外修改。
+複製任一 Prompt 貼到 AI 圖像/影片生成工具即可使用。
 ```
 
 ---
 
-## 範例執行
+## 範例
 
-### 輸入
-```bash
-/imagine-prompt "微縮世界.md"
+### Template（節錄）
+
+```
+Isometric 3D diorama of a floating cube, cutaway view.
+**TOP LEVEL (Surface):** <地上世界>, featuring <上面的細節>.
+**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals <地下的秘密>.
+**STYLE:** High-quality clay render, miniature toy aesthetic...
+**LIGHTING:** Warm and cozy sunlight on top...
 ```
 
-### 分析過程
-```
-✓ 找到 Template：Prompt/Image/shared/微縮世界.md
-
-Template 結構解析：
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-固定文字（不可修改）：
-  "Isometric 3D diorama of a floating cube, cutaway view."
-  "**TOP LEVEL (Surface):** "
-  ", featuring "
-  "."
-  "**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals "
-  "."
-  "**STYLE:** High-quality clay render, miniature toy aesthetic..."
-  "**LIGHTING:** Warm and cozy sunlight on top..."
-
-填空位置（需替換）：
-  1. <地上世界：例如熱帶島嶼、充滿霓虹燈的城市>
-  2. <上面的細節：例如棕櫚樹和小屋、招牌和行人>
-  3. <地下的秘密：例如埋藏的海盜寶箱、恐龍化石、神秘實驗室>
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### 輸出示範（僅展示 2 個作為格式參考）
+### 生成結果（展示 1 個）
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Prompt 1 - 深海龍宮奇境
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### 微縮世界
-
 Isometric 3D diorama of a floating cube, cutaway view.
 
-**TOP LEVEL (Surface):** a moonlit Japanese fishing village perched on rocky cliffs, with paper lanterns glowing along the shore and a lone torii gate half-submerged in silver tide, featuring weathered wooden boats tied to the pier, an elderly fisherman mending nets, tiny crabs scuttling across wet stones, and wisps of sea fog curling around the lantern light.
+**TOP LEVEL (Surface):** a moonlit Japanese fishing village perched on rocky cliffs,
+with paper lanterns glowing along the shore and a lone torii gate half-submerged in
+silver tide, featuring weathered wooden boats tied to the pier, an elderly fisherman
+mending nets, tiny crabs scuttling across wet stones, and wisps of sea fog curling
+around the lantern light.
 
-**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals a magnificent Dragon Palace (Ryugu-jo) carved from luminous coral and pearl, with a grand throne room where the Sea King entertains a bewildered turtle messenger, treasure rooms overflowing with glowing jellyfish lanterns, and ancient scrolls floating in underwater currents alongside schools of golden koi.
+**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals a
+magnificent Dragon Palace carved from luminous coral and pearl, with a grand throne
+room where the Sea King entertains a bewildered turtle messenger, treasure rooms
+overflowing with glowing jellyfish lanterns, and ancient scrolls floating in underwater
+currents alongside schools of golden koi.
 
-**STYLE:** High-quality clay render, miniature toy aesthetic, tilt-shift photography, shallow depth of field, incredible details, C4D style, volumetric lighting.
-
-**LIGHTING:** Warm and cozy sunlight on top, slightly darker and mysterious underground.
-
----
-💡 創意亮點：日本民間故事「浦島太郎」的龍宮場景藏在漁村地底，水面上的寧靜與海底的奢華形成夢幻反差
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Prompt 2 - 末日種子方舟
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-### 微縮世界
-
-Isometric 3D diorama of a floating cube, cutaway view.
-
-**TOP LEVEL (Surface):** a post-apocalyptic wasteland of cracked earth and rusted machinery, with a single enormous ancient tree breaking through the concrete, its canopy sheltering a tiny makeshift greenhouse, featuring scrap-metal wind turbines spinning slowly, a faded road sign half-buried in sand, scattered remnants of civilization, and one small figure in a hazmat suit carefully watering a seedling.
-
-**BOTTOM LEVEL (Underground Cross-section):** The soil cross-section reveals a thriving underground biodome — a secret seed vault transformed into a living garden paradise, with cascading hydroponic terraces of fruits and flowers in full bloom, bio-luminescent mushroom groves illuminating winding stone pathways, a crystal-clear underground spring feeding into a waterfall, and tiny robotic pollinators tending to rare orchids.
-
-**STYLE:** High-quality clay render, miniature toy aesthetic, tilt-shift photography, shallow depth of field, incredible details, C4D style, volumetric lighting.
-
-**LIGHTING:** Warm and cozy sunlight on top, slightly darker and mysterious underground.
+**STYLE:** High-quality clay render, miniature toy aesthetic...
+**LIGHTING:** Warm and cozy sunlight on top...
 
 ---
-💡 創意亮點：地表荒蕪絕望 vs 地下生機盎然，末日中的希望藏在腳下，一個人的堅持守護著人類最後的伊甸園
+💡 創意亮點：浦島太郎龍宮藏在漁村地底，水面寧靜與海底奢華形成夢幻反差
 ```
 
+注意：固定文字（粗體標籤、STYLE、LIGHTING 段落）與原 Template **完全一致**，只有 `<...>` 內容被替換。
+
 ---
 
-## 質量檢查清單
+## 品質自檢（生成後快速確認）
 
-每個生成的 Prompt 必須通過以下檢查：
-
-### 格式正確性（CRITICAL）
-- [ ] 所有固定文字與原 Template 100% 一致
-- [ ] 只有 `[...]` / `<...>` 中的內容被替換
-- [ ] Markdown 格式完全保留
-- [ ] 段落順序未被調整
-
-### 內容品質
-- [ ] 每個描述都具體、生動、有畫面感
-- [ ] 5 個 Prompt 主題方向完全不同
-- [ ] 沒有抄襲原 MD 中的 Example
-- [ ] 每個都能觸發「挖塞！」的驚嘆
-- [ ] 細節豐富，有意想不到的小巧思
-
-### 想像力等級
-- [ ] **S 級想像力**：讓人想立刻嘗試生成圖片
-- [ ] **情感觸動**：每個場景都有獨特的情感色彩
-- [ ] **視覺震撼**：腦海中能清晰浮現壯觀畫面
-- [ ] **原創性**：完全原創，非陳腔濫調
-
-## 注意事項
-
-- **CRITICAL**：固定文字一字不改，這是最高優先級的鐵律
-- **CRITICAL**：禁止參考或抄襲原 MD 中的 Example 內容
-- **CRITICAL**：所有中文輸出使用繁體中文
-- 如果 Template 中的填空有提供選項（類型 A），可以從選項中選擇，也可以自創全新的描述
-- 自創描述時，要符合填空的語境和角色（如填空要求「角色名」就填角色名，要求「場景」就填場景）
-- 生成的內容應該與 Template 的整體風格和意圖協調
-- 每次執行至少生成 5 個不同的 Prompt，如果使用者要求更多則配合
+- [ ] 固定文字與原 Template 逐字一致
+- [ ] 圖片流程的 4 個主題方向彼此截然不同，或影片流程的 2 個主題方向彼此截然不同
+- [ ] 沒有使用原 Example 中的主題或描述
+- [ ] 每個描述都具體、有畫面感、有情感
+- [ ] 讓人看完想立刻複製去生成

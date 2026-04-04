@@ -4,7 +4,7 @@
 
 ## 核心目標
 
-從 `Prompt/` 資料夾讀取驗證過的 Prompt Template，生成高互動、雙語（繁體中文 + 英文）的教學文章，並保存到 `Post/` 資料夾。
+從 `Prompt/` 資料夾讀取驗證過的 Prompt Template，生成高互動、雙語（繁體中文 + 英文）的教學文章，並保存到 `Post/Test/`。
 
 ## 使用方式
 
@@ -45,7 +45,7 @@
 
 4. **保存檔案**
    - 檔名：`[日期]-[Template名稱].md`（如：`2026-01-03-萬物皆Kirby.md`）
-   - 位置：`Post/` 資料夾
+   - 位置：`Post/Test/` 資料夾
    - 編碼：UTF-8
 
 5. **輸出確認**
@@ -344,7 +344,7 @@ What tutorial next? Pokemon evolution? Disney style?
 類型：Video Tutorial
 主題：Character Transformation Animation
 風格：Nintendo Game Style
-檔案：Post/2026-01-03-萬物皆Kirby-日常物體顯現.md
+檔案：Post/Test/2026-01-03-萬物皆Kirby-日常物體顯現.md
 
 SEO Discovery Block:
 🩷🎮✨🌟🫧
@@ -362,3 +362,4 @@ SEO Discovery Block:
 - **SEO Discovery Block 是必要區塊**，必須出現在教學文最末尾
 - **日文標籤必須使用母語者的自然搜尋習慣**，不是英文或中文的直譯（例：用 #カフェ巡り 而非 #カフェホッピング）
 - **三語標籤應各自涵蓋主題的不同面向**，避免同一個概念翻譯三次
+- 教學文是待審核內容，初始位置一律為 `Post/Test/`

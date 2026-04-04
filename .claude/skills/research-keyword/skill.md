@@ -71,6 +71,11 @@
    - 提醒注意事項
    - 建議後續應用方向
 
+5. **是否落地保存**
+   - 預設：不強制落地成檔
+   - 如果後續流程需要由其他 subagent 讀取研究結果，則保存到 `research/<keyword>/<日期>.md`
+   - 檔案用途是跨階段共享，不是暫存垃圾檔
+
 ## 研究報告格式
 
 ```markdown
@@ -144,6 +149,7 @@
 此 skill 的輸出會被用於：
 - `generate-prompt`: 基於研究結果生成更準確的 prompt template
 - `evaluate-prompt`: 評估時參考是否符合角色/概念的核心特徵
+- `auto-produce-prompt` / `full-pipeline`: 若涉及 subagent 接力，應保存到 `research/<keyword>/<日期>.md`
 
 ## 注意事項
 
@@ -151,4 +157,6 @@
 - 搜尋時優先查找官方設定和可靠來源
 - 標註不確定的資訊，避免誤導
 - 重點關注「視覺化」相關的特徵和機制
-- 不用產生實體化 research.md或是使用完後自動刪除
+- 預設不必落地保存研究檔
+- 若後續流程使用 subagent 串接，應保存到 `research/<keyword>/<日期>.md`
+- 不要再使用 `Test/research/` 作為研究檔案目錄

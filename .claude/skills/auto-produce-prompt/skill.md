@@ -1,6 +1,11 @@
+---
+name: auto-produce-prompt
+description: 完整自動化生產高質量 AI Prompt：研究 → 多樣化生成 → 自動優化 → 教學文產出。使用 subagent 隔離每個主題，避免 context 污染。
+---
+
 # Auto-Produce High-Quality Prompts
 
-完全自動化生產高質量 AI Prompt 的工作流程：研究 → 多樣化生成 → 自動優化 → 教學文產出。
+完全自動化生產高質量 AI Prompt 的工作流程：研究 → 2 個主題生成 → 自動優化 → 教學文產出。
 
 ## 核心目標
 
@@ -9,293 +14,132 @@
 ## 使用方式
 
 ```bash
-/auto-produce-prompt [IP 或關鍵字]
+/auto-produce-prompt [IP、關鍵字]
 ```
-
-**參數說明：**
-- `[IP 或關鍵字]`：核心主題（如 "Kirby", "Mario", "office anxiety"）
 
 **範例：**
 ```bash
-/auto-produce-prompt "Kirby"
-/auto-produce-prompt "Ghibli style"
-/auto-produce-prompt "workplace stress"
+/auto-produce-prompt "Kirby 御守 傳統神社風格 中國水墨風"
+/auto-produce-prompt "Ghibli style with kirby warm story"
 ```
+
+---
 
 ## 執行流程
 
-### 1. Research 階段（深入理解關鍵字）
+### 1. Research 階段
 
-**目的**：確保生成的 prompt 準確理解 IP 特徵、能力機制、視覺風格。
+調用 `/research-keyword [用戶關鍵字]`。
 
-**執行步驟**：
-- 調用 `/research-keyword [用戶關鍵字]`
-- 等待研究完成
-- 讀取生成的研究報告（`Test/research/research_[關鍵字].md`）
-- 提取核心特徵、能力機制、常見誤解
+- 若後續流程需要由 subagent 讀取研究內容，則將研究結果落地保存到 `research/<keyword>/<日期>.md`
+- 若沒有跨 subagent 共享需求，可只保留在當前上下文
 
-**輸出確認**：
+**輸出確認：**
 ```
 ✓ Research 完成：Kirby
-  - 核心特徵：粉紅圓球、Copy Ability、純真可愛
-  - 能力機制：吸入敵人 → 造型與能力轉換
-  - 常見誤解：不是隨機選擇能力
+  - 核心特徵：粉紅色、圓形、Copy Ability、純真可愛、無牙齒
 ```
 
 ---
 
-### 2. 主題生成階段（創造 3 個差異極大的主題）
+### 2. 主題生成階段（2 個差異極大的主題）
 
 **CRITICAL 規則**：
-- ✅ **保持用戶提供的 IP/關鍵字**（如 Kirby 永遠是 Kirby）
-- ✅ **隨機選擇 3 個完全不同的創意類型**
-- ✅ **確保類型之間差異極大**（不是場景變化，而是概念維度不同）
+- ✅ 保持用戶提供的 IP/關鍵字
+- ✅ 隨機選 2 個完全不同的創意類型（差異極大，不只場景變化而是迥異的核心內容）
 
-**可用創意類型（從中隨機選 3 個）**：
-1. `absurd-professional` - 荒謬專業（職場、正經場景）
-2. `temporal` - 時空錯位（歷史 × 現代）
-3. `emotion` - 情緒放大（日常情緒 → 災難級場景）
-4. `architecture` - 不可能建築（食物建築、軟材質結構）
-5. `tiny-epic` - 微型史詩（微小生物的宏大戰役）
-6. `mirror` - 鏡中世界（現實 vs 幻想）
-7. `weather` - 情緒天氣（情緒化為天氣視覺）
-8. `object` - 舊物之靈（珍貴舊物的靈魂光芒）
-9. `evolution-video` - 角色進化（遊戲風格進化動畫）
+**可用創意類型：**
+`absurd-professional` | `temporal` | `emotion` | `architecture` | `tiny-epic` | `mirror` | `weather` | `object` | `evolution-video`
 
-**範例組合（確保類型差異極大）**：
-```
-用戶關鍵字：Kirby
-
-生成的 3 個主題：
-├─ 主題 1：Kirby + absurd-professional
-│   → "Kirby 認真工作於科技公司辦公室"（職場荒謬）
-│
-├─ 主題 2：Kirby + temporal
-│   → "Kirby 出現在文藝復興油畫中"（時空錯位）
-│
-└─ 主題 3：Kirby + emotion
-    → "週一恐懼症變成 Kirby 災難電影海報"（情緒放大）
-```
-
-**輸出確認**：
-```
-✓ 主題生成完成（3 個差異極大的方向）：
-  1. Kirby + absurd-professional（荒謬職場）
-  2. Kirby + temporal（時空錯位）
-  3. Kirby + weather（情緒天氣）
+**將主題清單寫入 `config/tmp/topics_[關鍵字].json`：**
+```json
+{
+  "keyword": "Kirby",
+  "topics": [
+    {"type": "absurd-professional", "description": "Kirby 認真工作於科技公司"},
+    {"type": "temporal", "description": "Kirby 出現在文藝復興油畫中"}
+  ]
+}
 ```
 
 ---
 
-### 3. 批量生成與自動優化循環（對每個主題執行）
+### 3. 批量生成（每個主題用獨立 subagent 處理）
 
-**對每個主題執行以下步驟**：
+**CRITICAL：每個主題必須用獨立 subagent 處理，避免主 context 污染！**
 
-#### 3.1 Generate Prompt（整合 research 結果）
+對每個主題，啟動一個 subagent，指令如下：
 
-**調用**：
-```bash
-/generate-prompt [類型] [用戶關鍵字]
+```
+處理主題：[IP] + [type]
+
+1. 若存在研究檔案，讀取：research/[IP]/[日期].md
+2. 調用 /generate-prompt [type] "[IP]"
+3. 調用 /evaluate-prompt [生成的檔案名]
+4. 如果分數 < 9.0，執行優化循環（最多 3 次）：
+   a. 在每次迭代開始前，將狀態寫入 config/tmp/produce_[IP]_[type].json：
+      {"iteration": N, "best_score": X, "best_file": "路徑", "status": "optimizing"}
+   b. 從 evaluate 結果提取具體改進建議
+   c. 重新調用 /generate-prompt 並附上改進要求
+   d. 重新調用 /evaluate-prompt
+   e. 更新狀態檔（iteration += 1）
+   f. 如果達到 9.0 或迭代達 3 次，停止循環
+5. 如果最終分數 >= 9.0：調用 /create-tutorial [最佳檔案]
+6. 回報結果：{topic, final_score, file_path, iterations, status}
 ```
 
-**範例**：
-```bash
-/generate-prompt absurd-professional "Kirby"
-```
-
-**CRITICAL**：
-- 整合步驟 1 的研究結果
-- 確保符合核心特徵
-- 避免研究報告標註的常見誤解
+**為什麼用 subagent：**
+- 每個主題的生成+優化會消耗大量 context（多次讀寫大型 prompt 檔案）
+- Subagent 在獨立 context window 中執行，完成後只回傳摘要
+- 主 context 保持乾淨，避免「context 污染導致性能下降」
 
 ---
 
-#### 3.2 Evaluate Prompt（評估質量）
+### 4. 總結報告
 
-**調用**：
-```bash
-/evaluate-prompt [生成的檔案名稱]
-```
+收集所有 subagent 的結果，輸出：
 
-**評估標準**：
-- **S 級** (9.0-10.0) - 卓越，可直接使用
-- **A 級** (8.0-8.9) - 優秀，小幅調整
-- **B 級** (7.0-7.9) - 良好，需優化
-- **C 級** (6.0-6.9) - 及格，需大幅改進
-- **D 級** (<6.0) - 不合格，建議重新生成
-
----
-
-#### 3.3 自動優化循環（如果評分 < S 級）
-
-**循環邏輯**：
-```python
-MAX_ITERATIONS = 3
-current_iteration = 0
-
-while 評分 < 9.0 and current_iteration < MAX_ITERATIONS:
-    1. 從 evaluate 結果提取改進建議
-    2. 將改進建議整合到新的 generate 請求中
-    3. 重新調用 /generate-prompt（帶上改進要求）
-    4. 重新調用 /evaluate-prompt
-    5. current_iteration += 1
-
-if 評分 >= 9.0:
-    → 進入步驟 3.4
-else:
-    → 標記為「需人工介入」，繼續處理下一個主題
-```
-
-**改進建議整合範例**：
-```
-Evaluate 結果：
-  - 概念創意 5/10：只是 Kirby 穿西裝，缺乏視覺衝擊
-  - 建議：加入「吸入辦公室」或「身體變形成辦公椅」的荒謬元素
-
-整合到新的 generate 請求：
-  /generate-prompt absurd-professional "Kirby"
-  + 額外指令：「強調荒謬視覺衝擊，如 Kirby 正在吸入整個辦公室，或身體變形成傢俱」
-```
-
-**輸出確認**：
-```
-✓ 自動優化循環完成：
-  - 初次生成：C 級 (6.5/10)
-  - 第 1 次優化：B 級 (7.8/10) - 整合建議：加入荒謬元素
-  - 第 2 次優化：S 級 (9.1/10) - 整合建議：強化視覺反差
-  → 達到 S 級，進入教學文生成
-```
-
----
-
-#### 3.4 Create Tutorial（生成教學文）
-
-**CRITICAL**：只有達到 **S 級（9.0/10 以上）** 才執行此步驟。
-
-**調用**：
-```bash
-/create-tutorial [生成的檔案名稱]
-```
-
-**輸出**：
-- 生成雙語教學文章
-- 保存到 `Post/` 資料夾（臨時）
-
----
-
-#### 3.5 移動到 Post/Test/ 資料夾
-
-**執行**：
-```bash
-move "Post/[檔名].md" "Post/Test/[檔名].md"
-```
-
-**目的**：
-- `Post/Test/` - 待審核發布的成品
-- `Post/shared/` - 已發布的文章（用戶手動移動）
-
-**輸出確認**：
-```
-✓ 教學文已移動：Post/Test/2026-01-07-Kirby-荒謬職場.md
-```
-
----
-
-### 4. 總結報告（顯示所有結果）
-
-**統計信息**：
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✓ Auto-Produce 完成報告
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 關鍵字：Kirby
-生成主題數：3
-成功達標：3 / 3
-總優化次數：5 次
+生成主題數：2
+成功達標：2 / 2
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 詳細結果
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. Kirby + absurd-professional（荒謬職場）
-   ├─ 初次評分：C 級 (6.5/10)
-   ├─ 優化次數：2 次
-   ├─ 最終評分：S 級 (9.1/10)
-   ├─ 檔案：Post/Test/2026-01-07-Kirby-荒謬職場.md
-   └─ 狀態：✅ 已完成
-
-2. Kirby + temporal（時空錯位）
-   ├─ 初次評分：B 級 (7.5/10)
-   ├─ 優化次數：1 次
+1. Kirby + temporal（時空錯位）
    ├─ 最終評分：S 級 (9.2/10)
+   ├─ 優化次數：1 次
    ├─ 檔案：Post/Test/2026-01-07-Kirby-文藝復興油畫.md
-   └─ 狀態：✅ 已完成
+   └─ 狀態：✅ 教學文已生成
 
-3. Kirby + weather（情緒天氣）
-   ├─ 初次評分：A 級 (8.0/10)
-   ├─ 優化次數：2 次
+2. Kirby + absurd-professional（荒謬職場）
    ├─ 最終評分：S 級 (9.0/10)
-   ├─ 檔案：Post/Test/2026-01-07-Kirby-情緒天氣.md
-   └─ 狀態：✅ 已完成
+   ├─ 優化次數：2 次
+   ├─ 檔案：Post/Test/2026-01-07-Kirby-荒謬職場.md
+   └─ 狀態：✅ 教學文已生成
 
+所有成品已保存至 Post/Test/，後續可交由 /full-pipeline 繼續處理，或手動發布。
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 質量統計
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-S 級：3 個（100%）
-A 級：0 個（0%）
-B 級：0 個（0%）
-需人工介入：0 個
-
-平均評分：9.1/10
-平均優化次數：1.7 次
-
-所有成品已保存至 Post/Test/ 資料夾，請審核後移至 Post/shared/ 發布。
 ```
 
 ---
 
-## 錯誤處理與邊界情況
+## 防止無限循環的保護機制
 
-### 情況 1：Research 失敗
-
-**處理**：
-- 顯示警告訊息
-- 嘗試使用通用知識繼續執行
-- 標記「未經研究，可能不準確」
-
-### 情況 2：3 次優化後仍未達 S 級
-
-**處理**：
-- 標記為「需人工介入」
-- 保留最佳版本（最高分數版本）
-- 繼續處理下一個主題
-- 在最終報告中標註問題
-
-**範例輸出**：
-```
-⚠️ 主題 1 需人工介入
-   ├─ 初次評分：D 級 (5.0/10)
-   ├─ 優化 3 次後：C 級 (6.8/10)
-   ├─ 檔案：Test/Kirby-荒謬職場.md（未生成教學文）
-   └─ 建議：概念層面問題，建議手動調整創意方向
-```
-
-### 情況 3：生成的檔案格式錯誤
-
-**處理**：
-- 嘗試修復格式
-- 如果無法修復，重新生成
-- 如果 2 次都失敗，標記為「格式錯誤」並跳過
+1. **MAX_ITERATIONS = 3**：每個主題最多優化 3 次，超過即停止
+2. **狀態持久化**：每次迭代前後寫入 `config/tmp/produce_[IP]_[type].json`，即使 context 被壓縮也能從狀態檔恢復
+3. **Subagent 隔離**：每個主題的循環在獨立 context 中執行，不會互相影響
+4. **明確停止條件**：`分數 >= 9.0` 或 `迭代次數 >= 3`，兩者任一即停止——不設任何例外
 
 ---
 
----
+## 錯誤處理
 
-## 注意事項
-
-- 此 skill 會執行多次 API 調用，建議在穩定網路環境下使用
-- 如果某個主題 3 次優化後仍未達標，會自動跳過並繼續處理下一個
-- 生成的檔案會自動命名，避免覆蓋舊檔案
-- 所有中間檔案（prompt template、評估報告）都會保留在 `Test/` 資料夾供參考
+| 情況 | 處理方式 |
+|------|---------|
+| Research 失敗 | 使用通用知識繼續，標記「未經研究」 |
+| 3 次後仍未達 S 級 | 標記「需人工介入」，繼續下一主題 |
+| 格式錯誤 | 嘗試修復，若 2 次失敗則跳過 |
+| Subagent 失敗 | 記錄錯誤，繼續其他主題 |

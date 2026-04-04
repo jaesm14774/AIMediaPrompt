@@ -3,6 +3,7 @@ scripts/github_config.json
 scripts/imgur_config.json
 config/notion_config.json
 config/imgbb_config.json
+config/gemini_config.json
 config/cloudinary_config.json
 config/social_media/credentials/*.env
 config/notion_sync_state.json

@@ -191,17 +191,12 @@ npx -y bun ${SKILL_DIR}/scripts/fb-browser.ts [options] [text]
 ## 與其他 Skills 整合
 
 ```
-/create-tutorial → /generate-image → /viral-score → /post-to-fb
-                                                              │
-                                                              ▼
-                                                    (若 >= S 級且 --submit)
-                                                              │
-                                                              ▼
-                                                       實際發布到 FB
+/full-pipeline → auto_upload_media.py → python scripts/publish_to_social.py -> 實際發布到 FB
 ```
 
 建議工作流程：
 1. 先使用 `/viral-score` 評估內容品質
 2. 達到 S 級（9.0+）以上再使用 `/post-to-fb --submit`
-3. 低於 S 級使用預覽模式檢視，然後優化內容
+3. 若是主流程，先完成 `auto_upload_media.py`，再決定是否手動用 `/post-to-fb`
+4. 低於 S 級使用預覽模式檢視，然後優化內容
 

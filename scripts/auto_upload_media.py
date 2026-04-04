@@ -18,10 +18,14 @@ IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'}
 VIDEO_EXTENSIONS = {'.mp4', '.webm', '.mov', '.avi', '.mkv'}
 
 class MediaUploader:
-    def __init__(self, imgbb_key: str, cloudinary_config: Optional[Dict] = None):
+    def __init__(self, imgbb_key: str, cloudinary_config: Optional[Dict] = None, folder: Optional[str] = None):
         self.imgbb_key = imgbb_key
         self.cloudinary_config = cloudinary_config
-        self.media_dir = Path("Local_Media")
+        # folder 指定 Local_Media/<folder>，不指定則使用 Local_Media/（向下相容）
+        if folder:
+            self.media_dir = Path("Local_Media") / folder
+        else:
+            self.media_dir = Path("Local_Media")
 
     def detect_file_type(self, file_path: Path) -> str:
         """偵測檔案類型（圖片/影片）"""
@@ -169,12 +173,12 @@ class MediaUploader:
             }
 
     def upload_all_media(self) -> List[Dict]:
-        """上傳 Local_Media 中的所有媒體檔案"""
+        """上傳 Local_Media/<folder> 中的所有媒體檔案（不刪除本機檔案）"""
         if not self.media_dir.exists():
             print(f"❌ 找不到 {self.media_dir} 資料夾")
             return []
 
-        # 收集所有媒體檔案
+        # 收集該資料夾內的所有媒體檔案（僅第一層，不遞迴）
         extensions = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
         media_files = [
             f for f in self.media_dir.iterdir()
@@ -331,12 +335,17 @@ def insert_urls_to_prompt(prompt_file: Path, urls: List[str], is_video: bool = F
     print(f"✅ 已插入 {len(urls)} 個 URL 到 {prompt_file.name}")
 
 def main():
-    parser = argparse.ArgumentParser(description='自動上傳媒體檔案（圖片+影片）並移動到正式區')
+    parser = argparse.ArgumentParser(description='自動上傳媒體檔案（圖片+影片）並插入 URL 到 Prompt 檔案（不刪除本機檔案）')
     parser.add_argument('prompt_name', help='Prompt 檔案名稱（不含副檔名）')
     parser.add_argument('--env', choices=['dev', 'stg', 'test', 'prod'],
                        default='prod', help='環境（預設：prod）')
     parser.add_argument('--type', choices=['image', 'video'],
                        help='Prompt 類型（image/video），從 Test/ 移到 Prompt/ 時必填')
+    parser.add_argument('--folder', help=(
+        'Local_Media 子資料夾名稱（即 Prompt Template 名稱）。'
+        '指定後只上傳 Local_Media/<folder>/ 內的媒體，避免不同 Template 互相干擾。'
+        '未指定時使用 Local_Media/（向下相容）'
+    ))
 
     args = parser.parse_args()
 
@@ -402,14 +411,20 @@ def main():
         print(f"\n📝 檢查是否有對應的教學文需要移動...")
         move_post_test_to_post(args.prompt_name)
 
+    # 決定使用的 Local_Media 子資料夾
+    media_folder = args.folder if args.folder else None
+    media_folder_display = f"Local_Media/{media_folder}/" if media_folder else "Local_Media/"
+
     # 建立上傳器
     uploader = MediaUploader(
         imgbb_key=imgbb_config['api_key'],
-        cloudinary_config=cloudinary_config if cloudinary_config else None
+        cloudinary_config=cloudinary_config if cloudinary_config else None,
+        folder=media_folder
     )
 
     # 上傳所有媒體
-    print(f"\n📤 開始上傳 Local_Media/ 中的媒體檔案...")
+    print(f"\n📤 開始上傳 {media_folder_display} 中的媒體檔案...")
+    print(f"   ⚠️  注意：此腳本只上傳，不刪除本機檔案（刪除請用 publish_to_social.py）")
     results = uploader.upload_all_media()
 
     if not results:
@@ -441,8 +456,8 @@ def main():
         print(f"   Prompt: {prompt_file}")
         print(f"   Post: Post/shared/ (如果存在)")
 
-    # 清理本機媒體檔案
-    uploader.cleanup_local_media()
+    # ⚠️ 本機媒體檔案刻意保留，不刪除
+    # 如需刪除，請使用 scripts/publish_to_social.py
 
     print("="*60)
 

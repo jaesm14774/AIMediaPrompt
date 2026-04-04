@@ -1,6 +1,9 @@
-# Generate Image
+# Generate Image / Video
 
-使用 AI（Gemini Web API）生成高品質圖片，支援多種視覺風格。
+使用 Gemini API 生成圖片，或以已生成圖片作為 reference 生成影片，存入 `Local_Media/<TemplateName>/`。
+
+- **圖片**：`gemini-3.1-flash-image-preview`
+- **影片**：`veo-3.1-lite-generate-preview`（以 reference image 生影片）
 
 ## 使用方式
 
@@ -9,23 +12,46 @@
 ```
 
 **參數說明：**
-- `[描述或檔案路徑]`：圖片描述文字，或 Post/Prompt 檔案路徑
-- `--style <風格>`：指定視覺風格（見下方風格列表）
-- `--output <路徑>`：輸出圖片路徑（預設：`Local_Media/generated.png`）
-- `--aspect <比例>`：圖片比例（`1:1`、`16:9`、`2.35:1`）
-- `--auto`：從檔案自動分析內容生成配圖
+- `[描述或檔案路徑]`：圖片/影片描述文字，或 Prompt 檔案路徑
+- `--template <名稱>`：Prompt Template 名稱（決定存入 `Local_Media/<名稱>/`）
+- `--type <類型>`：`image`（預設）或 `video`
+- `--index <序號>`：第幾張/支，用於命名（預設：1）
+- `--reference-image <路徑>`：生成影片時必填；若省略，會優先嘗試使用 `Local_Media/<名稱>/<序號>.png`
+- `--style <風格>`：指定視覺風格，附加到 prompt（見下方風格列表）
+- `--aspect <比例>`：圖片比例（`1:1`、`16:9`、`2.35:1`），附加到 prompt
+- `--auto`：從檔案自動分析內容生成描述
 
 **範例：**
 ```bash
-# 直接描述生成
-/generate-image "Kirby 在辦公室認真工作，穿著西裝打領帶" --style notion
+# 生成圖片，存入 Local_Media/KirbyTemplate/01.png
+/generate-image "Kirby 在辦公室認真工作，穿著西裝打領帶" --template "KirbyTemplate" --index 1
 
-# 從教學文自動生成配圖
-/generate-image "Post/Test/2026-01-20-Kirby-Office.md" --auto --style warm
+# 影片：先有 reference 圖，再生成影片
+/generate-image "Kirby 跳舞" --template "KirbyTemplate" --index 1
+python scripts/generate_media_gemini.py --prompt "Kirby 跳舞" --template "KirbyTemplate" --index 1 --type video --reference-image "Local_Media/KirbyTemplate/01.png"
 
-# 指定輸出路徑和比例
-/generate-image "水彩風格的櫻花樹" --style watercolor --output cover.png --aspect 16:9
+# 從教學文自動分析並生成
+/generate-image "Post/Test/2026-01-20-Kirby-Office.md" --template "KirbyOffice" --auto
 ```
+
+## 前置需求
+
+**設定 Gemini API Key（二擇一）：**
+```bash
+# 方式一：環境變數
+set GEMINI_API_KEY=YOUR_KEY
+
+# 方式二：設定檔
+# 建立 config/gemini_config.json：
+# {"api_key": "YOUR_KEY"}
+```
+
+**安裝 Python SDK：**
+```bash
+pip install google-genai
+```
+
+---
 
 ## 風格系統
 
@@ -44,125 +70,115 @@
 | `editorial` | 雜誌風格資訊圖 | 科技解說、新聞 |
 | `vintage` | 復古老舊紙張質感 | 歷史、傳記 |
 
-### 風格自動選擇
+風格定義檔存於 `styles/` 目錄。若指定風格，讀取對應檔案並附加風格描述到 prompt 結尾。
 
-當未指定 `--style` 時，系統會根據內容自動選擇最適合的風格：
-
-| 內容關鍵字 | 自動選擇風格 |
-|-----------|-------------|
-| 遊戲、角色、IP、卡通 | `playful` |
-| 技術、架構、系統 | `tech` |
-| 教學、知識、學習 | `sketch` |
-| 生活、旅遊、美食 | `watercolor` |
-| 產品、SaaS、工具 | `notion` |
-| 個人、成長、情感 | `warm` |
-| 其他 | `notion`（預設）|
+---
 
 ## 執行流程
 
 ### Step 1: 分析輸入
 
 1. **判斷輸入類型**：
-   - 如果是檔案路徑 → 讀取檔案內容
+   - 如果是檔案路徑 → 讀取檔案，提取核心視覺描述
    - 如果是描述文字 → 直接使用
 
-2. **提取關鍵資訊**：
-   - 主題：圖片要呈現什麼？
-   - 風格訊號：內容中的風格暗示
-   - 情緒：嚴肅、活潑、溫暖？
+2. **決定媒體類型**：
+   - 副檔名 `.mp4/.mov/.webm` 或 `--type video` → 影片
+   - 否則 → 圖片
 
-### Step 2: 確定風格
+### Step 2: 建構完整 Prompt
 
-1. 如果指定 `--style` → 使用該風格
-2. 如果使用 `--auto` → 根據內容自動選擇
-3. 否則 → 詢問用戶選擇
+```
+[用戶描述]
 
-### Step 3: 建構 Prompt
+[風格描述（若指定 --style）]
 
-根據選定風格的特性，建構完整的圖片生成 prompt：
-
-```markdown
-[風格基礎描述]
-
-主題：[用戶描述或從檔案提取的主題]
-
-視覺元素：
-- [風格特定的視覺元素]
-- [主題相關的元素]
-
-色彩：
-- 主色：[風格主色]
-- 背景：[風格背景色]
-- 強調色：[風格強調色]
-
-構圖：[根據 aspect ratio 調整]
-
-技術規格：高品質、清晰、[aspect ratio]
+[比例指令（若指定 --aspect）]
 ```
 
-### Step 4: 生成圖片
+### Step 3: 決定輸出路徑
 
-**呼叫 Gemini Web API**：
+- 若指定 `--template <名稱>` 和 `--index <序號>`：
+  - 圖片：`Local_Media/<名稱>/<序號，補零2位>.png`（例：`Local_Media/KirbyTemplate/01.png`）
+  - 影片：`Local_Media/<名稱>/<序號，補零2位>.mp4`
+- 若指定完整路徑 → 直接使用
+
+### Step 4: 呼叫 Gemini API
 
 ```bash
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "[建構的 prompt]" --image "[輸出路徑]"
+python scripts/generate_media_gemini.py \
+  --prompt "[建構的 prompt]" \
+  --template "[Template 名稱]" \
+  --index [序號] \
+  --type image
+```
+
+若要生成影片，必須先有 reference image，再執行：
+
+```bash
+python scripts/generate_media_gemini.py \
+  --prompt "[建構的 prompt]" \
+  --template "[Template 名稱]" \
+  --index [序號] \
+  --type video \
+  --reference-image "Local_Media/[Template 名稱]/0[序號].png"
 ```
 
 ### Step 5: 輸出結果
 
 ```
-✓ 圖片生成完成！
+✓ 媒體生成完成！
 
-主題：[主題描述]
-風格：[使用的風格]
-比例：[aspect ratio]
-位置：[輸出檔案路徑] (保持原始畫質)
+類型：[image / video]
+模型：[gemini-3.1-flash-image-preview / veo-3.1-lite-generate-preview]
+位置：Local_Media/<TemplateName>/<序號>.png 或 .mp4
 
 下一步建議：
-- 使用 /viral-score 評估病毒潛力
+- 圖片流程：生成全部 4 張後，執行 /viral-score 評估
+- 影片流程：先確認 2 張 reference 圖，再生成 2 支影片後執行 /viral-score
+- 確認滿意後執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
 ```
 
-## 風格定義檔
+---
 
-每個風格的詳細定義存放在 `styles/` 目錄：
+## 批量生成（搭配 /imagine-prompt）
+
+典型使用情境：一個 Template 依媒體類型生成不同數量的媒體。
 
 ```
-.claude/skills/generate-image/
-├── skill.md
-├── scripts/
-│   └── main.ts
-└── styles/
-    ├── notion.md
-    ├── warm.md
-    ├── playful.md
-    └── ...
+1. /imagine-prompt "TemplateName.md"
+   - 圖片流程 → 產生 4 個 Prompt
+   - 影片流程 → 產生 2 個 Prompt
+2. 若是圖片流程，對每個 Prompt 呼叫 /generate-image：
+   - Prompt 1 → Local_Media/TemplateName/01.png
+   - Prompt 2 → Local_Media/TemplateName/02.png
+   - Prompt 3 → Local_Media/TemplateName/03.png
+   - Prompt 4 → Local_Media/TemplateName/04.png
+3. 若是影片流程，先生成 01.png、02.png，再各自生成 01.mp4、02.mp4
+4. /viral-score 評估
+5. 分數達 S 級後，再執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+   （僅上傳，不刪除本機檔案）
 ```
 
-## Script Directory
-
-**Important**: 所有腳本位於 `scripts/` 子目錄。
-
-**Script Reference**:
-| Script | Purpose |
-|--------|---------|
-| `scripts/main.ts` | Gemini Web API 圖片生成主程式 |
-
-**執行方式**：
-```bash
-npx -y bun ${SKILL_DIR}/scripts/main.ts --prompt "描述" --image output.png
-```
+---
 
 ## 注意事項
 
-- **首次使用需登入**：第一次執行會開啟瀏覽器要求登入 Google 帳號
-- **生成時間**：通常需要 10-30 秒
-- **圖片格式**：預設輸出 PNG 格式
-- **Cookie 快取**：登入後 cookie 會被快取，後續使用無需重新登入
-- **網路需求**：需要能夠存取 Google 服務
+- **API Key 必填**：請先設定 `GEMINI_API_KEY` 或 `config/gemini_config.json`
+- **影片生成較慢**：Veo API 通常需要 1-3 分鐘
+- **影片禁止文字直出**：必須先生成圖片，再用圖片當 reference 生成影片
+- **資料夾隔離**：每個 Template 使用獨立的 `Local_Media/<TemplateName>/`，不互相干擾
+- **不自動發布**：生成後僅儲存到 Local_Media，不會自動呼叫 publish_to_social.py
 
 ## 與其他 Skills 整合
 
 ```
-/auto-produce-prompt → /create-tutorial → /generate-image → /viral-score → /post-to-fb
+/auto-produce-prompt → /imagine-prompt (image ×4 / video ×2)
+                     → 圖片流程：/generate-image (×4)
+                     → 影片流程：先生圖 (×2) → 再生影片 (×2)
+                     → /viral-score
+                        ├─ 未達 S 級：停止
+                        └─ 達 S 級：auto_upload_media.py
+                                           ↓（手動）
+                                publish_to_social.py
 ```
-

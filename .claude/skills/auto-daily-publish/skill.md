@@ -1,268 +1,137 @@
+---
+name: auto-daily-publish
+description: 每日自動化發布工具。這是獨立的發布流程，不是 full-pipeline 的一部分；full-pipeline 一律只到媒體上傳為止。
+---
+
 # Auto Daily Publish
 
-一鍵完成每日內容發布流程：從生成到評估到發布的完整自動化。
+每日內容發布流程。**推薦直接用 Python 腳本**，不需要開啟 Claude session。
 
-## 使用方式
+> 這個工具是「發布階段」的獨立流程。`/full-pipeline` 的標準終點仍然是 `auto_upload_media.py`，不包含自動發布。
+
+---
+
+## 推薦：直接執行 Python 腳本
+
+```bash
+# 掃描 Post/Test/，評分 + 發布最高分內容
+python scripts/daily_publish.py --platforms fb
+
+# 預覽不發布
+python scripts/daily_publish.py --dry-run
+
+# 最多發布 3 篇
+python scripts/daily_publish.py --max-posts 3 --platforms fb,notion
+
+# 指定最低分數（不得低於 9.0，CLAUDE.md 規定）
+python scripts/daily_publish.py --min-score 9.0
+```
+
+腳本功能：
+- 掃描 `Post/Test/` 找所有待發布 `.md`
+- 對每個檔案呼叫 `claude -p "/viral-score ..."` 取得分數
+- 排序，只發布分數 ≥ 9.0 的內容
+- 呼叫 `scripts/publish_to_social.py` 執行實際發布
+- 更新 `config/publish_queue.json` 狀態
+- 自動執行頻率限制（30 分鐘間隔、每日上限 5 篇）
+
+---
+
+## Claude 輔助模式（當需要補齊配圖時）
+
+若 Post 沒有配圖，可在 Claude session 中執行：
 
 ```bash
 /auto-daily-publish [選項]
 ```
 
 **參數說明：**
-- `--generate <關鍵字>`：生成新內容後發布（調用 `/auto-produce-prompt`）
-- `--platforms <平台>`：目標平台（逗號分隔：`fb,notion`）
-- `--min-score <分數>`：最低發布分數（預設：8.0，即 A 級）
-- `--max-posts <數量>`：每次最多發布數量（預設：1）
-- `--dry-run`：模擬執行，不實際發布
-- `--page-name <名稱>`：FB 粉專名稱（發布到粉專時必填）
+- `--generate <關鍵字>`：先生成新內容再發布（調用 `/auto-produce-prompt`）
+- `--platforms <平台>`：目標平台（預設：`fb`）
+- `--max-posts <數量>`：最多發布數量（預設：1）
+- `--dry-run`：模擬執行
 
 **範例：**
 ```bash
-# 發布 Post/Test/ 中評分最高的內容
-/auto-daily-publish --platforms fb,notion --page-name "AI Art Lab"
-
-# 生成新內容並發布
-/auto-daily-publish --generate "Kirby" --platforms fb,notion --page-name "AI Art Lab"
-
-# 只同步到 Notion（不發 FB）
-/auto-daily-publish --platforms notion
-
-# 模擬執行
-/auto-daily-publish --platforms fb,notion --dry-run
-
-# 設定較低的發布標準
-/auto-daily-publish --platforms fb --min-score 7.5
+/auto-daily-publish --platforms fb --page-name "AI Art Lab"
+/auto-daily-publish --generate "Kirby" --platforms fb,notion
+/auto-daily-publish --dry-run
 ```
 
-## 完整執行流程
+---
+
+## 執行流程（Claude 輔助模式）
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Auto Daily Publish 流程                      │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 1: 準備內容                                                 │
-│                                                                 │
-│ ┌─ 如果有 --generate 參數 ─────────────────────────────────────┐│
-│ │  調用 /auto-produce-prompt [關鍵字]                          ││
-│ │  等待生成完成                                                 ││
-│ └──────────────────────────────────────────────────────────────┘│
-│                                                                 │
-│ 讀取 Post/Test/ 資料夾中所有待發布的 .md 檔案                   │
-│ 過濾出尚未發布的內容                                            │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 2: 生成配圖                                                 │
-│                                                                 │
-│ 對每個待發布內容：                                              │
-│   調用 /generate-image [Post 檔案] --auto                       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 3: 評估品質                                                 │
-│                                                                 │
-│ 對每個內容：                                                     │
-│   調用 /viral-score [Post 檔案] --image [配圖]                  │
-│                                                                 │
-│   如果分數 < --min-score (9.0)：                                 │
-│     標記為「未達標」，跳過發布                                   │
-│     （可選）嘗試重新生成配圖                                     │
-│                                                                 │
-│   如果分數 >= --min-score (9.0)：                                │
-│     加入發布佇列                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 4: 排序發布佇列                                             │
-│                                                                 │
-│ 按 viral-score 分數排序（高到低）                               │
-│ 取前 --max-posts 個內容                                         │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 5: 執行發布                                                 │
-│                                                                 │
-│ 對佇列中的每個內容：                                            │
-│                                                                 │
-│   ┌─ 如果 platforms 包含 fb ─────────────────────────────────┐ │
-│   │  調用 /post-to-fb [內容] --image [配圖] --submit           │ │
-│   │       --target page --page-name [粉專名]                   │ │
-│   └────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-│   ┌─ 如果 platforms 包含 notion ─────────────────────────────┐ │
-│   │  1. 執行 python scripts/auto_upload_media.py [Prompt] --type [image/video] --env prod │ │
-│   │     (自動偵測並上傳圖片到 ImgBB、影片到 Cloudinary，並移動到正式區)  │ │
-│   │  2. 執行 python scripts/sync_to_notion.py                  │ │
-│   └────────────────────────────────────────────────────────────┘ │
-│                                                                 │
-│   移動 Post/Test/[檔案].md → Post/shared/[檔案].md              │
-│   移動 Prompt 到對應的 shared 資料夾                            │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│ Step 6: 輸出報告                                                 │
-└─────────────────────────────────────────────────────────────────┘
+Step 1: 準備內容
+  ├─ 若有 --generate：調用 /auto-produce-prompt [關鍵字]
+  └─ 讀取 Post/Test/ 所有待發布檔案
+
+Step 2: 對每個待發布檔案，生成配圖
+  └─ 調用 /generate-image [Post 檔案] --auto
+
+Step 3: 評估 + 篩選
+  └─ 對每個有配圖的檔案：
+      /viral-score [Post 檔案] --image [配圖]
+      → 分數 >= 9.0：加入發布佇列
+      → 分數 < 9.0：標記「未達標」，跳過
+
+Step 4: 排序佇列（分數高到低），取前 --max-posts 個
+
+Step 5: 發布
+  └─ 對佇列中每個內容：
+      python scripts/publish_to_social.py [file] --platforms [platforms]
+      python scripts/sync_to_notion.py
+      移動 Post/Test/ → Post/shared/
 ```
+
+---
+
+## 品質控制（MANDATORY）
+
+- **最低標準：S 級（9.0+）**，A 級及以下一律不發布
+- 這是 CLAUDE.md 的強制規則，任何情況下不得繞過
+- 腳本模式和 Claude 模式均適用
+- 此規則與 `full-pipeline` 相同：未達 S 級就停止，不是只做紀錄
+
+---
+
+## 頻率限制
+
+- 每次發布間隔至少 **30 分鐘**
+- 每日上限 **5 篇**
+- 最佳發布時段（台灣）：10:00–12:00、19:00–21:00
+
+---
 
 ## 輸出報告範例
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 Auto Daily Publish 完成報告
+Auto Daily Publish 完成報告
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+執行時間：2026-03-31 10:00
+目標平台：FB
+最低分數：S 級 (9.0)
 
-執行時間：2026-01-21 14:30:00
-目標平台：FB, Notion
-最低發布分數：S 級 (9.0)
+掃描：3 個  |  達標：1 個  |  發布：1 個
 
+✅ 已發布
+  Kirby-文藝復興油畫 — S 級 (9.3)，FB ✓，Notion ✓
+
+⏸️ 未達標（不發布）
+  Kirby-辦公室 — A 級 (8.7) → 保留 Post/Test/
+  Mario-場景 — B 級 (7.5) → 保留 Post/Test/
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 處理結果
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-掃描檔案：5 個
-生成配圖：3 個
-通過評估：1 個
-實際發布：1 個
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✓ 已發布內容
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. Kirby Office Chaos
-   ├─ 評分：S 級 (9.2/10)
-   ├─ 配圖：cover-kirby-office.png (原始畫質)
-   ├─ FB：✓ 已發布到「AI Art Lab」
-   ├─ Notion：✓ 已同步
-   └─ 已移動到 Post/shared/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⏸️ 未達標內容（非 S 級一律不發布）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1. Mario Platformer Scene
-   ├─ 評分：A 級 (8.5/10)
-   └─ 狀態：未達 S 級，已跳過
-
-2. Snake Game Chain
-   ├─ 評分：B 級 (7.5/10)
-   └─ 狀態：未達 S 級，已跳過
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📈 統計
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-平均評分：7.7/10
-最高評分：8.5/10 (Kirby Office Chaos)
-總耗時：3 分 25 秒
-
-下次建議發布時間：2026-01-22 10:00
-（建議間隔至少 12 小時）
 ```
 
-## 發布佇列管理
+---
 
-### 佇列狀態檔案
+## 錯誤處理
 
-`config/publish_queue.json`：
-
-```json
-{
-  "last_publish": "2026-01-21T14:30:00+08:00",
-  "queue": [
-    {
-      "id": "kirby-office-2026-01-20",
-      "post_file": "Post/Test/2026-01-20-Kirby-Office.md",
-      "image_file": "Local_Media/cover-kirby-office.webp",
-      "viral_score": 8.5,
-      "status": "published",
-      "platforms": {
-        "fb": { "status": "published", "published_at": "2026-01-21T14:30:00+08:00" },
-        "notion": { "status": "synced", "synced_at": "2026-01-21T14:31:00+08:00" }
-      }
-    },
-    {
-      "id": "mario-scene-2026-01-21",
-      "post_file": "Post/Test/2026-01-21-Mario-Scene.md",
-      "image_file": null,
-      "viral_score": 7.2,
-      "status": "pending",
-      "platforms": {}
-    }
-  ]
-}
-```
-
-### 狀態說明
-
-| 狀態 | 說明 |
-|-----|------|
-| `pending` | 等待處理 |
-| `generating` | 正在生成配圖 |
-| `evaluating` | 正在評估 |
-| `ready` | 通過評估，等待發布 |
-| `publishing` | 正在發布 |
-| `published` | 已發布 |
-| `failed` | 發布失敗 |
-| `needs_improvement` | 評分不足，需要優化 |
-
-## 與其他 Skills 的關係
-
-```
-/auto-daily-publish
-  │
-  ├─ (可選) 調用 /auto-produce-prompt
-  │         └─ 調用 /research-keyword
-  │         └─ 調用 /generate-prompt
-  │         └─ 調用 /evaluate-prompt
-  │         └─ 調用 /create-tutorial
-  │
-  ├─ 調用 /generate-image
-  │
-  ├─ 調用 /viral-score
-  │
-  ├─ 調用 /post-to-fb
-  │
-  ├─ 執行 auto_upload_media.py (上傳圖片並更新 Prompt 檔案)
-  │
-  └─ 執行 sync_to_notion.py
-```
-
-## 注意事項
-
-### 發布頻率
-
-- **建議間隔**：每次發布間隔至少 30 分鐘
-- **每日上限**：建議每天不超過 3-5 篇
-- **最佳時段**：根據目標受眾調整（台灣：10:00-12:00, 19:00-21:00）
-
-### 品質控制
-
-- **最低標準**：必須 S 級（9.0 分）以上才發布，A 級亦不通過
-- **自動重試**：評分不足時可設定自動重新生成配圖
-- **不壓縮圖片**：為了保持原始畫質，跳過所有壓縮步驟
-- **人工審核**：重要內容建議先使用 `--dry-run` 預覽
-
-### 錯誤處理
-
-| 錯誤情況 | 處理方式 |
-|---------|---------|
-| 配圖生成失敗 | 跳過該內容，繼續處理其他 |
-| 評估失敗 | 使用預設分數或跳過 |
-| FB 發布失敗 | 標記為 failed，下次重試 |
-| Notion 同步失敗 | 記錄錯誤，不影響 FB 發布 |
-
-### 建議工作流程
-
-1. **每日早上**：執行 `/auto-daily-publish --dry-run` 預覽
-2. **確認無誤**：執行 `/auto-daily-publish --platforms fb,notion`
-3. **檢查結果**：查看報告，追蹤發布效果
-4. **週期優化**：根據實際互動數據調整 `--min-score`
-
+| 錯誤 | 處理方式 |
+|------|---------|
+| 配圖生成失敗 | 跳過，繼續其他 |
+| Viral Score 未達標 | 保留在 Post/Test/，不計入失敗 |
+| FB 發布失敗 | 標記 failed，Notion 仍繼續 |
+| Notion 同步失敗 | 記錄，不影響 FB 發布 |

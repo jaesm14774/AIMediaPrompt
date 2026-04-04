@@ -109,7 +109,8 @@ def _extract_prompt_name(post_path: Path) -> str:
 
 
 def collect_media(media_dir: Path, limit: int = 4) -> List[Path]:
-    """收集媒體檔（圖片優先最多 4 張，影片最多 10 支可同貼文）"""
+    """收集指定資料夾內的媒體檔（圖片優先最多 4 張，影片最多 10 支可同貼文）
+    只看該資料夾，不遞迴，不碰其他 Template 的資料夾。"""
     exts = IMAGE_EXT | VIDEO_EXT
     files = [f for f in media_dir.iterdir() if f.is_file() and f.suffix.lower() in exts]
     files.sort(key=lambda x: x.name)
@@ -481,12 +482,29 @@ def move_to_shared(post_path: Path, prompt_path: Optional[Path], media_type: Opt
 
 
 def main():
-    parser = argparse.ArgumentParser(description='一鍵上傳 Post + 媒體到 Facebook、Twitter')
+    parser = argparse.ArgumentParser(
+        description='一鍵上傳 Post + 媒體到 Facebook、Twitter（發布後刪除對應資料夾的媒體檔案）',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+範例：
+  # 使用 --template 指定 Prompt Template 名稱（推薦）
+  python scripts/publish_to_social.py "PostFile" --template "KirbyTemplate" --platforms fb
+
+  # 或直接指定完整媒體目錄
+  python scripts/publish_to_social.py "PostFile" --media-dir "Local_Media/KirbyTemplate" --platforms fb
+
+  注意：發布成功後，只會刪除 --template / --media-dir 指定資料夾內的媒體，不影響其他 Template。
+        """
+    )
     parser.add_argument('post', help='Post 檔名、路徑或關鍵字')
     parser.add_argument('--prompt', help='對應的 Prompt 名稱（用於移動到 shared）')
     parser.add_argument('--type', choices=['image', 'video'], help='Prompt 類型')
     parser.add_argument('--platforms', default='fb,twitter', help='平台，逗號分隔 (fb,twitter)')
-    parser.add_argument('--media-dir', default='Local_Media', help='媒體目錄')
+    parser.add_argument('--template', help=(
+        'Prompt Template 名稱（等同於 --media-dir Local_Media/<template>）。'
+        '建議使用此參數以確保資料夾隔離，避免誤刪其他 Template 的媒體。'
+    ))
+    parser.add_argument('--media-dir', default='Local_Media', help='媒體目錄（預設：Local_Media）')
     parser.add_argument('--dry-run', action='store_true', help='僅預覽，不實際發布')
     parser.add_argument('--no-move', action='store_true', help='發布後不移動檔案')
 
@@ -508,12 +526,19 @@ def main():
     if hashtags:
         print(f"[Hashtags] {hashtags[:80]}...")
 
-    media_dir = PROJECT_ROOT / args.media_dir
+    # --template 優先於 --media-dir
+    if args.template:
+        media_dir_str = f"Local_Media/{args.template}"
+        print(f"[Info] 使用 Template 資料夾：{media_dir_str}")
+    else:
+        media_dir_str = args.media_dir
+
+    media_dir = PROJECT_ROOT / media_dir_str
     media_paths = collect_media(media_dir) if media_dir.exists() else []
     if not media_paths:
-        print("[Warn] No media in Local_Media, will post text only")
+        print(f"[Warn] No media in {media_dir_str}, will post text only")
     else:
-        print(f"[Media] {[m.name for m in media_paths]}")
+        print(f"[Media] {[m.name for m in media_paths]} (from {media_dir_str})")
 
     # 載入平台設定
     cred_dir = PROJECT_ROOT / "config" / "social_media" / "credentials"
@@ -552,12 +577,20 @@ def main():
         move_to_shared(post_path, prompt_path, media_type)
 
     if media_paths and success:
+        print(f"[Clean] 刪除 {media_dir_str} 中的媒體檔案...")
         for f in media_paths:
             try:
                 f.unlink()
                 print(f"[Clean] Removed {f.name}")
             except Exception:
                 pass
+        # 若資料夾已空，刪除空資料夾（僅刪自己的資料夾，不影響其他 Template）
+        try:
+            if media_dir.exists() and not any(media_dir.iterdir()):
+                media_dir.rmdir()
+                print(f"[Clean] Removed empty folder: {media_dir_str}")
+        except Exception:
+            pass
 
     print("=" * 50)
     return 0

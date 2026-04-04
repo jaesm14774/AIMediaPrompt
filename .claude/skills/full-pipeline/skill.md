@@ -1,6 +1,15 @@
+---
+name: full-pipeline
+description: 一鍵完成從關鍵字到媒體上傳的完整流程。Phase 1 由 /auto-produce-prompt 處理；Phase 2 的 imagine-prompt 依類型輸出，圖片流程產生 4 個衍生 Prompt 並生成 4 張圖，影片流程產生 2 個衍生 Prompt，且必須先生 2 張 reference 圖，再用圖生 2 支影片。Phase 3 只有 S 級內容才能上傳媒體。發布需由使用者手動執行 publish_to_social.py。
+disable-model-invocation: true
+---
+
 # Full Pipeline - End-to-End Automation
 
-一鍵完成從研究到發布的完整流程：Research -> Generate -> Evaluate -> Tutorial -> Image -> Viral Score -> Publish -> Upload -> Sync。
+一鍵完成從關鍵字到媒體上傳的完整流程：
+Research → Generate Prompt (S 級) → Imagine (image ×4 / video ×2) → Gemini API 生成媒體 → Viral Score → Upload URL
+
+> **發布流程由使用者手動執行**：`python scripts/publish_to_social.py`
 
 ## 使用方式
 
@@ -9,83 +18,128 @@
 ```
 
 **參數說明：**
-- `[主題]`：核心 IP 或關鍵字（如 "Kirby", "Mario", "office anxiety"）
-- `--platforms <平台>`：目標平台，逗號分隔（預設：`fb,notion`）
-- `--page-name <名稱>`：FB 粉專名稱（預設：`"AI Art Lab"`）
-- `--count <數量>`：生成主題數量（預設：3）
-- `--style <風格>`：圖片風格覆蓋（預設：自動選擇）
-- `--dry-run`：預覽模式，不實際發布
-- `--skip-research`：跳過研究階段（適用於已熟悉的主題）
+- `[主題]`：核心 IP 或關鍵字（如 "Kirby", "Mario"）
+- `--platforms <平台>`：Viral Score 評估目標平台（預設：`fb`）
+- `--type <類型>`：媒體類型 `image`（預設）或 `video`
+- `--dry-run`：預覽模式，不實際呼叫 API
 
 **範例：**
 ```bash
-# 完整自動化（預設設定）
 /full-pipeline "Kirby"
-
-# 指定平台和粉專
-/full-pipeline "Kirby" --platforms fb,notion --page-name "AI Art Lab"
-
-# 只生成 1 個主題，預覽不發布
-/full-pipeline "Mario" --count 1 --dry-run
-
-# 跳過研究，指定圖片風格
-/full-pipeline "Ghibli style" --skip-research --style watercolor
-
-# 只同步到 Notion
-/full-pipeline "workplace stress" --platforms notion
+/full-pipeline "Kirby" --type image --platforms fb
+/full-pipeline "水彩告白" --type video
+/full-pipeline "Mario" --dry-run
 ```
-
-## 執行流程
-
-### Phase 1: 內容創作（委派給 `/auto-produce-prompt`）
-
-```
-1. /research-keyword [主題]          （除非 --skip-research）
-2. /generate-prompt [類型] [主題]     x [count] 個不同主題
-3. /evaluate-prompt [檔案]            評估 + 自動優化循環（最多 3 次）
-4. /create-tutorial [檔案]            僅 S 級（9.0+）才生成教學文
-5. 移動到 Post/Test/                  待審核
-```
-
-**調用方式**：
-```bash
-/auto-produce-prompt [主題]
-```
-
-**Phase 1 品質門檻**：
-- Prompt 必須達到 **S 級（9.0+）** 才進入教學文生成
-- 最多 3 次優化迭代，超過則標記為「需人工介入」
 
 ---
 
-### Phase 2+3: 圖片處理 + 發布（對每個 S 級 Post 執行）
-
-**對 Post/Test/ 中每個 S 級教學文執行以下流程**：
+## 執行架構
 
 ```
-1. /generate-image [Post 檔案] --auto    生成配圖（原始畫質）
-   如果指定 --style，使用指定風格
-
-2. /viral-score [Post 檔案] --image [配圖]
-   品質門檻：S 級（9.0+）才發布
-
-3. 如果 platforms 包含 fb：
-   /post-to-fb [Post 檔案] --image [配圖]
-     --target page --page-name [粉專名] --submit
-   （--dry-run 模式下不加 --submit）
-
-4. 如果 platforms 包含 notion：
-   python scripts/auto_upload_media.py [Prompt名稱] --env prod --type image
-   python scripts/sync_to_notion.py
-
-5. 移動到正式區：
-   Post/Test/[檔案].md -> Post/shared/[檔案].md
-   Prompt 移動到對應 shared/ 資料夾
+/full-pipeline "Kirby"
+  │
+  ├─ Phase 1（委派給 subagent）
+  │   └─ /auto-produce-prompt "Kirby"
+  │       ├─ /research-keyword          → research/<keyword>/<date>.md
+  │       └─ 每個主題獨立 subagent
+  │           ├─ /generate-prompt
+  │           ├─ /evaluate-prompt（最多 3 次優化）
+  │           └─ /create-tutorial（S 級才執行）
+  │
+  └─ Phase 2+3（每個 S 級 Template 獨立處理）
+      └─ 對每個 S 級 Prompt Template：
+          ├─ /imagine-prompt → image 產生 4 個 Prompt；video 產生 2 個 Prompt
+          ├─ image 模式：python scripts/generate_media_gemini.py × 4
+          │   → 存入 Local_Media/<TemplateName>/01~04.png
+          ├─ video 模式：先生成 2 張 reference 圖，再生成 2 支影片
+          │   → Local_Media/<TemplateName>/01~02.png
+          │   → Local_Media/<TemplateName>/01~02.mp4
+          ├─ /viral-score
+          │   → 未達 S 級即停止，不上傳
+          └─ python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+              → 僅在 S 級時執行，上傳 URL 到檔案（不刪除本機媒體）
 ```
 
-**Phase 2+3 品質門檻**：
-- Viral Score 必須達到 **S 級（9.0+）** 才實際發布
-- 未達標的跳過發布，保留在 Post/Test/ 等待優化
+---
+
+## Phase 1：內容創作（委派給 subagent）
+
+啟動一個 subagent 執行 Phase 1：
+
+```
+執行 /auto-produce-prompt "[主題]"
+固定生成 2 個不同創意類型的 S 級 Prompt + 教學文
+輸出到 Post/Test/
+回報：{成功數量, S 級 Template 清單（含 Template 名稱）, 需人工介入清單}
+```
+
+**品質門檻：**
+- Prompt 評估必須 S 級（9.0+）才生成教學文
+- 最多 3 次優化迭代
+- 主題數量固定為 2
+
+---
+
+## Phase 2+3：媒體生成 + URL 上傳（每個 S 級 Template）
+
+對每個 Phase 1 產出的 S 級 Prompt Template，執行以下流程：
+
+```
+Template 名稱：<TemplateName>
+
+Step 1: /imagine-prompt "<TemplateName>.md"
+  → 若 --type image：產生 4 個不同主題的完整 Prompt
+  → 若 --type video：產生 2 個不同主題的完整 Prompt
+
+Step 2A: 若 --type image，逐一呼叫 Gemini API（4 次）
+  python scripts/generate_media_gemini.py \
+    --prompt "[Prompt N]" \
+    --template "<TemplateName>" \
+    --index N \
+    --type image
+  → 存入 Local_Media/<TemplateName>/01.png ~ 04.png
+  → API 不穩、限速、單筆失敗時直接記錄，保留成功張數繼續
+  → 僅在 4 / 4 全部失敗時才重試或標記需人工介入
+
+Step 2B: 若 --type video，必須走 image-to-video 流程（禁止文字直出影片）
+  先生成 2 張 reference 圖：
+  python scripts/generate_media_gemini.py \
+    --prompt "[Prompt N]" \
+    --template "<TemplateName>" \
+    --index N \
+    --type image
+
+  再用同一張圖生成對應影片：
+  python scripts/generate_media_gemini.py \
+    --prompt "[Prompt N]" \
+    --template "<TemplateName>" \
+    --index N \
+    --type video \
+    --reference-image "Local_Media/<TemplateName>/0N.png"
+
+  → 存入 Local_Media/<TemplateName>/01.png ~ 02.png 與 01.mp4 ~ 02.mp4
+  → 若 reference 圖只成功部分，僅對成功的 reference 圖繼續生成影片
+  → API 不穩、限速、單筆失敗時直接記錄，不回頭補生失敗項
+  → 僅在 reference 圖 2 / 2 全失敗，或可執行的影片生成全失敗時才重試或標記需人工介入
+
+Step 3: /viral-score "Post/Test/[file].md" --type [image|video] --platform fb
+  → 若分數 < 9.0：立即停止，不進入上傳
+  → 若分數 >= 9.0：繼續 Step 4
+
+Step 4: python scripts/auto_upload_media.py "<TemplateName>" --folder "<TemplateName>"
+  → 上傳 Local_Media/<TemplateName>/ 內的媒體到 ImgBB/Cloudinary
+  → 將 URL 插入相關檔案
+  → ⚠️ 不刪除本機媒體檔案
+
+Step 5: 輸出完成報告，提示使用者手動發布
+```
+
+**發布（手動執行）：**
+```bash
+python scripts/publish_to_social.py "PostFileName" \
+  --template "<TemplateName>" \
+  --platforms fb
+```
 
 ---
 
@@ -94,42 +148,56 @@
 | 門檻 | 標準 | 未達標行為 |
 |------|------|-----------|
 | Prompt 評估 | S 級（9.0+） | 自動優化，最多 3 次 |
-| Viral Score | S 級（9.0+） | 跳過發布，保留待優化 |
-| 最大優化次數 | 3 次/主題 | 標記為「需人工介入」 |
+| Viral Score | S 級（9.0+） | 立即停止，不進入上傳 |
+| 最大優化次數 | 3 次/主題 | 標記「需人工介入」 |
 
 ---
 
 ## 輸出報告
-
-執行完成後顯示完整報告：
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Full Pipeline 完成報告
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-主題：[主題]
-平台：[平台列表]
-模式：[正式發布 / 預覽模式]
+主題：Kirby
+媒體類型：image
+平台評估：FB
 
 ━━━ Phase 1 結果 ━━━
-生成主題數：[N]
-達 S 級：[N] / [total]
-教學文產出：[N] 篇
+生成主題數：2
+達 S 級：2 / 2
+教學文產出：2 篇
 
 ━━━ Phase 2+3 結果 ━━━
-配圖生成：[N] 張
-Viral Score 達標：[N] / [total]
-已發布：[N] 篇
-  - FB：[N] 篇
-  - Notion：[N] 筆
+Template 1：Kirby-文藝復興油畫
+  ├─ 媒體生成：4 / 4 張
+  ├─ Viral Score：S 級 (9.3)
+  └─ URL 上傳：✅ 已插入 Prompt 檔案
+  📁 Local_Media/Kirby-文藝復興油畫/ (4 張圖保留中)
 
-━━━ 未達標項目 ━━━
-[列出需人工介入的項目]
+Template 2：Kirby-荒謬職場
+  ├─ 媒體生成：4 / 4 張
+  ├─ Viral Score：S 級 (9.1)
+  └─ URL 上傳：✅ 已插入 Prompt 檔案
+  📁 Local_Media/Kirby-荒謬職場/ (4 張圖保留中)
 
-━━━ 檔案清單 ━━━
-[列出所有產出的檔案路徑]
+━━━ 下一步：手動發布 ━━━
+確認媒體後執行：
+  python scripts/publish_to_social.py "2026-01-07-Kirby-文藝復興油畫" --template "Kirby-文藝復興油畫" --platforms fb
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+---
+
+## 快速替代方案
+
+| 場景 | 指令 |
+|------|------|
+| 只生成內容（不生成媒體） | `/auto-produce-prompt "主題"` |
+| 只生成圖片（已有 Template） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type image` |
+| 只生成影片（已有 reference 圖） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type video --reference-image "Local_Media/Name/01.png"` |
+| 手動發布 | `python scripts/publish_to_social.py "Post" --template "Name" --platforms fb` |
 
 ---
 
@@ -137,16 +205,9 @@ Viral Score 達標：[N] / [total]
 
 | 情況 | 處理方式 |
 |------|---------|
-| Research 失敗 | 使用通用知識繼續，標記警告 |
-| 3 次優化後未達 S 級 | 標記為「需人工介入」，繼續下一個主題 |
-| 配圖生成失敗 | 跳過該內容，繼續處理其他 |
-| Viral Score 未達 S 級 | 跳過發布，保留在 Post/Test/ |
-| FB 發布失敗 | 標記為 failed，繼續其他平台 |
-| Notion 同步失敗 | 記錄錯誤，不影響其他操作 |
-
-## 注意事項
-
-- 此 skill 會執行大量 API 調用，建議在穩定網路環境下使用
-- `--dry-run` 模式下會執行完整流程但不實際發布，用於預覽和驗證
-- 每篇 FB 發文間隔至少 30 分鐘，避免觸發安全機制
-- 所有中間檔案保留在 `Test/` 資料夾供參考
+| Phase 1 subagent 失敗 | 記錄錯誤，若有部分成品仍繼續 Phase 2+3 |
+| 3 次優化後未達 S 級 | 標記「需人工介入」，繼續下一個主題 |
+| 圖片或影片生成部分失敗 | 標記失敗，保留成功成果並繼續，在報告中說明 |
+| 圖片或影片生成全部失敗 | 才重試一次；若仍失敗，標記「需人工介入」 |
+| Viral Score 未達 S 級 | 立即停止該 Template 的上傳流程，保留本機媒體供人工檢查 |
+| URL 上傳失敗 | 記錄，媒體仍保留在 Local_Media，可手動重試 |

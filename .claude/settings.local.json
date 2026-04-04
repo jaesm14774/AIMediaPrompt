@@ -4,6 +4,9 @@
       "Bash",
       "Edit",
       "Write",
+      "Read",
+      "Glob",
+      "Grep",
       "WebFetch",
       "WebSearch",
       "Skill(*)"
@@ -15,6 +18,19 @@
       "Bash(rmdir *)",
       "Bash(rd *)",
       "Bash(erase *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/hooks/validate-filename.py"
+          }
+        ]
+      }
     ]
   }
 }

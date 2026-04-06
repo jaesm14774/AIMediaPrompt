@@ -66,10 +66,11 @@ python scripts/publish_to_social.py
 ## 強制規則
 
 1. `full-pipeline` 一律只到媒體上傳，不自動發布。
-2. `viral-score` 必須達到 S 級（9.0+）才可繼續上傳。
-3. `imagine-prompt` 在圖片流程固定產生 4 個 Prompt，在影片流程固定產生 2 個 Prompt。
-4. `auto-produce-prompt` 固定產生 2 個主題，不是 3 個。
-5. 教學文一律先輸出到 `Post/Test/`。
-6. `/指令` 是 Claude skill 呼叫，`python scripts/...` 是直接執行腳本，兩者角色不同，不互相衝突。
-7. `--type video` 不可直接用文字生影片，必須先生圖片，再用圖片當 reference。
-8. 媒體生成遇到 API 不穩、限速或單筆失敗時，不要回頭重生失敗項；保留成功項繼續，僅在同一階段全部失敗時才再嘗試或標記人工介入。
+2. `viral-score` 必須達到 S 級（9.0+ 且通過 `/viral-score` 硬門檻）才可繼續上傳。
+3. `evaluate-prompt` 的 S 級也不是只有 9.0+，還必須通過概念與強烈印象的硬門檻。
+4. `imagine-prompt` 在圖片流程固定產生 4 個 Prompt，在影片流程固定產生 2 個 Prompt。
+5. `auto-produce-prompt` 固定產生 2 個主題，不是 3 個。
+6. 教學文一律先輸出到 `Post/Test/`。
+7. `/指令` 是 Claude skill 呼叫，`python scripts/...` 是直接執行腳本，兩者角色不同，不互相衝突。
+8. `--type video` 不可直接用文字生影片，必須先生圖片，再用圖片當 reference。
+9. 媒體生成遇到 API 不穩、限速或單筆失敗時，不要回頭重生失敗項；保留成功項繼續，僅在同一階段全部失敗時才再嘗試或標記人工介入。

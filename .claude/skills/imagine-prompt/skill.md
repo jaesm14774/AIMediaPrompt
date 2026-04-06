@@ -180,3 +180,15 @@ currents alongside schools of golden koi.
 - [ ] 沒有使用原 Example 中的主題或描述
 - [ ] 每個描述都具體、有畫面感、有情感
 - [ ] 讓人看完想立刻複製去生成
+
+---
+
+## ⚠️ Pipeline 繼續執行規則（CRITICAL）
+
+**本 skill 是 full-pipeline 的中間步驟，不是終點。**
+
+若在 `/full-pipeline` 流程中被呼叫：
+- 輸出完 Prompt 後，**呼叫方必須立即**提取上方所有完整 Prompt 文字
+- **直接進入媒體生成**（`generate_media_gemini.py`）
+- **禁止**在此停頓、輸出「完成」摘要、或等待用戶確認
+- video 流程：先用每個 Prompt 生成 reference 圖，再用圖生成影片

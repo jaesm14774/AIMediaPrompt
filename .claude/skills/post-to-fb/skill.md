@@ -196,7 +196,7 @@ npx -y bun ${SKILL_DIR}/scripts/fb-browser.ts [options] [text]
 
 建議工作流程：
 1. 先使用 `/viral-score` 評估內容品質
-2. 達到 S 級（9.0+）以上再使用 `/post-to-fb --submit`
+2. 達到 S 級（9.0+ 且通過 `/viral-score` 硬門檻）再使用 `/post-to-fb --submit`
 3. 若是主流程，先完成 `auto_upload_media.py`，再決定是否手動用 `/post-to-fb`
 4. 低於 S 級使用預覽模式檢視，然後優化內容
 

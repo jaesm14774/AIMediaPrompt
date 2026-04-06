@@ -73,7 +73,7 @@ def find_post_file(name_or_path: str) -> Optional[Path]:
     """依名稱或路徑找到 Post .md"""
     p = Path(name_or_path)
     if p.exists() and p.suffix == '.md':
-        return p
+        return p.resolve()
     post_dir = PROJECT_ROOT / "Post"
     if not post_dir.exists():
         return None
@@ -106,6 +106,23 @@ def _extract_prompt_name(post_path: Path) -> str:
     stem = post_path.stem
     match = re.match(r'^\d{4}-\d{2}-\d{2}-(.+)$', stem)
     return match.group(1) if match else stem
+
+
+def find_media_dir(template_name: str) -> Optional[Path]:
+    """依 Prompt 名稱找到對應 Local_Media 子資料夾。"""
+    base = PROJECT_ROOT / "Local_Media"
+    if not base.exists():
+        return None
+
+    exact = base / template_name
+    if exact.exists() and exact.is_dir():
+        return exact
+
+    for folder in base.iterdir():
+        if folder.is_dir() and template_name in folder.name:
+            return folder
+
+    return None
 
 
 def collect_media(media_dir: Path, limit: int = 4) -> List[Path]:
@@ -526,12 +543,20 @@ def main():
     if hashtags:
         print(f"[Hashtags] {hashtags[:80]}...")
 
-    # --template 優先於 --media-dir
+    # --template 優先於 --media-dir；若都沒指定，嘗試自動對應 Local_Media/<Prompt 名稱>
     if args.template:
         media_dir_str = f"Local_Media/{args.template}"
         print(f"[Info] 使用 Template 資料夾：{media_dir_str}")
-    else:
+    elif args.media_dir != 'Local_Media':
         media_dir_str = args.media_dir
+    else:
+        search_name = args.prompt if args.prompt else _extract_prompt_name(post_path)
+        auto_media_dir = find_media_dir(search_name)
+        if auto_media_dir:
+            media_dir_str = str(auto_media_dir.relative_to(PROJECT_ROOT)).replace("\\", "/")
+            print(f"[Info] 自動對應媒體資料夾：{media_dir_str}")
+        else:
+            media_dir_str = args.media_dir
 
     media_dir = PROJECT_ROOT / media_dir_str
     media_paths = collect_media(media_dir) if media_dir.exists() else []

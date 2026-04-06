@@ -23,14 +23,14 @@ python scripts/daily_publish.py --dry-run
 # 最多發布 3 篇
 python scripts/daily_publish.py --max-posts 3 --platforms fb,notion
 
-# 指定最低分數（不得低於 9.0，CLAUDE.md 規定）
+# 指定最低分數（仍需同時通過 `viral-score` 的 S 級硬門檻）
 python scripts/daily_publish.py --min-score 9.0
 ```
 
 腳本功能：
 - 掃描 `Post/Test/` 找所有待發布 `.md`
 - 對每個檔案呼叫 `claude -p "/viral-score ..."` 取得分數
-- 排序，只發布分數 ≥ 9.0 的內容
+- 排序，只發布達 S 級的內容（不是只有分數 ≥ 9.0）
 - 呼叫 `scripts/publish_to_social.py` 執行實際發布
 - 更新 `config/publish_queue.json` 狀態
 - 自動執行頻率限制（30 分鐘間隔、每日上限 5 篇）
@@ -73,8 +73,8 @@ Step 2: 對每個待發布檔案，生成配圖
 Step 3: 評估 + 篩選
   └─ 對每個有配圖的檔案：
       /viral-score [Post 檔案] --image [配圖]
-      → 分數 >= 9.0：加入發布佇列
-      → 分數 < 9.0：標記「未達標」，跳過
+      → 達 S 級：加入發布佇列
+      → 未達 S 級：標記「未達標」，跳過
 
 Step 4: 排序佇列（分數高到低），取前 --max-posts 個
 
@@ -89,7 +89,7 @@ Step 5: 發布
 
 ## 品質控制（MANDATORY）
 
-- **最低標準：S 級（9.0+）**，A 級及以下一律不發布
+- **最低標準：S 級（9.0+ 且通過 `/viral-score` 硬門檻）**，A 級及以下一律不發布
 - 這是 CLAUDE.md 的強制規則，任何情況下不得繞過
 - 腳本模式和 Claude 模式均適用
 - 此規則與 `full-pipeline` 相同：未達 S 級就停止，不是只做紀錄

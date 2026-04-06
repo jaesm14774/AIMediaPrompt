@@ -22,6 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"
 VIDEO_MODEL = "veo-3.1-lite-generate-preview"
+VIDEO_DURATION_SECONDS = 5
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
@@ -114,16 +115,17 @@ def generate_video(
         print(f"   Prompt：{prompt[:80]}{'...' if len(prompt) > 80 else ''}")
         print(f"   Reference image：{reference_image_path}")
 
-        reference_image = types.Image.from_file(str(reference_image_path))
+        reference_image = types.Image.from_file(location=str(reference_image_path))
 
         operation = client.models.generate_videos(
             model=VIDEO_MODEL,
-            prompt=prompt,
-            image=reference_image,
+            source=types.GenerateVideosSource(
+                prompt=prompt,
+                image=reference_image,
+            ),
             config=types.GenerateVideosConfig(
                 aspect_ratio="16:9",
                 number_of_videos=1,
-                duration_seconds=8,
             ),
         )
 

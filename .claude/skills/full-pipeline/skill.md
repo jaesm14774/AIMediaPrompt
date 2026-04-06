@@ -1,13 +1,13 @@
 ---
 name: full-pipeline
-description: 一鍵完成從關鍵字到媒體上傳的完整流程。Phase 1 由 /auto-produce-prompt 處理；Phase 2 的 imagine-prompt 依類型輸出，圖片流程產生 4 個衍生 Prompt 並生成 4 張圖，影片流程產生 2 個衍生 Prompt，且必須先生 2 張 reference 圖，再用圖生 2 支影片。Phase 3 只有 S 級內容才能上傳媒體。發布需由使用者手動執行 publish_to_social.py。
+description: 一鍵完成從關鍵字到媒體上傳的完整流程。Phase 1 由 /auto-produce-prompt 處理；Phase 2 的 imagine-prompt 依類型輸出，圖片流程產生 4 個衍生 Prompt 並生成 4 張圖，影片流程產生 2 個衍生 Prompt，且必須先生 2 張 reference 圖，再用圖生 2 支影片。Phase 3 只有通過統一 S 級硬門檻的內容才能上傳媒體。發布需由使用者手動執行 publish_to_social.py。
 disable-model-invocation: true
 ---
 
 # Full Pipeline - End-to-End Automation
 
 一鍵完成從關鍵字到媒體上傳的完整流程：
-Research → Generate Prompt (S 級) → Imagine (image ×4 / video ×2) → Gemini API 生成媒體 → Viral Score → Upload URL
+Research → Generate Prompt (通過 S 級硬門檻) → Imagine (image ×4 / video ×2) → Gemini API 生成媒體 → Viral Score → Upload URL
 
 > **發布流程由使用者手動執行**：`python scripts/publish_to_social.py`
 
@@ -74,7 +74,7 @@ Research → Generate Prompt (S 級) → Imagine (image ×4 / video ×2) → Gem
 ```
 
 **品質門檻：**
-- Prompt 評估必須 S 級（9.0+）才生成教學文
+- Prompt 評估必須達 S 級（9.0+ 且通過 `/evaluate-prompt` 硬門檻）才生成教學文
 - 最多 3 次優化迭代
 - 主題數量固定為 2
 
@@ -82,14 +82,26 @@ Research → Generate Prompt (S 級) → Imagine (image ×4 / video ×2) → Gem
 
 ## Phase 2+3：媒體生成 + URL 上傳（每個 S 級 Template）
 
-對每個 Phase 1 產出的 S 級 Prompt Template，執行以下流程：
+### ⚠️ 架構重要說明：必須用 Agent subagent，禁止用 Skill tool
+
+**Skill tool 呼叫會產生 human-turn 邊界**：每次 `Skill: imagine-prompt` 結束後，
+assistant turn 就結束，流程停住等待用戶輸入，導致無法自動繼續到 Gemini API。
+
+**正確做法**：對每個 S 級 Template，啟動一個 **`Agent` subagent** 執行完整 Phase 2+3，
+subagent 內部直接讀取 Template 檔案並 inline 生成 Prompt，不使用 Skill tool。
+
+對每個 Phase 1 產出的 S 級 Prompt Template，啟動 Agent subagent，指令如下：
 
 ```
 Template 名稱：<TemplateName>
 
-Step 1: /imagine-prompt "<TemplateName>.md"
-  → 若 --type image：產生 4 個不同主題的完整 Prompt
-  → 若 --type video：產生 2 個不同主題的完整 Prompt
+Step 1: 直接讀取 Prompt/Image/<TemplateName>.md（或 Prompt/Video/）
+  → 找出所有 [佔位符] 和 <佔位符>
+  → 若 --type image：inline 生成 4 個完全不同主題的完整 Prompt（替換佔位符）
+  → 若 --type video：inline 生成 2 個完全不同主題的完整 Prompt（替換佔位符）
+  → IP角色規則：1~2 個可使用具名著名 IP（Kirby/皮卡丘/Hello Kitty 等），
+               其餘用廣義描述（"a tiny round cartoon creature"）
+  → 直接繼續 Step 2，不停頓、不輸出摘要等待確認
 
 Step 2A: 若 --type image，逐一呼叫 Gemini API（4 次）
   python scripts/generate_media_gemini.py \
@@ -123,8 +135,8 @@ Step 2B: 若 --type video，必須走 image-to-video 流程（禁止文字直出
   → 僅在 reference 圖 2 / 2 全失敗，或可執行的影片生成全失敗時才重試或標記需人工介入
 
 Step 3: /viral-score "Post/Test/[file].md" --type [image|video] --platform fb
-  → 若分數 < 9.0：立即停止，不進入上傳
-  → 若分數 >= 9.0：繼續 Step 4
+  → 若未達 S 級（不是只有分數不足，也包含未通過硬門檻）：立即停止，不進入上傳
+  → 若達 S 級：繼續 Step 4
 
 Step 4: python scripts/auto_upload_media.py "<TemplateName>" --folder "<TemplateName>"
   → 上傳 Local_Media/<TemplateName>/ 內的媒體到 ImgBB/Cloudinary
@@ -147,8 +159,8 @@ python scripts/publish_to_social.py "PostFileName" \
 
 | 門檻 | 標準 | 未達標行為 |
 |------|------|-----------|
-| Prompt 評估 | S 級（9.0+） | 自動優化，最多 3 次 |
-| Viral Score | S 級（9.0+） | 立即停止，不進入上傳 |
+| Prompt 評估 | S 級（9.0+ + `/evaluate-prompt` 硬門檻） | 自動優化，最多 3 次 |
+| Viral Score | S 級（9.0+ + `/viral-score` 硬門檻） | 立即停止，不進入上傳 |
 | 最大優化次數 | 3 次/主題 | 標記「需人工介入」 |
 
 ---

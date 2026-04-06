@@ -136,7 +136,7 @@ python scripts/generate_media_gemini.py \
 下一步建議：
 - 圖片流程：生成全部 4 張後，執行 /viral-score 評估
 - 影片流程：先確認 2 張 reference 圖，再生成 2 支影片後執行 /viral-score
-- 確認滿意後執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+- 確認已達 S 級後執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
 ```
 
 ---
@@ -177,7 +177,7 @@ python scripts/generate_media_gemini.py \
                      → 圖片流程：/generate-image (×4)
                      → 影片流程：先生圖 (×2) → 再生影片 (×2)
                      → /viral-score
-                        ├─ 未達 S 級：停止
+                        ├─ 未達 S 級（不是只有分數不足，也包含未通過硬門檻）：停止
                         └─ 達 S 級：auto_upload_media.py
                                            ↓（手動）
                                 publish_to_social.py

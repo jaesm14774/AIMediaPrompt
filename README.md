@@ -158,7 +158,7 @@ Phase 3 會評估 Post 的社群潛力，再把媒體上傳並回填 URL。
 | Skill | 主要用途 |
 |------|------|
 | `/generate-image` | 從描述或檔案自動產圖，必要時再接影片流程 |
-| `/post-to-fb` | 以瀏覽器自動化方式直接發文到 Facebook |
+| `publish_to_social.py` | 手動發布已完成內容到社群平台（需先通過 viral-score S 級） |
 | `/auto-daily-publish` | 處理待發布內容的篩選、評分與發布流程 |
 | `/health` | 檢查專案的 Claude Code 設定健康度 |
 
@@ -314,7 +314,6 @@ AIMediaPrompt/
 `scripts/hooks/` 內已有基礎檢查腳本：
 
 - `validate-filename.py`：檢查 Post 檔名格式
-- `validate-chinese.py`：檢查是否誤用簡體字
 
 ## 支援格式與服務限制
 

@@ -251,7 +251,7 @@ version: "1.0.0"
    - 使用明確的填空標記（類型 A 或類型 B）
    - **確保符合研究報告中的核心特徵**（如有）
    - **避免研究報告中標註的常見誤解**（如有）
-   - **Default character is Kirby** (see CLAUDE.md for details)
+   - **Default character is Kirby** (see AGENTS.md for details)
    - 包含完整 Example
 
 4. **保存檔案**

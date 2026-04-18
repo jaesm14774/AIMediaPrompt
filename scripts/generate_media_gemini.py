@@ -22,7 +22,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"
 VIDEO_MODEL = "veo-3.1-lite-generate-preview"
-VIDEO_DURATION_SECONDS = 5
+# VIDEO_MODEL = "veo-3.1-fast-generate-preview"
+
+VIDEO_DURATION_SECONDS = 8  # 8s 最穩定，支援 reference_images
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
@@ -99,9 +101,24 @@ def generate_image(prompt: str, output_path: Path, api_key: str) -> bool:
 
 
 def generate_video(
-    prompt: str, output_path: Path, api_key: str, reference_image_path: Path
+    prompt: str,
+    output_path: Path,
+    api_key: str,
+    reference_image_path: Path,
+    character_anchor_path: Path | None = None,
+    duration_seconds: int = VIDEO_DURATION_SECONDS,
+    aspect_ratio: str = "16:9",
 ) -> bool:
-    """使用 Veo API 生成影片（以 reference image 為起始畫面）"""
+    """使用 Veo API 生成影片（以 reference image 為起始畫面）
+
+    character_anchor_path: 角色錨點圖（通常是 scene_01.png），作為 asset reference
+                           確保角色外觀全片一致。與 reference_image_path 不同：
+                           reference_image_path = 前幕中段幀（決定畫面起始狀態）
+                           character_anchor_path = 初始角色圖（鎖定角色外觀）
+    duration_seconds:      8（最穩定，必須用 8 才能使用 reference_images）
+    api_note:              排除元素請寫入主 Prompt（官方 Veo 指南：以名詞描述、避免 no/don't）。
+                           公開 API 規格表未列 negative_prompt 參數。
+    """
     try:
         from google import genai
         from google.genai import types
@@ -114,19 +131,34 @@ def generate_video(
         print(f"🎬 呼叫 Veo 影片生成 API ({VIDEO_MODEL})...")
         print(f"   Prompt：{prompt[:80]}{'...' if len(prompt) > 80 else ''}")
         print(f"   Reference image：{reference_image_path}")
+        if character_anchor_path:
+            print(f"   Character anchor：{character_anchor_path}")
+        print(f"   Duration：{duration_seconds}s")
 
         reference_image = types.Image.from_file(location=str(reference_image_path))
 
+        # 建立 config — duration=8 是使用 reference_images 的必要條件
+        config_kwargs: dict = {
+            "aspect_ratio": aspect_ratio,
+            "number_of_videos": 1,
+            "duration_seconds": str(duration_seconds),
+        }
+        # 角色錨點（asset reference）— 鎖定角色外觀跨幕一致
+        if character_anchor_path and character_anchor_path.exists():
+            anchor_img = types.Image.from_file(location=str(character_anchor_path))
+            config_kwargs["reference_images"] = [
+                types.VideoGenerationReferenceImage(
+                    image=anchor_img,
+                    reference_type="asset",
+                )
+            ]
+
+        # 同官方文件：image-to-video 以 prompt、image 參數呼叫（非 GenerateVideosSource）
         operation = client.models.generate_videos(
             model=VIDEO_MODEL,
-            source=types.GenerateVideosSource(
-                prompt=prompt,
-                image=reference_image,
-            ),
-            config=types.GenerateVideosConfig(
-                aspect_ratio="16:9",
-                number_of_videos=1,
-            ),
+            prompt=prompt,
+            image=reference_image,
+            config=types.GenerateVideosConfig(**config_kwargs),
         )
 
         print("⏳ 等待影片生成（可能需要 60-120 秒）...")
@@ -206,7 +238,24 @@ def main():
     parser.add_argument(
         "--reference-image",
         "-r",
-        help="影片生成使用的 reference image 路徑（建議先生成同 index 的 png）",
+        help="影片生成使用的 reference image 路徑（前幕中段幀，決定畫面起始狀態）",
+    )
+    parser.add_argument(
+        "--character-anchor",
+        help="角色錨點圖路徑（通常為 scene_01.png），鎖定角色外觀跨幕一致（Veo 3.1 asset reference）",
+    )
+    parser.add_argument(
+        "--duration",
+        type=int,
+        default=VIDEO_DURATION_SECONDS,
+        choices=[4, 6, 8],
+        help=f"影片時長（秒），預設 {VIDEO_DURATION_SECONDS}；Veo API 僅支援 4/6/8 三種時長",
+    )
+    parser.add_argument(
+        "--aspect-ratio",
+        default="16:9",
+        choices=["16:9", "9:16"],
+        help="影片畫面比例（Veo 公開 API：16:9 或 9:16；9:16 適合直式短片）",
     )
 
     args = parser.parse_args()
@@ -239,6 +288,8 @@ def main():
         sys.exit(1)
 
     reference_image_path = None
+    character_anchor_path = None
+
     if args.type == "video":
         if args.reference_image:
             reference_image_path = Path(args.reference_image)
@@ -261,12 +312,32 @@ def main():
             print(f"❌ 找不到 reference image：{reference_image_path}")
             sys.exit(1)
 
+        # 角色錨點圖（asset reference）
+        if args.character_anchor:
+            character_anchor_path = Path(args.character_anchor)
+            if not character_anchor_path.is_absolute():
+                character_anchor_path = PROJECT_ROOT / character_anchor_path
+            if not character_anchor_path.exists():
+                print(f"⚠️  找不到角色錨點圖，略過：{character_anchor_path}")
+                character_anchor_path = None
+
+        # 使用 character_anchor 時強制 duration=8
+        if character_anchor_path and args.duration != 8:
+            print(f"⚠️  使用 reference_images 時 duration 必須為 8，已自動調整（原值：{args.duration}s）")
+            args.duration = 8
+
     # 生成媒體
     if args.type == "image":
         success = generate_image(args.prompt, output_path, api_key)
     else:
         success = generate_video(
-            args.prompt, output_path, api_key, reference_image_path=reference_image_path
+            args.prompt,
+            output_path,
+            api_key,
+            reference_image_path=reference_image_path,
+            character_anchor_path=character_anchor_path,
+            duration_seconds=args.duration,
+            aspect_ratio=args.aspect_ratio,
         )
 
     if not success:

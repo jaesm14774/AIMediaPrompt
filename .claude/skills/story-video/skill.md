@@ -277,7 +277,7 @@ N  | End      | <Xs> | <姿勢>  | <起始色>          | <動作>  | （無需 
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<Block A> + <Block B（幕1版本）> + <Block C（幕1版本）> + <幕1場景描述> + <視覺風格>" \
-  --output "Local_Media/<TemplateName>/story/scene_01.png" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/scene_01.png" \
   --type image
 ```
 
@@ -286,9 +286,9 @@ python scripts/generate_media_gemini.py \
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<完整幕1 Prompt（APB-SEC 格式）>" \
-  --output "Local_Media/<TemplateName>/story/clip_01.mp4" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_01.mp4" \
   --type video \
-  --reference-image "Local_Media/<TemplateName>/story/scene_01.png" \
+  --reference-image "Local_Media/<YYYY-MM-DD-TemplateName>/story/scene_01.png" \
   --duration <幕1規劃時長>
 ```
 
@@ -298,9 +298,9 @@ python scripts/generate_media_gemini.py \
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --extract-last-frame "Local_Media/<TemplateName>/story/clip_01.mp4" \
+  --extract-last-frame "Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_01.mp4" \
   --extract-at "30%" \
-  --output "Local_Media/<TemplateName>/story/frame_01_relay.png"
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/frame_01_relay.png"
 ```
 
 > 📌 30% 對應秒數：4s→1.2s，6s→1.8s，8s→2.4s
@@ -332,9 +332,9 @@ python scripts/concat_video_clips.py \
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<完整幕N Prompt（APB-SEC continuity 格式）>" \
-  --output "Local_Media/<TemplateName>/story/clip_0N.mp4" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_0N.mp4" \
   --type video \
-  --reference-image "Local_Media/<TemplateName>/story/frame_0{實際使用的relay幀}_relay.png" \
+  --reference-image "Local_Media/<YYYY-MM-DD-TemplateName>/story/frame_0{實際使用的relay幀}_relay.png" \
   --duration <幕N規劃時長>
 ```
 
@@ -344,9 +344,9 @@ python scripts/generate_media_gemini.py \
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --extract-last-frame "Local_Media/<TemplateName>/story/clip_0N.mp4" \
+  --extract-last-frame "Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_0N.mp4" \
   --extract-at "30%" \
-  --output "Local_Media/<TemplateName>/story/frame_0N_relay.png"
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/frame_0N_relay.png"
 ```
 
 **完成後輸出：**
@@ -367,16 +367,16 @@ python scripts/concat_video_clips.py \
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
   --template "<TemplateName>" \
-  --output "Local_Media/<TemplateName>/story/final_story.mp4"
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/story/final_story.mp4"
 ```
 
 若有跳過的幕，改用 `--clips` 明確列出成功片段：
 ```bash
 python scripts/concat_video_clips.py \
-  --clips Local_Media/<TemplateName>/story/clip_01.mp4 \
-          Local_Media/<TemplateName>/story/clip_03.mp4 \
-          Local_Media/<TemplateName>/story/clip_05.mp4 \
-  --output Local_Media/<TemplateName>/story/final_story.mp4
+  --clips Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_01.mp4 \
+          Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_03.mp4 \
+          Local_Media/<YYYY-MM-DD-TemplateName>/story/clip_05.mp4 \
+  --output Local_Media/<YYYY-MM-DD-TemplateName>/story/final_story.mp4
 ```
 
 ---
@@ -398,7 +398,7 @@ Template：<TemplateName>
 （依實際幕數輸出...）
 幕 N｜End       ✅  clip_0N.mp4（<Xs>）
 
-合併成品：Local_Media/<TemplateName>/story/final_story.mp4
+合併成品：Local_Media/<YYYY-MM-DD-TemplateName>/story/final_story.mp4
 
 ━━━ 故事回顧 ━━━
 幕 1（<功能>）：   <敘事一句話>
@@ -427,7 +427,7 @@ Template：<TemplateName>
 ## 儲存結構
 
 ```
-Local_Media/<TemplateName>/
+Local_Media/<YYYY-MM-DD-TemplateName>/
   story/
     scene_01.png           ← 幕 1 初始參考圖（Gemini 生圖）
     clip_01.mp4            ← 幕 1 影片（依規劃時長）

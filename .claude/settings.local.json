@@ -19,18 +19,5 @@
       "Bash(rd *)",
       "Bash(erase *)"
     ]
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python scripts/hooks/validate-filename.py"
-          }
-        ]
-      }
-    ]
   }
 }

@@ -1,0 +1,796 @@
+{
+  "_meta": {
+    "version": "5.0",
+    "description": "角色主題庫。涵蓋療育系、喜劇、冒險、競技、職場、美食、宇宙、成長等200+創意方向。每個 concept 均可搭配 story_arcs.json 的任一弧線類型生成畫面。",
+    "fields": {
+      "arc_type": "對應 story_arcs.json 中的弧線 id",
+      "act2_twist": "第二幕的溫和變化，必須是可視覺化、可延續、能提升療育感的小事件",
+      "visual_core": "第一幕建立場景的視覺描述，以繁體中文撰寫，強調柔和構圖、可愛動作、舒服配色",
+      "en": "給生成模型使用的英文場景概念句，需簡單清楚、避免複雜衝突"
+    }
+  },
+  "seasonal_keywords": {
+    "1": ["冬日暖光 / winter warm light", "新年小願望 / tiny new year wish", "毛毯與熱茶 / blanket and tea"],
+    "2": ["柔粉色調 / soft pink palette", "早春微風 / early spring breeze", "甜點陪伴 / sweet companionship"],
+    "3": ["花苞初開 / first blossoms", "晴天散步 / sunny walk", "春天甦醒 / spring awakening"],
+    "4": ["窗邊細雨 / rain by the window", "嫩葉生長 / fresh green leaves", "安靜午後 / quiet afternoon"],
+    "5": ["花園日光 / garden sunlight", "初夏輕盈 / early summer lightness", "開心野餐 / cheerful picnic"],
+    "6": ["雨後清新 / after-rain freshness", "植物生長 / growing plants", "涼涼微風 / cool breeze"],
+    "7": ["盛夏明亮 / midsummer brightness", "水果甜香 / fruity sweetness", "海邊放鬆 / seaside calm"],
+    "8": ["夏末柔光 / late summer glow", "午睡時光 / nap time", "慵懶可愛 / sleepy cuteness"],
+    "9": ["初秋金光 / early autumn gold", "落葉散步 / leaf walk", "溫柔收穫 / gentle harvest"],
+    "10": ["秋日舒適 / cozy autumn", "熱湯暖意 / warm soup comfort", "南瓜色調 / pumpkin palette"],
+    "11": ["晚秋靜謐 / late autumn stillness", "早早點燈 / early lights", "圍巾季節 / scarf season"],
+    "12": ["節日燈串 / holiday lights", "小屋溫暖 / warm little house", "歲末療癒 / year-end comfort"]
+  },
+  "clusters": [
+    {
+      "id": "garden_buddies",
+      "label_zh": "花園裡的可愛陪伴",
+      "label_en": "Garden Buddies",
+      "kirby_trait": "重點是圓潤角色、植物、花朵、草地、舒服留白，像你給的參考圖那種單純看了就會放鬆的療育感。",
+      "concepts": [
+        {
+          "id": "gb_01",
+          "zh": "坐在小花叢裡，讓蝴蝶停在鼻尖上",
+          "en": "A cute character sitting in a small flower patch while a butterfly gently rests on its nose",
+          "visual_core": "主角圓圓地坐在花叢中央，四周是低矮小花與嫩草，表情放鬆開心，構圖簡單乾淨，背景留白",
+          "act2_twist": "more tiny butterflies quietly gather around, creating a soft circle of color without disturbing the calm mood",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "gb_02",
+          "zh": "頭上頂著一朵大花，安靜曬太陽",
+          "en": "A chubby gentle creature wearing a giant flower like a hat and enjoying warm sunlight",
+          "visual_core": "圓潤角色坐在草地上，頭上是一朵大大的花，陽光從側邊落下，配色以粉綠與柔黃為主",
+          "act2_twist": "the flower slowly opens wider and casts a cute petal-shaped shadow over the character's happy face",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "gb_03",
+          "zh": "和小鳥一起澆花，水珠閃亮亮",
+          "en": "A cute character watering flowers together with tiny birds in a sunny garden",
+          "visual_core": "角色拿著小澆水壺，旁邊兩三隻小鳥幫忙，花盆整齊排著，水珠在陽光下閃光，氣氛純淨",
+          "act2_twist": "the falling water droplets catch the sunlight and briefly look like tiny sparkling beads around the flowers",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "gb_04",
+          "zh": "躺在草地上，讓蒲公英飄過身邊",
+          "en": "A soft round character lying on the grass while dandelion seeds drift by in the breeze",
+          "visual_core": "角色仰躺在綠草地上，閉眼微笑，身邊有幾朵蒲公英，畫面留很多呼吸感與柔和空白",
+          "act2_twist": "the drifting seeds gently gather above like a tiny cloud before floating away again",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "gb_05",
+          "zh": "蹲在草叢旁，和小蝸牛慢慢對看",
+          "en": "A cute creature crouching beside the grass and calmly looking at a tiny snail",
+          "visual_core": "角色低低蹲著，與小蝸牛平視，草葉與小花圍成溫柔前景，整體色彩淡雅可愛",
+          "act2_twist": "the snail slowly reaches one leaf toward the character like a tiny gift, making the scene even softer",
+          "arc_type": "gentle_discovery"
+        }
+      ]
+    },
+    {
+      "id": "cozy_home",
+      "label_zh": "家裡的小幸福",
+      "label_en": "Cozy Home Moments",
+      "kirby_trait": "聚焦在房間、抱枕、毛毯、熱飲、窗邊、桌燈這種非常安全的日常元素，療癒感比敘事張力更重要。",
+      "concepts": [
+        {
+          "id": "ch_01",
+          "zh": "抱著枕頭在窗邊發呆，看雲慢慢飄",
+          "en": "A fluffy character hugging a pillow by the window and quietly watching the clouds drift",
+          "visual_core": "角色坐在窗邊軟墊上抱著枕頭，窗外是淡藍天空與白雲，室內是奶油色與木質調，氛圍安定",
+          "act2_twist": "a patch of sunlight slowly moves across the floor and reaches the character's feet like a warm companion",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "ch_02",
+          "zh": "剛烤好的小餅乾，整盤捧在手上聞香味",
+          "en": "A cute creature holding a tray of freshly baked cookies and happily smelling the warm sweetness",
+          "visual_core": "角色雙手捧著小餅乾盤，臉湊近熱氣，背景是簡單廚房與柔暖燈光，整體圓潤可口",
+          "act2_twist": "one tiny cookie at the edge tips into the character's paw, making the smile grow even bigger",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "ch_03",
+          "zh": "縮進毛毯裡，只露出圓圓的臉",
+          "en": "A sleepy round character wrapped in a blanket with only its happy little face showing",
+          "visual_core": "大毛毯包住整個角色，只露出眼睛和笑臉，旁邊有熱可可與小書本，畫面極簡但很暖",
+          "act2_twist": "the blanket softly puffs up as if the character has settled in even deeper, becoming even more irresistibly cozy",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "ch_04",
+          "zh": "桌燈下認真畫塗鴉，旁邊放著彩色筆",
+          "en": "A cute little creature doodling happily under a desk lamp surrounded by colorful pencils",
+          "visual_core": "木桌與小桌燈形成小小安全空間，角色專心畫圖，彩色筆散在桌面，線條與色塊都很溫柔",
+          "act2_twist": "the finished doodle turns out to be a smiling self-portrait with tiny hearts around it",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "ch_05",
+          "zh": "睡前把玩偶們排好，一起準備晚安",
+          "en": "A sweet character arranging plush toys neatly before bedtime in a cozy room",
+          "visual_core": "角色在床上把幾隻小玩偶排成一排，床單柔軟蓬鬆，房間光線是暖黃夜燈，安全感很強",
+          "act2_twist": "one plush toy leans against the character's side, making the bedtime scene feel even more loved",
+          "arc_type": "cozy_companionship"
+        }
+      ]
+    },
+    {
+      "id": "snack_happiness",
+      "label_zh": "點心時間的快樂",
+      "label_en": "Snack Time Happiness",
+      "kirby_trait": "用甜點、水果、飲料、盤子、餐墊這些小物，做出簡單明亮的快樂，不需要複雜劇情。",
+      "concepts": [
+        {
+          "id": "sh_01",
+          "zh": "抱著大草莓，笑得像今天沒有煩惱",
+          "en": "A cheerful round creature hugging a giant strawberry with pure delight",
+          "visual_core": "角色雙手抱著大草莓，眼睛彎彎地笑，背景簡單留白，草莓紅與角色主色形成清爽對比",
+          "act2_twist": "a few extra strawberries roll in around the character's feet like a tiny happy surprise",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "sh_02",
+          "zh": "坐在甜甜圈上，把它當柔軟坐墊",
+          "en": "A cute creature sitting on a big donut like it is the softest seat in the world",
+          "visual_core": "角色坐在大甜甜圈中央，糖霜柔和、色彩粉嫩，姿態放鬆又可愛，畫面一看就開心",
+          "act2_twist": "colorful sprinkles gently tumble down around the donut like confetti, keeping the mood playful and light",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "sh_03",
+          "zh": "和一杯奶昔靠在一起，像在一起休息",
+          "en": "A soft creature leaning against a tall milkshake as if sharing a peaceful break together",
+          "visual_core": "角色靠著奶昔杯休息，吸管與奶泡都很圓潤，桌面乾淨，背景像咖啡店角落但極簡柔和",
+          "act2_twist": "the whipped cream tilts slightly like a fluffy hat, making the milkshake feel like a cute silent friend",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "sh_04",
+          "zh": "把小餅乾一片一片排成愛心",
+          "en": "A cute character carefully arranging tiny cookies into a heart shape on the table",
+          "visual_core": "角色趴在桌邊，專心排著小圓餅乾，桌上有可愛餐墊與幾個散落的小點心，畫面工整溫柔",
+          "act2_twist": "the last cookie drops perfectly into place, completing a heart shape that makes the whole table feel brighter",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "sh_05",
+          "zh": "抱著暖呼呼的湯碗，臉也被蒸氣暖暖包住",
+          "en": "A gentle character hugging a warm soup bowl while soft steam wraps around its smiling face",
+          "visual_core": "角色雙手抱著熱湯，熱氣上升，臉頰微紅，整體配色是奶白、南瓜橘、淡綠等舒服色調",
+          "act2_twist": "the steam curls upward into tiny heart shapes before fading back into the air",
+          "arc_type": "peaceful_rest"
+        }
+      ]
+    },
+    {
+      "id": "tiny_errands",
+      "label_zh": "小小日常任務",
+      "label_en": "Tiny Daily Errands",
+      "kirby_trait": "不是冒險，而是可愛的小任務，例如提籃子、收果子、送花、整理桌面。讓角色看起來認真又可愛。",
+      "concepts": [
+        {
+          "id": "te_01",
+          "zh": "提著小籃子去採幾顆圓圓果實",
+          "en": "A tiny cute creature carrying a basket and collecting round fruit in a sunny field",
+          "visual_core": "角色提著小籃子走在草地上，地上散著可愛圓果，步伐短短圓圓，畫面節奏輕快",
+          "act2_twist": "the basket fills with colorful fruit faster than expected, making the little errand feel like a happy success",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "te_02",
+          "zh": "小心抱著一束花，要去送給朋友",
+          "en": "A sweet creature carefully carrying a bouquet of flowers to deliver to a friend",
+          "visual_core": "角色雙手抱著大花束，花比身體還稍微大一點，表情認真溫柔，背景乾淨明亮",
+          "act2_twist": "a few petals drift behind like a tiny trail, making the short walk feel extra gentle and lovely",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "te_03",
+          "zh": "把書桌上的彩色鉛筆一支支排整齊",
+          "en": "A round little character carefully lining up colored pencils on a tidy desk",
+          "visual_core": "角色坐在桌前，把彩色鉛筆按色系排好，桌面整潔，畫面中有療癒的秩序感與低飽和色彩",
+          "act2_twist": "the pencils end up forming a soft rainbow line that makes the desk feel even more cheerful",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "te_04",
+          "zh": "拿著小掃把，認真把落葉掃成一堆",
+          "en": "A cute creature using a tiny broom to sweep fallen leaves into a neat little pile",
+          "visual_core": "角色拿著迷你掃把站在落葉旁，動作認真可愛，落葉顏色是秋日暖橘與金黃，畫面乾淨舒服",
+          "act2_twist": "the leaf pile becomes perfectly round, matching the character's shape and making the task feel adorably complete",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "te_05",
+          "zh": "抱著小信封去門口，像在做很重要的事",
+          "en": "A tiny happy creature carrying a little envelope to the front door like it is on a very important mission",
+          "visual_core": "角色雙手抱著信封，小步走向門口，門邊有鞋子與盆栽，場景非常日常但很可愛",
+          "act2_twist": "the envelope turns out to have a hand-drawn heart on it, making the tiny mission feel extra warm and personal",
+          "arc_type": "cozy_companionship"
+        }
+      ]
+    },
+    {
+      "id": "weather_softness",
+      "label_zh": "天氣也很溫柔",
+      "label_en": "Soft Weather Moments",
+      "kirby_trait": "用陽光、雨滴、雪、風、雲霧做出舒服心情，重點是角色和天氣互相陪伴，不是對抗。",
+      "concepts": [
+        {
+          "id": "ws_01",
+          "zh": "穿著小雨衣，在細雨裡踩水窪",
+          "en": "A happy round character in a tiny raincoat stepping in small puddles during a gentle drizzle",
+          "visual_core": "角色穿著可愛小雨衣與短靴，站在水窪邊，細雨很輕，地面反光柔和，表情單純開心",
+          "act2_twist": "the puddle ripple forms soft little circles around the character's feet, making the rainy moment feel playful instead of cold",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "ws_02",
+          "zh": "坐在雲朵邊邊曬太陽",
+          "en": "A dreamy cute creature sitting on the edge of a fluffy cloud in warm sunlight",
+          "visual_core": "角色坐在柔軟雲朵上，天空是淡藍與奶白漸層，構圖空曠輕盈，療癒感強",
+          "act2_twist": "a second smaller cloud drifts over and settles beside the character like a soft seat for company",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "ws_03",
+          "zh": "冬天圍著圍巾，接住第一片雪花",
+          "en": "A bundled-up cute character catching the first snowflake of winter with quiet delight",
+          "visual_core": "角色戴著圍巾與小手套站在白色背景前，神情期待，雪花少少落下，色調安靜又乾淨",
+          "act2_twist": "the first snowflake lands gently on the character's paw and stays there for a tiny magical moment",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "ws_04",
+          "zh": "被風吹得耳朵和葉子一起晃呀晃",
+          "en": "A cute gentle creature swaying in the breeze while nearby leaves flutter the same way",
+          "visual_core": "角色站在草地上，耳朵或小配件被風吹動，幾片葉子在周圍輕輕飄著，畫面很有呼吸感",
+          "act2_twist": "the leaves end up drifting into a loose circle around the character, echoing the same soft movement",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "ws_05",
+          "zh": "霧霧的早晨裡，捧著一杯熱飲慢慢走",
+          "en": "A calm cute character walking slowly through a misty morning while holding a warm drink",
+          "visual_core": "淡霧包住背景，角色捧著杯子慢慢走在小路上，顏色是灰藍、奶白、淡杏，畫面安靜舒服",
+          "act2_twist": "the warm steam becomes the clearest shape in the mist, making the tiny walk feel even more comforting",
+          "arc_type": "peaceful_rest"
+        }
+      ]
+    },
+    {
+      "id": "animal_friends",
+      "label_zh": "和小動物做好朋友",
+      "label_en": "Animal Friends",
+      "kirby_trait": "讓角色與兔子、小鳥、貓咪、小狗、鴨子等小動物互動，主軸是陪伴與信任，不需要高衝突。",
+      "concepts": [
+        {
+          "id": "af_01",
+          "zh": "坐著不動，讓小鳥停在肩膀上",
+          "en": "A gentle creature sitting very still while a tiny bird rests on its shoulder",
+          "visual_core": "角色安靜坐著，肩膀停著小鳥，表情彎彎笑，背景是幾片葉子與大面積留白",
+          "act2_twist": "a second bird lands on the other side, balancing the whole scene into a sweet little portrait",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "af_02",
+          "zh": "把小胡蘿蔔分給兔兔一起吃",
+          "en": "A cute round character sharing tiny carrots with a happy little rabbit",
+          "visual_core": "角色坐在地上，面前是一隻小兔子，兩邊共享小胡蘿蔔，眼神都是開心和放鬆的",
+          "act2_twist": "the rabbit nudges one extra carrot back toward the character like a tiny thank-you gift",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "af_03",
+          "zh": "和小狗一起躺在地上看天空",
+          "en": "A soft creature lying on the grass with a small dog while both look up at the sky",
+          "visual_core": "角色和小狗並排躺著，草地柔軟，天空簡單淡藍，畫面核心是輕鬆與陪伴",
+          "act2_twist": "their tails and feet relax into the same easy pose, making the friendship feel naturally matched",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "af_04",
+          "zh": "伸手摸摸小貓，結果小貓主動蹭過來",
+          "en": "A cute creature reaching out to pet a tiny cat, only for the cat to nuzzle in first",
+          "visual_core": "角色蹲低身體伸出手，小貓圓圓地靠過去，背景很乾淨，讓互動成為唯一焦點",
+          "act2_twist": "the cat curls around the character's hand, turning the first hello into instant trust",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "af_05",
+          "zh": "和幾隻小鴨子排成一列慢慢散步",
+          "en": "A cheerful little creature walking slowly in a line with several tiny ducklings",
+          "visual_core": "角色走在最前面，小鴨子一隻隻跟在後面，步伐小小圓圓，畫面節奏可愛明快",
+          "act2_twist": "the last duckling hurries forward to close the gap, completing the cutest possible walking line",
+          "arc_type": "soft_daily_delight"
+        }
+      ]
+    },
+    {
+      "id": "sleepy_healing",
+      "label_zh": "午睡系療癒",
+      "label_en": "Sleepy Healing",
+      "kirby_trait": "把睡意、枕頭、抱抱、柔光、安靜姿勢做成核心，這一類最適合簡單而高療癒的畫面。",
+      "concepts": [
+        {
+          "id": "sl_01",
+          "zh": "趴在大葉子上睡午覺",
+          "en": "A sleepy cute creature napping on a giant leaf in soft afternoon light",
+          "visual_core": "角色縮成一小團睡在大葉子中央，葉脈像天然床墊，光線柔和，色彩以嫩綠與淡黃為主",
+          "act2_twist": "the leaf rocks slightly in the breeze like a tiny cradle, making the nap feel even more peaceful",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "sl_02",
+          "zh": "睡在一堆抱枕裡，只看得到耳朵和笑臉",
+          "en": "A tiny happy creature napping inside a pile of soft cushions with only its smiling face visible",
+          "visual_core": "抱枕堆成柔軟山丘，角色埋在中間，表情滿足，畫面色彩低飽和且圓潤可愛",
+          "act2_twist": "one cushion gently slips into the perfect place, making the sleeping nest look even softer and fuller",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "sl_03",
+          "zh": "靠著窗邊打瞌睡，陽光剛好照到臉",
+          "en": "A sweet character dozing by the window as a warm sunbeam reaches its face",
+          "visual_core": "角色靠在窗邊小睡，窗框與地板是簡單木質感，光束明顯但柔軟，整體很安穩",
+          "act2_twist": "dust motes float through the sunbeam, making the sleepy moment feel golden and softly magical",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "sl_04",
+          "zh": "抱著小玩偶一起睡，像有雙倍安心",
+          "en": "A cuddly character sleeping while hugging a tiny plush toy close to its chest",
+          "visual_core": "角色側躺睡著，小玩偶被緊緊抱住，床鋪蓬鬆，色調是奶油白和粉彩，療癒感很滿",
+          "act2_twist": "the plush toy settles into the hug so perfectly that the whole pose looks extra tender and safe",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "sl_05",
+          "zh": "睡在樹蔭下，旁邊還有一杯沒喝完的果汁",
+          "en": "A sleepy round creature resting under a tree with a half-finished juice beside it",
+          "visual_core": "樹蔭形成自然遮罩，角色睡在草地上，身邊有一杯插著吸管的果汁，氣氛像舒服的夏日午後",
+          "act2_twist": "a leaf drifts down and lands lightly on the cup, finishing the lazy afternoon scene perfectly",
+          "arc_type": "peaceful_rest"
+        }
+      ]
+    },
+    {
+      "id": "tiny_celebrations",
+      "label_zh": "小小慶祝的快樂",
+      "label_en": "Tiny Celebrations",
+      "kirby_trait": "不是盛大派對，而是小型可愛慶祝，像生日帽、彩帶、小蛋糕、完成一件小事之後的快樂。",
+      "concepts": [
+        {
+          "id": "tc_01",
+          "zh": "戴著小紙帽，守著一顆迷你蛋糕笑",
+          "en": "A cute creature wearing a tiny paper party hat and smiling at a mini cake",
+          "visual_core": "角色坐在桌前，前面是一顆小蛋糕，紙帽可愛歪歪的，構圖簡單中心化，像一張溫柔小賀卡",
+          "act2_twist": "the candle flickers softly and makes the character's eyes shine even brighter with simple joy",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "tc_02",
+          "zh": "努力吹出一個最圓的肥皂泡泡",
+          "en": "A cheerful little creature trying to blow the roundest soap bubble possible",
+          "visual_core": "角色拿著泡泡棒，嘴巴小小鼓起來，背景乾淨，透明泡泡反射出淡淡彩虹光",
+          "act2_twist": "one bubble grows perfectly round and drifts up slowly, becoming the proud center of the scene",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "tc_03",
+          "zh": "完成拼圖最後一塊時，開心得舉高高",
+          "en": "A tiny cute creature lifting the final puzzle piece with pure excitement",
+          "visual_core": "角色坐在地板拼圖旁，最後一塊拼圖被小心舉高，畫面有成就感但依然溫柔可愛",
+          "act2_twist": "the last piece clicks into place neatly, making the character's whole posture relax into happy satisfaction",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "tc_04",
+          "zh": "頭上被灑了幾片彩紙，也還是笑得很甜",
+          "en": "A happy little creature covered with a few pieces of confetti and smiling sweetly",
+          "visual_core": "角色站在中央，頭上和肩膀落著少量彩紙，背景留白，整體像簡單慶祝插畫",
+          "act2_twist": "one bright confetti piece lands neatly on top like a tiny crown, making the scene extra adorable",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "tc_05",
+          "zh": "收到一張手寫小卡片，開心得抱在懷裡",
+          "en": "A gentle creature hugging a handwritten little card with quiet happy gratitude",
+          "visual_core": "角色雙手抱著小卡片，卡片上有簡單可愛圖案，臉上是很滿足的笑，色調柔和乾淨",
+          "act2_twist": "the card opens slightly to reveal a tiny drawn heart, deepening the warmth of the moment without changing its simplicity",
+          "arc_type": "cozy_companionship"
+        }
+      ]
+    },
+    {
+      "id": "seasonal_cute",
+      "label_zh": "四季可愛變化",
+      "label_en": "Seasonal Cute Moments",
+      "kirby_trait": "利用四季顏色和小配件做變化，不靠劇情，而靠季節本身的舒服感與角色的可愛表情支撐。",
+      "concepts": [
+        {
+          "id": "sc_01",
+          "zh": "春天戴花圈，坐在嫩草上微笑",
+          "en": "A cute creature wearing a flower crown and smiling softly on fresh spring grass",
+          "visual_core": "角色頭戴小花圈，坐姿穩穩的，草地嫩綠，整體是清新春天配色，畫面明亮但不刺眼",
+          "act2_twist": "a few loose petals drift down and settle around the character like a naturally made spring frame",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "sc_02",
+          "zh": "夏天抱著西瓜片，臉上全是清爽快樂",
+          "en": "A cheerful little creature hugging a slice of watermelon with bright summer happiness",
+          "visual_core": "角色抱著大西瓜片，背景是簡單草地或白底，紅綠配色清爽，整體非常可口可愛",
+          "act2_twist": "a tiny drop of watermelon juice rolls down, making the summer feeling even fresher and more playful",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "sc_03",
+          "zh": "秋天把小南瓜排在腳邊當裝飾",
+          "en": "A round cute character sitting among tiny pumpkins like cozy autumn decorations",
+          "visual_core": "角色坐在小南瓜旁，色彩以橘、奶白、墨綠為主，背景簡單，畫面像秋季療癒卡片",
+          "act2_twist": "one smallest pumpkin tilts gently against the character, making the arrangement feel even more snug and cute",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "sc_04",
+          "zh": "冬天圍圍巾喝熱可可，鼻尖紅紅的",
+          "en": "A bundled-up sweet creature sipping hot cocoa in winter with a tiny rosy nose",
+          "visual_core": "角色圍著圍巾捧杯子，臉頰和鼻尖淡淡紅，背景可有少量雪點或乾淨白色，安全又可愛",
+          "act2_twist": "the cup's steam rises slowly and softens the whole winter frame into an even gentler moment",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "sc_05",
+          "zh": "四季的小配件都圍在身邊，像一年份的幸福",
+          "en": "A cute creature surrounded by small seasonal items from spring, summer, autumn, and winter",
+          "visual_core": "角色坐在中央，四周是花瓣、西瓜、落葉、小雪花等四季元素，配置整齊可愛，像收藏畫面",
+          "act2_twist": "the seasonal items settle into a soft balanced circle, making the whole scene feel complete and harmonious",
+          "arc_type": "gentle_discovery"
+        }
+      ]
+    },
+    {
+      "id": "friendly_pairs",
+      "label_zh": "兩個角色的溫柔互動",
+      "label_en": "Friendly Pair Moments",
+      "kirby_trait": "如果你之後要做雙角色療癒圖，這組很適合。重點是彼此靠近、分享、陪坐，不要戲劇衝突。",
+      "concepts": [
+        {
+          "id": "fp_01",
+          "zh": "兩個角色一起坐著分一塊小點心",
+          "en": "Two cute characters sitting side by side and sharing one small treat peacefully",
+          "visual_core": "兩個圓潤角色並排坐著，中間放一塊小點心，構圖對稱，表情放鬆，色彩柔和舒服",
+          "act2_twist": "they each hold the treat from one side at the same time, making the shared moment feel extra sweet and balanced",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "fp_02",
+          "zh": "一起撐著一把小傘走路",
+          "en": "Two tiny gentle characters walking together under one small umbrella",
+          "visual_core": "兩個角色靠得很近共撐一把小傘，小雨細細落下，地面反光溫柔，畫面很有照顧感",
+          "act2_twist": "they lean a little closer under the umbrella, making the rainy walk look even safer and warmer",
+          "arc_type": "cozy_companionship"
+        },
+        {
+          "id": "fp_03",
+          "zh": "一個負責抱花，一個負責提籃子",
+          "en": "Two adorable characters helping each other, one carrying flowers and the other holding a basket",
+          "visual_core": "雙角色分工合作，一個抱花一個提籃，步伐慢慢的，花園或草地背景乾淨舒適",
+          "act2_twist": "they pause to look at each other with matching smiles, making the simple errand feel like shared happiness",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "fp_04",
+          "zh": "一起睡在同一條大毛毯上",
+          "en": "Two soft round creatures napping together on the same big blanket",
+          "visual_core": "兩個角色靠在一起睡在毛毯上，姿勢自然放鬆，配色低飽和，畫面滿是安穩感",
+          "act2_twist": "one corner of the blanket folds over both of them like a tiny shared shelter",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "fp_05",
+          "zh": "一起看著一顆剛亮起來的小燈",
+          "en": "Two sweet characters quietly watching a tiny lamp turn on between them",
+          "visual_core": "兩個角色坐在昏暗但不陰沉的空間裡，中間有一盞小燈，光線柔柔擴散，氣氛溫暖",
+          "act2_twist": "the small lamp glow spreads across both faces evenly, making the shared stillness feel extra comforting",
+          "arc_type": "gentle_discovery"
+        }
+      ]
+    },
+    {
+      "id": "simple_magic",
+      "label_zh": "很小很可愛的魔法",
+      "label_en": "Simple Soft Magic",
+      "kirby_trait": "保留一點奇幻，但一定要輕、柔、可愛。魔法不是震撼，而是讓畫面變得更舒服一點點。",
+      "concepts": [
+        {
+          "id": "sm_01",
+          "zh": "手心裡浮起一顆小小發光星星",
+          "en": "A gentle cute creature holding a tiny glowing star floating above its paw",
+          "visual_core": "角色雙手捧著一顆小光星，背景簡單偏暗但柔和，星光成為唯一焦點，感覺安靜又溫暖",
+          "act2_twist": "the star glows just a little brighter and softly lights the character's entire smile",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "sm_02",
+          "zh": "把澆水壺裡的水灑成一小道彩虹",
+          "en": "A cute creature watering plants and accidentally making a tiny rainbow in the sunlight",
+          "visual_core": "角色拿著小澆水壺，植物在前景，陽光斜照，水流很細，整體明亮溫柔",
+          "act2_twist": "the water catches the light perfectly and forms a soft miniature rainbow above the leaves",
+          "arc_type": "soft_daily_delight"
+        },
+        {
+          "id": "sm_03",
+          "zh": "睡著時，身邊冒出幾顆圓圓小星光",
+          "en": "A sleeping round creature surrounded by a few tiny glowing stars in a calm dreamlike scene",
+          "visual_core": "角色安靜睡著，周圍只有少量小星光飄浮，背景簡單乾淨，夢境感很淡很柔",
+          "act2_twist": "one little star drifts closer and rests beside the pillow like a tiny night companion",
+          "arc_type": "peaceful_rest"
+        },
+        {
+          "id": "sm_04",
+          "zh": "吹泡泡時，泡泡裡藏著淡淡花瓣光",
+          "en": "A cute creature blowing bubbles that shimmer softly with petal-like light inside",
+          "visual_core": "角色輕輕吹泡泡，泡泡透明輕盈，裡面有淡淡粉色花瓣光感，畫面輕巧夢幻",
+          "act2_twist": "the largest bubble reflects a tiny smiling version of the character, adding a playful magical touch",
+          "arc_type": "gentle_discovery"
+        },
+        {
+          "id": "sm_05",
+          "zh": "小燈串自己亮起來，把角落變得更安心",
+          "en": "A cozy little creature watching string lights softly turn on and warm up a quiet corner",
+          "visual_core": "角色坐在房間角落，旁邊垂著簡單小燈串，色調柔暖，空間感小小的很安全",
+          "act2_twist": "the string lights glow one by one until the entire corner feels like a tiny safe world",
+          "arc_type": "cozy_companionship"
+        }
+      ]
+    },
+    {
+      "id": "urban_mini_adventures",
+      "label_zh": "城市微冒險",
+      "label_en": "Urban Mini Adventures",
+      "kirby_trait": "把日常城市角落變成小小冒險場景，強調移動感、偶遇感與一點點夜色或街頭節奏。",
+      "concepts": [
+        {
+          "id": "ua_01",
+          "zh": "卡比站在便利商店門口，抱著熱飲看雨停",
+          "en": "A cute round character standing outside a convenience store with a warm drink, waiting for the rain to stop under the neon glow",
+          "visual_core": "小夜雨、便利商店招牌反光、熱飲蒸氣與短暫停留的城市呼吸感。",
+          "act2_twist": "the puddles begin reflecting the store lights so clearly that the sidewalk feels like a tiny second city under the character's feet",
+          "arc_candidates": ["gentle_discovery", "peaceful_rest"]
+        },
+        {
+          "id": "ua_02",
+          "zh": "卡比在空蕩捷運車廂裡抱著小包包打瞌睡",
+          "en": "A sleepy little character dozing gently on a nearly empty train car while hugging a tiny bag on its lap",
+          "visual_core": "車窗流動光影、安靜車廂、座椅重複節奏與旅途中短暫放鬆。",
+          "act2_twist": "a warm stripe of station light slides across the seat and lands right on the character like a moving blanket",
+          "arc_candidates": ["peaceful_rest", "soft_daily_delight"]
+        },
+        {
+          "id": "ua_03",
+          "zh": "卡比在天橋上幫一排小盆栽擋風",
+          "en": "A gentle pink character standing on a pedestrian bridge and shielding a row of tiny potted plants from a strong gust of wind",
+          "visual_core": "高處風感、橋面欄杆線條、微小守護行為與城市天空。",
+          "act2_twist": "the plants lean back upright together once the wind passes, making the whole tiny rescue feel successful",
+          "arc_candidates": ["cozy_companionship", "hero_journey_mini"]
+        },
+        {
+          "id": "ua_04",
+          "zh": "卡比在夜市邊角排整齊小點心準備分享",
+          "en": "A cheerful round character carefully lining up tiny street snacks on a night market counter, preparing to share them",
+          "visual_core": "夜市暖燈、桌面小物、排列帶來的滿足感與分享前的期待。",
+          "act2_twist": "the final snack clicks into the last open spot and suddenly the whole arrangement looks like a perfect little festival display",
+          "arc_candidates": ["soft_daily_delight", "gentle_discovery"]
+        },
+        {
+          "id": "ua_05",
+          "zh": "卡比在大樓屋頂追著飛走的購物小票",
+          "en": "A tiny determined character chasing a drifting receipt across a city rooftop as if it were a very important mission",
+          "visual_core": "屋頂風、城市天際線、輕巧追逐與滑稽認真感。",
+          "act2_twist": "the receipt lands neatly on the character's head like a paper crown, turning the chase into a cute accidental victory",
+          "arc_candidates": ["comedy_escalation", "plot_twist_ending"]
+        }
+      ]
+    },
+    {
+      "id": "festival_wonder",
+      "label_zh": "節慶奇想",
+      "label_en": "Festival Wonder",
+      "kirby_trait": "把燈光、裝飾、群眾氛圍與小小儀式感混在一起，偏歡樂、閃亮、可分享。",
+      "concepts": [
+        {
+          "id": "fw_01",
+          "zh": "卡比抱著一串小燈籠坐在節慶入口等朋友",
+          "en": "A cute character hugging a string of tiny lanterns while sitting near the entrance of a festival and waiting for a friend",
+          "visual_core": "燈籠層層光點、等待時的安靜期待、入口人流的朦朧背景。",
+          "act2_twist": "the lanterns begin glowing one by one until the character is sitting inside a tiny pocket of warm light",
+          "arc_candidates": ["cozy_companionship", "gentle_discovery"]
+        },
+        {
+          "id": "fw_02",
+          "zh": "卡比替小攤位把彩旗一面面扶正",
+          "en": "A helpful little pink character straightening each strand of festival bunting above a tiny vendor stall",
+          "visual_core": "彩旗節奏、手忙腳亂卻認真的整理感、攤位即將準備好的歡樂前奏。",
+          "act2_twist": "once the last flag is fixed, the entire stall suddenly looks complete and celebration-ready",
+          "arc_candidates": ["soft_daily_delight", "hero_journey_mini"]
+        },
+        {
+          "id": "fw_03",
+          "zh": "卡比在煙火前先用耳罩抱住自己",
+          "en": "A soft round character bracing gently with fluffy earmuffs just before the fireworks begin overhead",
+          "visual_core": "煙火未放前的停頓、表情預備動作、夜空即將被點亮的瞬間。",
+          "act2_twist": "the first firework reflects in the character's wide eyes before it fills the whole sky",
+          "arc_candidates": ["gentle_discovery", "plot_twist_ending"]
+        },
+        {
+          "id": "fw_04",
+          "zh": "卡比和朋友一起把小紙星貼滿慶典牆面",
+          "en": "Two adorable characters decorating a festival wall with tiny paper stars until the whole corner starts to glow with color",
+          "visual_core": "共同佈置、視覺累積、越貼越滿足的手作節奏。",
+          "act2_twist": "the final cluster of paper stars forms a subtle heart shape without either character planning it",
+          "arc_candidates": ["cozy_companionship", "soft_daily_delight"]
+        },
+        {
+          "id": "fw_05",
+          "zh": "卡比在遊行散場後撿起一片亮晶晶彩紙當戰利品",
+          "en": "A tiny cheerful character picking up one sparkling piece of confetti after the parade as if it were a precious trophy",
+          "visual_core": "散場後餘韻、地面反光、把小事看得很珍貴的可愛視角。",
+          "act2_twist": "the confetti catches one last beam of light and becomes the brightest thing in the empty street for a second",
+          "arc_candidates": ["gentle_discovery", "peaceful_rest"]
+        }
+      ]
+    },
+    {
+      "id": "dream_quests",
+      "label_zh": "夢境小遠征",
+      "label_en": "Dream Quests",
+      "kirby_trait": "題材偏童話式任務、漂浮感、遠景與奇幻目標，但仍保留可愛與溫柔，不走沉重戰鬥。",
+      "concepts": [
+        {
+          "id": "dq_01",
+          "zh": "卡比背著小布包走向雲海裡唯一亮著的塔",
+          "en": "A tiny pink traveler carrying a cloth satchel and walking toward the only glowing tower in a sea of clouds",
+          "visual_core": "遠方目標明確、雲海分層、旅途開始的安靜決心。",
+          "act2_twist": "the tower light pulses softly back as if it noticed the traveler approaching",
+          "arc_candidates": ["hero_journey_mini", "mystery_solved"]
+        },
+        {
+          "id": "dq_02",
+          "zh": "卡比在水面上撐著星星葉片當小船前進",
+          "en": "A round dreamy character drifting across mirror-like water on a leaf shaped like a star",
+          "visual_core": "鏡面水面、漂浮旅程、安靜前進與天際倒影的夢感。",
+          "act2_twist": "the water reflection reveals a second sky below, making the small voyage feel twice as magical",
+          "arc_candidates": ["gentle_discovery", "simple_magic"]
+        },
+        {
+          "id": "dq_03",
+          "zh": "卡比在巨大的石階上拖著一顆會發光的小鈴鐺往上爬",
+          "en": "A tiny determined character hauling a glowing little bell up a giant staircase one careful step at a time",
+          "visual_core": "巨型尺度、努力爬行、明確任務物件與安靜耐心。",
+          "act2_twist": "the bell gives off a small reassuring glow each time it taps a step, making the climb feel less lonely",
+          "arc_candidates": ["hero_journey_mini", "transformation_arc"]
+        },
+        {
+          "id": "dq_04",
+          "zh": "卡比在森林岔路前翻看手繪地圖卻被螢火蟲帶路",
+          "en": "A cute explorer checking a hand-drawn map at a fork in the forest, only for a trail of fireflies to guide the way instead",
+          "visual_core": "岔路、手繪地圖、原本靠計畫後來改靠溫柔奇遇。",
+          "act2_twist": "the fireflies arrange themselves into the same path shape as the map, confirming the new route",
+          "arc_candidates": ["mystery_solved", "gentle_discovery"]
+        },
+        {
+          "id": "dq_05",
+          "zh": "卡比把找到的小月亮碎片放回夜空模型中",
+          "en": "A careful little character placing a found moon fragment back into a tiny model of the night sky",
+          "visual_core": "修復感、細緻手勢、宇宙元素縮小到桌面尺寸的溫柔奇幻。",
+          "act2_twist": "the restored moon piece lights the rest of the model from within, turning the whole setup into a tiny cosmos",
+          "arc_candidates": ["transformation_arc", "soft_daily_delight"]
+        }
+      ]
+    },
+    {
+      "id": "tiny_professions",
+      "label_zh": "迷你職人任務",
+      "label_en": "Tiny Professions",
+      "kirby_trait": "讓卡比扮演各種迷你職人或工作角色，重點是專注、笨拙可愛與完成工作的成就感。",
+      "concepts": [
+        {
+          "id": "tp_01",
+          "zh": "卡比戴著超大安全帽在小工坊修一盞桌燈",
+          "en": "A tiny diligent character wearing an oversized safety helmet while repairing a desk lamp in a cluttered workshop",
+          "visual_core": "工具台、維修中的專注感、角色與大型工具比例反差。",
+          "act2_twist": "the lamp turns on at the exact moment the character leans back in relief, bathing the whole table in warm success",
+          "arc_candidates": ["hero_journey_mini", "soft_daily_delight"]
+        },
+        {
+          "id": "tp_02",
+          "zh": "卡比當迷你甜點師把最後一顆糖珠放上蛋糕",
+          "en": "A cheerful little pastry chef placing the final sugar bead on top of a cake with total concentration",
+          "visual_core": "甜點細節、最後一步的張力、完成前的屏息時刻。",
+          "act2_twist": "the final sugar bead lands perfectly in the middle and suddenly the whole cake looks celebration-ready",
+          "arc_candidates": ["soft_daily_delight", "gentle_discovery"]
+        },
+        {
+          "id": "tp_03",
+          "zh": "卡比在小圖書角把借來的書排成彩虹順序",
+          "en": "A soft round librarian-like character arranging returned books into a perfect rainbow sequence in a tiny reading corner",
+          "visual_core": "排列癖滿足感、書背色塊、靜靜把空間整理好的療癒感。",
+          "act2_twist": "the final book slides into place and completes the color gradient across the whole shelf",
+          "arc_candidates": ["soft_daily_delight", "peaceful_rest"]
+        },
+        {
+          "id": "tp_04",
+          "zh": "卡比在科技實驗桌前替一顆會亮的小裝置接線",
+          "en": "A careful pink technician connecting wires to a tiny glowing device on a clean laboratory bench",
+          "visual_core": "乾淨桌面、科技細節、面對未知裝置時的小心翼翼。",
+          "act2_twist": "the device begins pulsing in the same rhythm as the character's smile, turning the test into a tiny triumph",
+          "arc_candidates": ["gentle_discovery", "transformation_arc"]
+        },
+        {
+          "id": "tp_05",
+          "zh": "卡比當花店小助手把緞帶綁到最後一束花上",
+          "en": "A tiny flower shop assistant tying a ribbon around the final bouquet with patient little hands",
+          "visual_core": "束花手勢、緞帶收尾、工作完成前最後一個細節的溫柔專注。",
+          "act2_twist": "the ribbon curls into the neatest shape and makes the bouquet look instantly gift-ready",
+          "arc_candidates": ["cozy_companionship", "soft_daily_delight"]
+        }
+      ]
+    },
+    {
+      "id": "retro_playroom",
+      "label_zh": "復古遊戲房",
+      "label_en": "Retro Playroom",
+      "kirby_trait": "題材偏玩具感、復古螢幕、塑膠質感與有點淘氣的節奏，適合做更跳脫的視覺變體。",
+      "concepts": [
+        {
+          "id": "rp_01",
+          "zh": "卡比坐在老電視前等讀取畫面跑完",
+          "en": "A patient little character sitting in front of an old television and watching a loading screen as if it were the most dramatic event in the room",
+          "visual_core": "CRT 光、房間昏暗、等待本身變成一種好笑又懷舊的戲。",
+          "act2_twist": "the loading icon suddenly matches the character's round shape, making the whole wait feel like a private joke",
+          "arc_candidates": ["plot_twist_ending", "gentle_discovery"]
+        },
+        {
+          "id": "rp_02",
+          "zh": "卡比把彩色積木排成超正式的冠軍頒獎台",
+          "en": "A proud tiny character stacking colorful toy blocks into an overly serious championship podium",
+          "visual_core": "玩具房舞台感、誇張認真、孩子氣世界裡的英雄儀式。",
+          "act2_twist": "the highest block wobbles but settles perfectly, turning the almost-fail into a triumphant finish",
+          "arc_candidates": ["hero_journey_mini", "soft_daily_delight"]
+        },
+        {
+          "id": "rp_03",
+          "zh": "卡比在貼滿貼紙的遊戲桌下偷偷整理秘密寶物",
+          "en": "A tiny mischievous character organizing a stash of secret treasures under a sticker-covered game table",
+          "visual_core": "桌下空間、私藏感、貼紙與玩具小物製造二刷細節。",
+          "act2_twist": "one hidden sticker turns out to mirror the exact shape of the most treasured object in the stash",
+          "arc_candidates": ["mystery_solved", "gentle_discovery"]
+        },
+        {
+          "id": "rp_04",
+          "zh": "卡比對著夾娃娃機裡唯一一顆星星球沉思",
+          "en": "A round character staring thoughtfully at the only star-shaped prize inside a claw machine",
+          "visual_core": "玻璃反光、獎品孤獨感、要不要出手的心理戲。",
+          "act2_twist": "the star-shaped prize shifts just enough to look like it is staring back, making the machine feel strangely alive",
+          "arc_candidates": ["mystery_solved", "plot_twist_ending"]
+        },
+        {
+          "id": "rp_05",
+          "zh": "卡比在彈珠台邊接住一顆差點飛走的亮球",
+          "en": "A quick little character catching a pinball that almost shoots off the table like a tiny silver meteor",
+          "visual_core": "金屬反光、速度感、差點失手但最後接住的俐落可愛。",
+          "act2_twist": "the ball lands in both paws at once and reflects the whole playroom in miniature on its surface",
+          "arc_candidates": ["comedy_escalation", "gentle_discovery"]
+        }
+      ]
+    }
+  ]
+}

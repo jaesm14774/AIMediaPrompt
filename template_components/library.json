@@ -1,0 +1,1285 @@
+{
+    "_meta": {
+      "version": "2.0",
+      "design_principles": [
+        "Every component must be combinable across genres, not locked to one mood",
+        "Each option is written as a directive prompt fragment that survives translation",
+        "Coverage spans editorial CG, documentary, surreal, retro, sport, food, tech, street, fashion, fantasy, horror-lite, sci-fi, slice-of-life",
+        "A viral Reel/Post needs: instant hook, readable emotion, rewatch reward, shareable detail, and rhythm — every dimension below targets at least one of these",
+        "Avoid template clichés: prompts force specificity (one focal point, one tonal direction, one motion intent) instead of generic adjectives"
+      ],
+      "viral_factors": {
+        "hook_window_seconds": 1.5,
+        "emotion_readability": "must be nameable in one word within 2 seconds",
+        "rewatch_layer": "one detail discoverable only on second viewing",
+        "shareability_cue": "one element that triggers tag/save/quote behavior",
+        "rhythm_signature": "motion + pacing must have a recognizable beat, not just movement"
+      }
+    },
+    "components": {
+      "scene": [
+        {
+          "id": "tiny_epic_workspace",
+          "label_zh": "微小角色 vs 巨型職場",
+          "label_en": "Tiny character vs oversized workspace",
+          "tags": ["scale", "office", "cute"],
+          "prompt": "Place the subject in an oversized workspace where scale contrast is the core idea — keyboard keys as platforms, paperclips as architecture, one human-scaled hero prop anchoring the eye."
+        },
+        {
+          "id": "dreamlike_storybook_land",
+          "label_zh": "童話世界俯瞰",
+          "label_en": "Dreamlike storybook vista",
+          "tags": ["fantasy", "wide", "layered"],
+          "prompt": "Build a wide fantasy environment with three depth layers — foreground story prop, mid-ground subject action, distant mythic landmark — and one tiny character detail that rewards a second look."
+        },
+        {
+          "id": "domestic_emotional_corner",
+          "label_zh": "居家療癒角落",
+          "label_en": "Domestic emotional corner",
+          "tags": ["interior", "warm", "intimate"],
+          "prompt": "Stage the scene in a lived-in domestic corner: tactile textiles, half-drunk mug, one personal artifact telling a backstory the viewer has to infer."
+        },
+        {
+          "id": "neon_night_market",
+          "label_zh": "霓虹夜市街景",
+          "label_en": "Neon night market street",
+          "tags": ["street", "asia", "neon", "food"],
+          "prompt": "Compose a wet-asphalt night market scene with stacked neon signage, steam from a food cart catching backlight, and a single human silhouette that gives the chaos a center."
+        },
+        {
+          "id": "liminal_corridor",
+          "label_zh": "閾限空間走廊",
+          "label_en": "Liminal corridor space",
+          "tags": ["liminal", "uncanny", "minimal"],
+          "prompt": "Build a liminal interior — fluorescent corridor, hotel pool at 3am, abandoned mall — with one impossible element placed casually so the viewer notices it on rewatch."
+        },
+        {
+          "id": "rooftop_horizon",
+          "label_zh": "城市屋頂遠景",
+          "label_en": "Rooftop city horizon",
+          "tags": ["urban", "sky", "freedom"],
+          "prompt": "Set the scene on a rooftop edge with city horizon as the canvas — subject small against skyline, wind-implied hair or fabric, golden-hour or pre-storm sky doing emotional work."
+        },
+        {
+          "id": "underwater_silence",
+          "label_zh": "水下靜謐世界",
+          "label_en": "Underwater silence",
+          "tags": ["water", "calm", "surreal"],
+          "prompt": "Place the subject submerged with godrays piercing from above, suspended particles, fabric or hair drifting in slow drag — sound implied as muffled."
+        },
+        {
+          "id": "studio_seamless_pop",
+          "label_zh": "棚拍純色背景",
+          "label_en": "Studio seamless pop",
+          "tags": ["studio", "fashion", "graphic"],
+          "prompt": "Use a clean studio seamless backdrop in a single saturated tone — subject dead-center or rule-of-thirds, one prop interaction, zero environmental clutter."
+        },
+        {
+          "id": "wilderness_solitude",
+          "label_zh": "荒野孤獨地景",
+          "label_en": "Wilderness solitude",
+          "tags": ["nature", "vast", "epic"],
+          "prompt": "Frame a vast wilderness — alpine ridge, desert dune line, foggy forest — where the subject occupies less than 10% of the frame and the landscape becomes the protagonist."
+        },
+        {
+          "id": "cluttered_workshop",
+          "label_zh": "創作者凌亂工作室",
+          "label_en": "Cluttered maker workshop",
+          "tags": ["craft", "process", "authentic"],
+          "prompt": "Stage a maker's workshop with controlled chaos — tools mid-use, half-finished work, sawdust or paint residue — and one freshly completed object catching the cleanest light."
+        },
+        {
+          "id": "transit_in_between",
+          "label_zh": "通勤過渡時刻",
+          "label_en": "Transit in-between moment",
+          "tags": ["commute", "mundane", "poetic"],
+          "prompt": "Capture a transit moment — empty train car, taxi back seat at night, escalator descent — where stillness inside contrasts motion outside the window."
+        },
+        {
+          "id": "retro_arcade_glow",
+          "label_zh": "復古電玩廳光暈",
+          "label_en": "Retro arcade glow",
+          "tags": ["retro", "80s", "neon", "nostalgia"],
+          "prompt": "Build a retro arcade interior — CRT glow on faces, sticky carpet patterns, cabinet attract-mode reflections — leaning into 80s/90s nostalgia without parody."
+        },
+        {
+          "id": "kitchen_choreography",
+          "label_zh": "廚房動作編舞",
+          "label_en": "Kitchen choreography",
+          "tags": ["food", "process", "sensory"],
+          "prompt": "Frame a kitchen as a stage — flame flare, oil shimmer, knife rhythm on board — with the cook's hands doing the storytelling and ingredients staged like cast members."
+        },
+        {
+          "id": "construction_giant_machine",
+          "label_zh": "巨型機具工地",
+          "label_en": "Industrial giant machinery",
+          "tags": ["industrial", "scale", "raw"],
+          "prompt": "Place the subject against industrial machinery scale — cargo crane, refinery pipework, mine truck — where rust, scale, and one human element create cinematic awe."
+        },
+        {
+          "id": "garden_secret_pocket",
+          "label_zh": "秘密花園角落",
+          "label_en": "Secret garden pocket",
+          "tags": ["nature", "intimate", "magical"],
+          "prompt": "Discover a hidden garden pocket — overgrown greenhouse, mossy stone steps, wildflower tangle — lit as if found by accident, not staged."
+        },
+        {
+          "id": "stadium_solo_moment",
+          "label_zh": "空蕩體育場單人",
+          "label_en": "Empty stadium solo moment",
+          "tags": ["sport", "solitude", "epic"],
+          "prompt": "Place a solo athlete in an empty stadium or training ground — pre-dawn, post-match, off-season — where echoing scale amplifies a private ritual."
+        },
+        {
+          "id": "tech_clean_lab",
+          "label_zh": "科技潔淨實驗室",
+          "label_en": "Tech clean lab",
+          "tags": ["tech", "minimal", "future"],
+          "prompt": "Compose a clean tech lab — anti-static surfaces, blue task lighting, one device opened and exposed — with surgical visual hygiene and one warm human element to prevent coldness."
+        },
+        {
+          "id": "marketplace_density",
+          "label_zh": "市集人群密度",
+          "label_en": "Marketplace density",
+          "tags": ["crowd", "documentary", "color"],
+          "prompt": "Capture marketplace density — produce stacks, fabric bolts, spice mounds — with one face making eye contact through the crowd as the emotional anchor."
+        },
+        {
+          "id": "abandoned_grandeur",
+          "label_zh": "廢墟昔日輝煌",
+          "label_en": "Abandoned grandeur",
+          "tags": ["decay", "history", "melancholy"],
+          "prompt": "Frame an abandoned grand interior — theater, ballroom, factory — where decay and original ornament fight for dominance and a single beam of light picks the focal point."
+        },
+        {
+          "id": "weather_extreme_moment",
+          "label_zh": "極端天氣瞬間",
+          "label_en": "Extreme weather moment",
+          "tags": ["weather", "drama", "elemental"],
+          "prompt": "Catch an extreme weather instant — wall of rain, dust storm wall, blizzard whiteout, lightning flash — with the subject reacting honestly to the elements, not posing through them."
+        }
+      ],
+      "shot": [
+        {
+          "id": "low_angle_hero",
+          "label_zh": "低仰角英雄構圖",
+          "label_en": "Low-angle heroic framing",
+          "tags": ["power", "iconic"],
+          "prompt": "Use a low-angle hero composition — camera below waist height, strong foreground anchor, clean silhouette against negative space."
+        },
+        {
+          "id": "overhead_tableau",
+          "label_zh": "俯視全景敘事",
+          "label_en": "Overhead narrative tableau",
+          "tags": ["flatlay", "graphic", "readable"],
+          "prompt": "Use a top-down overhead tableau where the full scene reads in one glance, with one dominant focal point breaking the symmetry."
+        },
+        {
+          "id": "cinematic_medium_wide",
+          "label_zh": "電影感中廣景",
+          "label_en": "Cinematic medium-wide",
+          "tags": ["cinema", "balanced"],
+          "prompt": "Frame as a cinematic medium-wide — subject from knees up, environment doing 50% of the storytelling, lens around 35–50mm equivalent."
+        },
+        {
+          "id": "dutch_tilt_tension",
+          "label_zh": "傾斜構圖張力",
+          "label_en": "Dutch tilt tension",
+          "tags": ["unease", "kinetic"],
+          "prompt": "Use a deliberate dutch tilt — 8 to 15 degrees, motivated by emotion not gimmick — to create unease, energy, or off-balance narrative."
+        },
+        {
+          "id": "macro_intimate_detail",
+          "label_zh": "微距私密細節",
+          "label_en": "Macro intimate detail",
+          "tags": ["texture", "ASMR", "sensory"],
+          "prompt": "Shoot macro close-up where texture and material become the subject — pores, fabric weave, condensation, ink bleed — with razor-thin depth of field."
+        },
+        {
+          "id": "extreme_wide_lonely",
+          "label_zh": "極遠景孤寂感",
+          "label_en": "Extreme wide loneliness",
+          "tags": ["scale", "vast", "minimal"],
+          "prompt": "Use extreme wide framing where the subject is barely findable — environment dwarfs them, viewer has to search, payoff is the search itself."
+        },
+        {
+          "id": "shoulder_pov_immersive",
+          "label_zh": "肩後第一人稱沉浸",
+          "label_en": "Over-the-shoulder POV",
+          "tags": ["pov", "immersive", "gaming"],
+          "prompt": "Use over-the-shoulder POV that puts the viewer inside the action — partial subject occluding frame edge, attention forward, immersion through borrowed perspective."
+        },
+        {
+          "id": "symmetrical_centered",
+          "label_zh": "完美對稱中軸",
+          "label_en": "Symmetrical centered",
+          "tags": ["graphic", "calm", "iconic"],
+          "prompt": "Use rigid central symmetry — vanishing point dead center, mirrored elements, subject on the axis — for graphic calm and instant readability."
+        },
+        {
+          "id": "long_lens_compression",
+          "label_zh": "長焦壓縮空間",
+          "label_en": "Long-lens compression",
+          "tags": ["telephoto", "fashion", "cinema"],
+          "prompt": "Use long-lens compression — 85 to 200mm equivalent — to flatten layers, isolate subject from background, and create that signature fashion/cinema look."
+        },
+        {
+          "id": "wide_angle_distortion",
+          "label_zh": "廣角誇張變形",
+          "label_en": "Wide-angle exaggeration",
+          "tags": ["dynamic", "energy", "youth"],
+          "prompt": "Use wide-angle distortion — 16 to 24mm equivalent, close to subject — for kinetic energy, exaggerated foreground, and that GoPro/skate-video punch."
+        },
+        {
+          "id": "two_shot_relationship",
+          "label_zh": "雙人關係構圖",
+          "label_en": "Two-shot relationship framing",
+          "tags": ["narrative", "emotional"],
+          "prompt": "Compose a two-shot where the gap, gaze, or gesture between two subjects carries the entire story — proxemics is the message."
+        },
+        {
+          "id": "frame_within_frame",
+          "label_zh": "框中框構圖",
+          "label_en": "Frame within frame",
+          "tags": ["composition", "voyeur"],
+          "prompt": "Use frame-within-frame — doorway, window, mirror, screen — to focus attention and add a layer of voyeuristic distance."
+        },
+        {
+          "id": "split_diopter_dual_focus",
+          "label_zh": "前後雙焦點構圖",
+          "label_en": "Dual-focus split composition",
+          "tags": ["cinema", "tension"],
+          "prompt": "Stage two focal planes that both demand attention — foreground object sharp, background subject equally sharp — creating compositional tension."
+        },
+        {
+          "id": "negative_space_isolation",
+          "label_zh": "大片留白構圖",
+          "label_en": "Negative space isolation",
+          "tags": ["editorial", "calm", "minimal"],
+          "prompt": "Push subject to one corner with 70%+ negative space — quiet, editorial, room for typography or breath."
+        },
+        {
+          "id": "tracking_lateral_motion",
+          "label_zh": "側向跟拍移動",
+          "label_en": "Lateral tracking shot",
+          "tags": ["motion", "rhythm"],
+          "prompt": "Track laterally alongside the subject — parallel motion, parallax background — for that walking-with-a-friend energy or runway momentum."
+        }
+      ],
+      "lighting": [
+        {
+          "id": "warm_cool_contrast",
+          "label_zh": "冷暖對撞光線",
+          "label_en": "Warm-cool contrast lighting",
+          "tags": ["cinematic", "saturated"],
+          "prompt": "Light with warm key against cool ambient fill — tungsten-vs-twilight, sodium-vs-moonlight — for emotional separation and instant cinematic read."
+        },
+        {
+          "id": "volumetric_backlight",
+          "label_zh": "逆光體積光",
+          "label_en": "Volumetric backlight",
+          "tags": ["atmospheric", "epic"],
+          "prompt": "Use volumetric backlight with atmospheric haze — sun through dust, projector beam through fog — to carve depth and add scale."
+        },
+        {
+          "id": "soft_window_poetry",
+          "label_zh": "柔窗光詩意",
+          "label_en": "Soft poetic window light",
+          "tags": ["calm", "intimate", "vermeer"],
+          "prompt": "Use soft north-window light with gentle falloff and tactile shadows — Vermeer logic, no harshness, every transition rendered patiently."
+        },
+        {
+          "id": "single_practical_motivated",
+          "label_zh": "單一實用光源",
+          "label_en": "Single practical motivated light",
+          "tags": ["realistic", "noir"],
+          "prompt": "Light from a single visible practical — desk lamp, neon sign, phone screen, candle — and let everything else fall into honest shadow."
+        },
+        {
+          "id": "high_key_clean_pop",
+          "label_zh": "高調乾淨明亮",
+          "label_en": "High-key clean lighting",
+          "tags": ["fashion", "tech", "clean"],
+          "prompt": "Use high-key lighting — bright, low-contrast, near-shadowless — for clean editorial, tech-product, or fashion-positivity feeling."
+        },
+        {
+          "id": "low_key_chiaroscuro",
+          "label_zh": "低調明暗對比",
+          "label_en": "Low-key chiaroscuro",
+          "tags": ["drama", "noir", "art"],
+          "prompt": "Use low-key chiaroscuro — 80% shadow, one decisive highlight on the subject — Caravaggio energy, drama through restraint."
+        },
+        {
+          "id": "neon_rim_color_pop",
+          "label_zh": "霓虹邊光色彩",
+          "label_en": "Neon rim color pop",
+          "tags": ["cyberpunk", "music_video"],
+          "prompt": "Add neon rim lighting — magenta and cyan opposing rims — separating subject from background with music-video color logic."
+        },
+        {
+          "id": "golden_hour_honey",
+          "label_zh": "黃金時刻蜜光",
+          "label_en": "Golden hour honey light",
+          "tags": ["warm", "romantic", "natural"],
+          "prompt": "Use low golden-hour sun — long warm rakes, long shadows, dust catching sidelight — natural and unforced, not orange-graded fake."
+        },
+        {
+          "id": "blue_hour_melancholy",
+          "label_zh": "藍調時刻憂鬱",
+          "label_en": "Blue hour melancholy",
+          "tags": ["dusk", "quiet", "city"],
+          "prompt": "Shoot at blue hour — that 15-minute window of cobalt sky and warm interior windows — for urban melancholy without saying a word."
+        },
+        {
+          "id": "harsh_midday_brutalist",
+          "label_zh": "正午烈日硬光",
+          "label_en": "Harsh midday brutalist sun",
+          "tags": ["graphic", "summer", "modern"],
+          "prompt": "Embrace harsh midday sun — hard shadows as graphic shapes, blown highlights, surface heat implied — modern editorial defiance of golden-hour cliché."
+        },
+        {
+          "id": "underlight_uncanny",
+          "label_zh": "下方光詭譎感",
+          "label_en": "Underlight uncanny",
+          "tags": ["horror", "weird", "campfire"],
+          "prompt": "Light from below the subject's eyeline — campfire, phone screen, computer glow — creating uncanny or sacred mood depending on color."
+        },
+        {
+          "id": "split_light_psychology",
+          "label_zh": "半臉分光心理",
+          "label_en": "Split-light psychology",
+          "tags": ["portrait", "duality"],
+          "prompt": "Use split lighting — one half of face lit, one half in shadow — to telegraph internal conflict, duality, or hidden truth."
+        },
+        {
+          "id": "dappled_organic_pattern",
+          "label_zh": "葉影斑駁光",
+          "label_en": "Dappled organic light",
+          "tags": ["nature", "summer", "memory"],
+          "prompt": "Use dappled light through foliage, lace, blinds, or water — broken patterns dancing on surfaces — for memory-tinted, organic warmth."
+        },
+        {
+          "id": "studio_strobe_freeze",
+          "label_zh": "棚閃凍結瞬間",
+          "label_en": "Studio strobe freeze",
+          "tags": ["sport", "fashion", "crisp"],
+          "prompt": "Use studio strobe freeze — short flash duration, every droplet and fabric crease frozen — for sport, dance, or fashion impact."
+        },
+        {
+          "id": "screen_glow_dependent",
+          "label_zh": "螢幕光依存",
+          "label_en": "Screen-glow dependent",
+          "tags": ["digital", "modern", "isolated"],
+          "prompt": "Light the subject only with screen glow — phone, laptop, TV — flickering color shifts, modern digital-age intimacy or alienation."
+        }
+      ],
+      "style": [
+        {
+          "id": "premium_editorial_cg",
+          "label_zh": "高級感 editorial CG",
+          "label_en": "Premium editorial CG",
+          "tags": ["polished", "commercial"],
+          "prompt": "Render with premium editorial polish — restrained texture detail, clean specular discipline, high-end commercial image hygiene, no AI-generic gloss."
+        },
+        {
+          "id": "storybook_painterly",
+          "label_zh": "繪本式筆觸",
+          "label_en": "Painterly storybook style",
+          "tags": ["illustrated", "warm", "kids"],
+          "prompt": "Use painterly storybook texture — visible brush logic, simplified shape language, warm color harmony — Pixar-meets-Studio-Ghibli sensibility."
+        },
+        {
+          "id": "cinematic_realism",
+          "label_zh": "電影寫實風",
+          "label_en": "Cinematic realism",
+          "tags": ["film", "grounded"],
+          "prompt": "Aim for cinematic realism — believable materials, controlled contrast, intentional lens behavior, micro-imperfections on surfaces."
+        },
+        {
+          "id": "documentary_unposed",
+          "label_zh": "紀實未擺拍",
+          "label_en": "Documentary unposed",
+          "tags": ["real", "raw", "humanist"],
+          "prompt": "Adopt documentary unposed feel — caught-not-staged composition, real environmental sound implied, no makeup-perfect skin, dignified human truth."
+        },
+        {
+          "id": "anime_2d_modern",
+          "label_zh": "現代動畫風",
+          "label_en": "Modern anime 2D",
+          "tags": ["anime", "stylized", "vivid"],
+          "prompt": "Use modern anime 2D treatment — clean line art, cel-shading with one bounce, sky-blue and sunset-orange palette discipline, Makoto Shinkai light handling."
+        },
+        {
+          "id": "grain_film_emulation",
+          "label_zh": "底片顆粒感",
+          "label_en": "Film grain emulation",
+          "tags": ["analog", "nostalgic"],
+          "prompt": "Emulate analog film — Portra-like skin, controlled grain structure, slight halation on highlights, color shifts in shadow regions."
+        },
+        {
+          "id": "vhs_lofi_decay",
+          "label_zh": "VHS 低保真衰退",
+          "label_en": "VHS lo-fi decay",
+          "tags": ["retro", "vaporwave", "y2k"],
+          "prompt": "Apply VHS lo-fi treatment — chroma bleed, scan lines, tracking errors as accent not noise — y2k or vaporwave context, used sparingly."
+        },
+        {
+          "id": "tilt_shift_miniature",
+          "label_zh": "移軸微縮模型感",
+          "label_en": "Tilt-shift miniature",
+          "tags": ["scale", "playful"],
+          "prompt": "Use tilt-shift miniature effect — selective focus band, exaggerated saturation — making real scenes look like dioramas, real people like toys."
+        },
+        {
+          "id": "isometric_diorama",
+          "label_zh": "等角斜視場景",
+          "label_en": "Isometric diorama",
+          "tags": ["graphic", "game", "infographic"],
+          "prompt": "Render in isometric diorama — fixed 30/60 angle, stacked readable layers, every prop visible, game-and-infographic crossover."
+        },
+        {
+          "id": "claymation_stop_motion",
+          "label_zh": "黏土停格動畫",
+          "label_en": "Claymation stop-motion",
+          "tags": ["handcrafted", "tactile"],
+          "prompt": "Mimic claymation — fingerprint-textured surfaces, slight frame-to-frame jitter, handmade imperfection, Aardman/Laika DNA."
+        },
+        {
+          "id": "high_fashion_editorial",
+          "label_zh": "高時尚雜誌感",
+          "label_en": "High fashion editorial",
+          "tags": ["fashion", "vogue", "bold"],
+          "prompt": "Adopt high-fashion editorial language — confident silhouettes, willful proportions, color blocking, Vogue-Italia-level commitment to attitude."
+        },
+        {
+          "id": "street_photography_raw",
+          "label_zh": "街頭攝影生猛",
+          "label_en": "Street photography raw",
+          "tags": ["street", "decisive_moment"],
+          "prompt": "Channel raw street photography — decisive-moment timing, available light only, slight motion blur tolerated, Daido Moriyama or Alex Webb DNA."
+        },
+        {
+          "id": "minimalist_graphic_poster",
+          "label_zh": "極簡平面海報",
+          "label_en": "Minimalist graphic poster",
+          "tags": ["poster", "swiss", "design"],
+          "prompt": "Treat the frame as a graphic poster — bold typography space, two-color discipline, Swiss-design grid logic, no decoration without function."
+        },
+        {
+          "id": "noir_high_contrast_bw",
+          "label_zh": "黑白高對比硬調",
+          "label_en": "Noir high-contrast B&W",
+          "tags": ["bw", "noir", "drama"],
+          "prompt": "Use high-contrast B&W noir — crushed shadows, hot specular highlights, smoke or rain implied — 1940s detective DNA without costume cliché."
+        },
+        {
+          "id": "infrared_dreamlike",
+          "label_zh": "紅外線夢境",
+          "label_en": "Infrared dreamlike",
+          "tags": ["surreal", "alien", "art"],
+          "prompt": "Render in infrared-style palette — pink/white foliage, deep cyan skies, alien-pastoral feeling — used purposefully as dream signal."
+        },
+        {
+          "id": "comic_halftone_pop",
+          "label_zh": "漫畫網點普普",
+          "label_en": "Comic halftone pop",
+          "tags": ["comic", "pop_art", "graphic"],
+          "prompt": "Apply comic halftone treatment — Ben-Day dots, ink-line emphasis, limited primary palette — Lichtenstein-meets-Saul-Bass attitude."
+        },
+        {
+          "id": "y2k_chrome_glossy",
+          "label_zh": "Y2K 鉻光澤面",
+          "label_en": "Y2K chrome glossy",
+          "tags": ["y2k", "future_past"],
+          "prompt": "Use Y2K chrome glossy aesthetic — liquid metal text, blue-tinted lens flares, optimistic-future-from-the-past vibe, Matrix-meets-iPod era."
+        },
+        {
+          "id": "low_poly_warmth",
+          "label_zh": "低多邊形溫感",
+          "label_en": "Low-poly warmth",
+          "tags": ["geometric", "indie_game"],
+          "prompt": "Render low-poly with warmth — faceted geometry but soft ambient shading, indie-game-poster sensibility, Monument-Valley-adjacent calm."
+        }
+      ],
+      "color": [
+        {
+          "id": "duo_tone_disciplined",
+          "label_zh": "雙色嚴謹搭配",
+          "label_en": "Disciplined duotone",
+          "tags": ["graphic", "iconic"],
+          "prompt": "Restrict palette to two dominant hues plus neutrals — every accent earns its place, every saturation choice deliberate, ad-poster discipline."
+        },
+        {
+          "id": "monochrome_single_pop",
+          "label_zh": "單色加單一強調",
+          "label_en": "Monochrome plus one accent",
+          "tags": ["focus", "minimal"],
+          "prompt": "Use a near-monochrome scene plus one saturated accent — a red coat in grayscale street, a yellow taxi in blue dusk — guaranteed eye anchor."
+        },
+        {
+          "id": "muted_earth_organic",
+          "label_zh": "低彩度大地色",
+          "label_en": "Muted earth organic",
+          "tags": ["natural", "premium"],
+          "prompt": "Use muted earth tones — clay, oat, sage, stone — desaturated but not lifeless, premium-natural-brand palette discipline."
+        },
+        {
+          "id": "candy_saturated_pop",
+          "label_zh": "糖果飽和爆色",
+          "label_en": "Candy saturated pop",
+          "tags": ["fun", "youth", "z_gen"],
+          "prompt": "Crank candy saturation — bubblegum pink, lemon yellow, mint, lavender — Z-gen confectionery palette, joyful and unapologetic."
+        },
+        {
+          "id": "warm_ember_glow",
+          "label_zh": "暖橘餘燼色調",
+          "label_en": "Warm ember glow palette",
+          "tags": ["cozy", "fire"],
+          "prompt": "Anchor in ember tones — amber, ochre, terracotta, soot — fire-lit logic, comfort and slight danger coexisting."
+        },
+        {
+          "id": "cool_subzero_palette",
+          "label_zh": "極寒冷色調",
+          "label_en": "Sub-zero cool palette",
+          "tags": ["winter", "tech", "clean"],
+          "prompt": "Use a sub-zero palette — ice blue, gunmetal, frost white, deep navy — clinical or wintry depending on context, never warm."
+        },
+        {
+          "id": "gradient_synthwave",
+          "label_zh": "合成波漸層",
+          "label_en": "Synthwave gradient",
+          "tags": ["synthwave", "music"],
+          "prompt": "Use synthwave gradient — magenta to indigo to cyan — sky-as-canvas treatment, retro-future emotional shorthand."
+        },
+        {
+          "id": "sun_bleached_pastel",
+          "label_zh": "陽光褪色粉彩",
+          "label_en": "Sun-bleached pastel",
+          "tags": ["summer", "nostalgia"],
+          "prompt": "Pretend the image has been sun-bleached — pastels with reduced contrast, slight cyan shift in shadows — Polaroid-from-the-attic memory color."
+        },
+        {
+          "id": "high_contrast_primary",
+          "label_zh": "高對比三原色",
+          "label_en": "High-contrast primaries",
+          "tags": ["bauhaus", "graphic"],
+          "prompt": "Use Bauhaus primaries — red, yellow, blue, plus black and white — high-contrast, zero apology, design-history-aware."
+        },
+        {
+          "id": "tonal_harmony_serene",
+          "label_zh": "同色系和諧",
+          "label_en": "Tonal harmony serene",
+          "tags": ["calm", "interior"],
+          "prompt": "Stay within one hue family — varied value and saturation, no contrasting hue — for serene tonal harmony, interior-magazine calm."
+        },
+        {
+          "id": "teal_orange_blockbuster",
+          "label_zh": "青橘大片色調",
+          "label_en": "Teal-orange blockbuster",
+          "tags": ["cinema", "summer_movie"],
+          "prompt": "Use teal-orange blockbuster grade — skin warmed, shadows pushed teal — used knowingly as cinema reference, not by accident."
+        },
+        {
+          "id": "neon_against_concrete",
+          "label_zh": "霓虹襯水泥灰",
+          "label_en": "Neon against concrete",
+          "tags": ["urban", "cyberpunk"],
+          "prompt": "Place saturated neon accents against concrete-gray environment — color earns weight by scarcity, city-night logic."
+        }
+      ],
+      "subject_archetype": [
+        {
+          "id": "quiet_loner_observer",
+          "label_zh": "安靜旁觀者",
+          "label_en": "Quiet loner observer",
+          "tags": ["introvert", "thoughtful"],
+          "prompt": "Cast a quiet observer archetype — present but not performing, reading the room, the kind of character whose stillness implies depth."
+        },
+        {
+          "id": "competent_craftsperson",
+          "label_zh": "專業工匠",
+          "label_en": "Competent craftsperson",
+          "tags": ["skilled", "process"],
+          "prompt": "Cast a craftsperson at work — confident hands, worn tools, quiet expertise communicated through small efficient motions, not exposition."
+        },
+        {
+          "id": "underdog_in_motion",
+          "label_zh": "底層努力者",
+          "label_en": "Underdog in motion",
+          "tags": ["sport", "grind", "real"],
+          "prompt": "Cast an underdog mid-effort — sweat, breath, a body fighting through resistance — relatable struggle, no hero polish."
+        },
+        {
+          "id": "elder_with_wisdom",
+          "label_zh": "智慧長者",
+          "label_en": "Elder with weight",
+          "tags": ["age", "dignity"],
+          "prompt": "Cast an elder treated with dignity — weathered hands or face foregrounded, life implied in posture, never reduced to nostalgia prop."
+        },
+        {
+          "id": "child_unfiltered_wonder",
+          "label_zh": "孩童純粹驚奇",
+          "label_en": "Child of unfiltered wonder",
+          "tags": ["youth", "discovery"],
+          "prompt": "Cast a child mid-wonder — concentration on something adults dismiss, scale exaggerated by their smallness, never cute-cliché."
+        },
+        {
+          "id": "outsider_misfit",
+          "label_zh": "格格不入者",
+          "label_en": "Outsider misfit",
+          "tags": ["alienation", "style"],
+          "prompt": "Cast an outsider mid-context — overdressed at the bus stop, calm in the chaos, the wrong-looking person who's actually the right one."
+        },
+        {
+          "id": "duo_silent_understanding",
+          "label_zh": "默契雙人",
+          "label_en": "Silent-understanding duo",
+          "tags": ["bond", "emotional"],
+          "prompt": "Cast a duo with silent understanding — old friends, working partners, parent-and-child — communicating through shared rhythm, not dialogue."
+        },
+        {
+          "id": "anthropomorphic_creature",
+          "label_zh": "擬人化生物",
+          "label_en": "Anthropomorphic creature",
+          "tags": ["fantasy", "charm"],
+          "prompt": "Cast an anthropomorphic creature — tiny clothes, human posture, animal logic — charm through specificity of behavior, not generic cuteness."
+        },
+        {
+          "id": "object_as_protagonist",
+          "label_zh": "物件主角化",
+          "label_en": "Object as protagonist",
+          "tags": ["surreal", "branding"],
+          "prompt": "Treat an object as the protagonist — a single shoe, a kettle, a lamp — given screen presence usually reserved for human leads."
+        },
+        {
+          "id": "crowd_as_one_character",
+          "label_zh": "群體即角色",
+          "label_en": "Crowd as one character",
+          "tags": ["mass", "documentary"],
+          "prompt": "Treat the crowd as a single character — synchronized motion, collective breath, one face surfacing then disappearing back into the body."
+        },
+        {
+          "id": "dual_self_reflection",
+          "label_zh": "雙重自我",
+          "label_en": "Dual self confrontation",
+          "tags": ["identity", "art"],
+          "prompt": "Stage a confrontation between two versions of the same person — mirror, doppelganger, before-and-after — internal conflict externalized."
+        }
+      ],
+      "emotion": [
+        {
+          "id": "bittersweet_loneliness",
+          "label_zh": "微苦孤獨感",
+          "label_en": "Bittersweet loneliness",
+          "tags": ["melancholy", "dignified"],
+          "prompt": "Aim for bittersweet loneliness with quiet dignity — not empty sadness, not self-pity, the kind that includes acceptance."
+        },
+        {
+          "id": "warm_healing",
+          "label_zh": "療癒溫暖感",
+          "label_en": "Warm healing mood",
+          "tags": ["comfort", "safe"],
+          "prompt": "Aim for warm healing — softness, safety, the feeling of being held — instantly nameable in one second."
+        },
+        {
+          "id": "playful_absurdity",
+          "label_zh": "荒謬可愛反差",
+          "label_en": "Playful absurd contrast",
+          "tags": ["humor", "weird"],
+          "prompt": "Lean into playful absurdity — contrast and timing as the joke, not chaos, the smile-and-rewind kind of humor."
+        },
+        {
+          "id": "tense_anticipation",
+          "label_zh": "緊張未發生感",
+          "label_en": "Tense anticipation",
+          "tags": ["thriller", "edge"],
+          "prompt": "Build tense anticipation — something is about to happen but hasn't yet, every detail loaded, viewer breath held."
+        },
+        {
+          "id": "triumphant_release",
+          "label_zh": "勝利釋放感",
+          "label_en": "Triumphant release",
+          "tags": ["sport", "achievement"],
+          "prompt": "Capture triumphant release — the exhale after effort, arms unclenching, the moment after winning, not the act itself."
+        },
+        {
+          "id": "righteous_focus",
+          "label_zh": "專注鋒利感",
+          "label_en": "Sharp righteous focus",
+          "tags": ["intent", "skill"],
+          "prompt": "Render sharp focus emotion — total absorption in task, world narrowed to one target, no awareness of camera or audience."
+        },
+        {
+          "id": "uncanny_unease",
+          "label_zh": "詭譎不安感",
+          "label_en": "Uncanny unease",
+          "tags": ["liminal", "horror_lite"],
+          "prompt": "Create uncanny unease — almost-right but slightly wrong, no jump scare, the kind that makes viewers pause and squint."
+        },
+        {
+          "id": "tender_devotion",
+          "label_zh": "溫柔奉獻感",
+          "label_en": "Tender devotion",
+          "tags": ["love", "care"],
+          "prompt": "Show tender devotion — care expressed through small gestures, attention to another's needs, love without performance."
+        },
+        {
+          "id": "yearning_longing",
+          "label_zh": "渴望未及感",
+          "label_en": "Yearning longing",
+          "tags": ["desire", "distance"],
+          "prompt": "Express yearning — gaze toward something just out of reach, body forward, want made visible through posture not face."
+        },
+        {
+          "id": "quiet_pride",
+          "label_zh": "靜默驕傲",
+          "label_en": "Quiet pride",
+          "tags": ["dignity", "earned"],
+          "prompt": "Show quiet pride — small smile, straight shoulders, the look of someone who knows what they did and isn't going to brag."
+        },
+        {
+          "id": "righteous_anger_contained",
+          "label_zh": "克制的憤怒",
+          "label_en": "Contained righteous anger",
+          "tags": ["intensity", "controlled"],
+          "prompt": "Render contained anger — jaw set, breath measured, fury held under tension — far more powerful than expression."
+        },
+        {
+          "id": "delight_caught_off_guard",
+          "label_zh": "措手不及的喜悅",
+          "label_en": "Delight caught off guard",
+          "tags": ["joy", "spontaneous"],
+          "prompt": "Catch unguarded delight — pre-laugh moment, eyes lighting before mouth moves, the joy you can't fake."
+        },
+        {
+          "id": "exhausted_acceptance",
+          "label_zh": "疲憊接受感",
+          "label_en": "Exhausted acceptance",
+          "tags": ["adult", "honest"],
+          "prompt": "Show exhausted acceptance — the seat-edge sit, the long exhale, the it-is-what-it-is look that adults recognize immediately."
+        },
+        {
+          "id": "wonder_at_first_sight",
+          "label_zh": "初見驚奇感",
+          "label_en": "Wonder at first sight",
+          "tags": ["awe", "discovery"],
+          "prompt": "Capture first-sight wonder — the half-second before words, mouth slightly parted, body still — encountering the impossible as plausible."
+        },
+        {
+          "id": "reckless_freedom",
+          "label_zh": "魯莽自由感",
+          "label_en": "Reckless freedom",
+          "tags": ["youth", "wild"],
+          "prompt": "Express reckless freedom — body abandoned to motion, no fear of consequence, the kind of moment people post and caption with one word."
+        }
+      ],
+      "hook": [
+        {
+          "id": "scale_contrast",
+          "label_zh": "尺寸反差鉤",
+          "label_en": "Scale contrast hook",
+          "tags": ["instant", "visual"],
+          "prompt": "Make the first read about scale contrast — tiny vs huge, wide vs narrow — instant curiosity in under a second."
+        },
+        {
+          "id": "unexpected_role",
+          "label_zh": "不合理角色",
+          "label_en": "Unexpected role hook",
+          "tags": ["concept", "humor"],
+          "prompt": "Set up an unexpected role — wrong character in right uniform, or right character in wrong context — readable in one second."
+        },
+        {
+          "id": "quiet_emotional_reveal",
+          "label_zh": "安靜情緒揭露",
+          "label_en": "Quiet emotional reveal",
+          "tags": ["sticky", "rewatch"],
+          "prompt": "Use a quiet emotional reveal — subtle, sticky, one detail that rewards a second look and a third share."
+        },
+        {
+          "id": "pattern_break",
+          "label_zh": "模式破壞鉤",
+          "label_en": "Pattern interrupt hook",
+          "tags": ["disruption", "viral"],
+          "prompt": "Break an expected visual pattern — symmetry interrupted, repetition with one wrong unit — disruption forces attention."
+        },
+        {
+          "id": "wtf_first_frame",
+          "label_zh": "首幀震撼",
+          "label_en": "WTF first frame",
+          "tags": ["shock", "scroll_stop"],
+          "prompt": "Lead with a first frame that makes the viewer say 'wait, what' — impossible juxtaposition, mid-action freeze, scroll-stop bait."
+        },
+        {
+          "id": "promise_of_payoff",
+          "label_zh": "承諾即將揭曉",
+          "label_en": "Promise of payoff",
+          "tags": ["narrative", "tease"],
+          "prompt": "Frame the opening as a promise — something is being prepared, hidden, or about to be revealed — viewer stays for the answer."
+        },
+        {
+          "id": "relatable_mirror",
+          "label_zh": "映照觀眾日常",
+          "label_en": "Relatable mirror hook",
+          "tags": ["relatable", "share"],
+          "prompt": "Mirror an exact relatable moment — the 3pm slump, the elevator silence, the parking-lot post-shop sit — instant 'this is me' recognition."
+        },
+        {
+          "id": "before_after_implied",
+          "label_zh": "暗示前後變化",
+          "label_en": "Before-after implied",
+          "tags": ["transformation"],
+          "prompt": "Imply transformation without showing it linearly — one frame containing both states, viewer's brain fills the gap."
+        },
+        {
+          "id": "controversy_bait_tasteful",
+          "label_zh": "得體爭議鉤",
+          "label_en": "Tasteful controversy hook",
+          "tags": ["debate", "comments"],
+          "prompt": "Set up a tasteful debate trigger — pineapple-on-pizza-level disagreement — comment-section gold without actual harm."
+        },
+        {
+          "id": "satisfying_completion",
+          "label_zh": "解壓完成感",
+          "label_en": "Satisfying completion hook",
+          "tags": ["asmr", "process"],
+          "prompt": "Open with the promise of satisfying completion — neat slice, perfect fit, clean reveal — process-porn instinct."
+        },
+        {
+          "id": "mystery_object_or_action",
+          "label_zh": "神秘物件或動作",
+          "label_en": "Mystery object or action",
+          "tags": ["curiosity", "dwell"],
+          "prompt": "Show an unfamiliar object or unidentifiable action — viewer must keep watching to learn what it is, dwell-time engineered."
+        },
+        {
+          "id": "cultural_inside_joke",
+          "label_zh": "文化內梗",
+          "label_en": "Cultural inside joke",
+          "tags": ["niche", "tribal"],
+          "prompt": "Plant a niche cultural reference visible only to the in-group — local dialect prop, subculture detail — tribe-recognition trigger."
+        }
+      ],
+      "motion": [
+        {
+          "id": "slow_push_in",
+          "label_zh": "慢推鏡",
+          "label_en": "Slow push-in",
+          "tags": ["intimate", "build"],
+          "prompt": "Use a slow push-in — gradual zoom or dolly toward emotional center, scene logic stays fixed, intensity rises."
+        },
+        {
+          "id": "parallax_flythrough",
+          "label_zh": "空間視差滑行",
+          "label_en": "Parallax fly-through",
+          "tags": ["depth", "reveal"],
+          "prompt": "Use a parallax fly-through — camera moves through layered depth, subject locked as anchor, foreground elements pass like punctuation."
+        },
+        {
+          "id": "reveal_then_hold",
+          "label_zh": "先揭露後停留",
+          "label_en": "Reveal then hold",
+          "tags": ["payoff", "breath"],
+          "prompt": "Reveal the scene quickly, then hold long enough for the emotional payoff to land — silence after the punchline."
+        },
+        {
+          "id": "match_cut_transformation",
+          "label_zh": "匹配剪接變形",
+          "label_en": "Match-cut transformation",
+          "tags": ["editing", "kubrick"],
+          "prompt": "Use match-cut between two scenes that share shape or motion — bone to spaceship logic — sells transformation through visual rhyme."
+        },
+        {
+          "id": "whip_pan_energy",
+          "label_zh": "甩鏡爆發力",
+          "label_en": "Whip pan energy",
+          "tags": ["kinetic", "scene_change"],
+          "prompt": "Use a whip pan to slingshot between moments — motion-blurred transition, kinetic energy carried into next beat."
+        },
+        {
+          "id": "static_lock_off",
+          "label_zh": "鎖定靜止鏡頭",
+          "label_en": "Static lock-off",
+          "tags": ["calm", "tableau"],
+          "prompt": "Lock the camera completely still — let only subjects move — tableau-vivant logic, every motion inside frame becomes meaningful."
+        },
+        {
+          "id": "speed_ramp_punctuation",
+          "label_zh": "變速強調節奏",
+          "label_en": "Speed-ramp punctuation",
+          "tags": ["rhythm", "edit"],
+          "prompt": "Use speed ramps — normal to slow at the impact moment, fast through transitions — engineered viewer-breath rhythm."
+        },
+        {
+          "id": "orbit_around_subject",
+          "label_zh": "繞主體環繞",
+          "label_en": "Orbit around subject",
+          "tags": ["product", "reveal"],
+          "prompt": "Orbit smoothly around the subject — 90 to 360 degrees — every angle adding information, common in product but underused in narrative."
+        },
+        {
+          "id": "vertical_descent_or_rise",
+          "label_zh": "垂直升降運鏡",
+          "label_en": "Vertical descent or rise",
+          "tags": ["scale", "epic"],
+          "prompt": "Move camera vertically — drone rise revealing scale, top-down descent into intimacy — vertical motion as emotional escalator."
+        },
+        {
+          "id": "stop_motion_jitter_charm",
+          "label_zh": "定格抖動魅力",
+          "label_en": "Stop-motion jitter charm",
+          "tags": ["handcraft", "indie"],
+          "prompt": "Use stop-motion-style jitter — slight inter-frame inconsistency — handcraft signal, indie warmth, anti-AI-perfection statement."
+        },
+        {
+          "id": "loop_seamless_hypnotic",
+          "label_zh": "無縫循環催眠",
+          "label_en": "Seamless hypnotic loop",
+          "tags": ["loop", "rewatch"],
+          "prompt": "Engineer a seamless loop — end frame matches start frame, viewer can't tell where it began — engineered rewatchability."
+        },
+        {
+          "id": "freeze_frame_punctuation",
+          "label_zh": "凍格停頓",
+          "label_en": "Freeze-frame punctuation",
+          "tags": ["editing", "highlight"],
+          "prompt": "Use sudden freeze-frame at peak moment — motion locks, text or sound enters, emphasis weaponized."
+        },
+        {
+          "id": "chaotic_handheld_real",
+          "label_zh": "手持紀實感",
+          "label_en": "Chaotic handheld realism",
+          "tags": ["docu", "raw"],
+          "prompt": "Use honest handheld — micro-shake, breath rhythm visible, viewer feels embodied — documentary or first-person POV signal."
+        },
+        {
+          "id": "rhythmic_to_beat",
+          "label_zh": "對拍節奏剪接",
+          "label_en": "Rhythmic to-beat editing",
+          "tags": ["music", "trend"],
+          "prompt": "Cut to beat — every action lands on a music hit, rhythm is the structure — trend-aware short-form DNA."
+        }
+      ],
+      "sound_design_cue": [
+        {
+          "id": "asmr_tactile_focus",
+          "label_zh": "ASMR 觸感聚焦",
+          "label_en": "ASMR tactile focus",
+          "tags": ["asmr", "satisfaction"],
+          "prompt": "Imply ASMR sound logic — close-mic textures, paper crinkle, ice clink, fabric slide — sound becomes the reason to wear headphones."
+        },
+        {
+          "id": "ambient_room_tone_quiet",
+          "label_zh": "環境底噪寧靜",
+          "label_en": "Ambient room tone quiet",
+          "tags": ["calm", "real"],
+          "prompt": "Imply quiet room tone — fridge hum, distant street, no music — silence as the loudest design choice."
+        },
+        {
+          "id": "rising_synth_swell",
+          "label_zh": "合成器漸強",
+          "label_en": "Rising synth swell",
+          "tags": ["epic", "build"],
+          "prompt": "Imply a rising synth swell — pad pushing toward crescendo, sub-bass entering — emotional escalator, sci-fi or sport hype."
+        },
+        {
+          "id": "lofi_warm_loop",
+          "label_zh": "低保真暖循環",
+          "label_en": "Lo-fi warm loop",
+          "tags": ["chill", "study"],
+          "prompt": "Imply a lo-fi warm loop — crackle, brushed snare, mellow piano — study-with-me, late-night-calm signal."
+        },
+        {
+          "id": "single_diegetic_punch",
+          "label_zh": "單一現場音擊",
+          "label_en": "Single diegetic punch",
+          "tags": ["impact", "minimal"],
+          "prompt": "Imply one decisive diegetic sound — door slam, knife hit, glass clink — emphasized by silence around it, more cinematic than score."
+        },
+        {
+          "id": "sudden_silence_drop",
+          "label_zh": "驟然安靜",
+          "label_en": "Sudden silence drop",
+          "tags": ["tension", "drama"],
+          "prompt": "Imply sudden silence — music or noise stops mid-phrase — viewer's body tenses, attention sharpens involuntarily."
+        },
+        {
+          "id": "voiceover_intimate_close",
+          "label_zh": "貼耳獨白",
+          "label_en": "Intimate close voiceover",
+          "tags": ["narrative", "podcast"],
+          "prompt": "Imply close-mic voiceover — breath audible, conversational not performative — letting-you-in-on-a-secret intimacy."
+        },
+        {
+          "id": "trending_audio_aware",
+          "label_zh": "趨勢音檔感",
+          "label_en": "Trending audio aware",
+          "tags": ["meme", "reach"],
+          "prompt": "Compose with awareness of a trending audio rhythm — beats and visual cuts pre-aligned for that audio's structure — algorithm-aware."
+        },
+        {
+          "id": "field_recording_layered",
+          "label_zh": "實地錄音疊層",
+          "label_en": "Layered field recording",
+          "tags": ["docu", "authentic"],
+          "prompt": "Imply layered field recording — birds, distant traffic, footsteps on specific surface — texture stacked for honest sense of place."
+        }
+      ],
+      "text_overlay_strategy": [
+        {
+          "id": "no_text_pure_visual",
+          "label_zh": "全無文字純視覺",
+          "label_en": "No text pure visual",
+          "tags": ["cinematic", "fashion"],
+          "prompt": "Use zero text overlay — visual carries 100% of the meaning — confidence move, premium signal."
+        },
+        {
+          "id": "single_punchline_caption",
+          "label_zh": "單句金句字幕",
+          "label_en": "Single punchline caption",
+          "tags": ["meme", "share"],
+          "prompt": "Drop one perfectly weighted line of text — quotable, screenshot-worthy, placed where eye lands second."
+        },
+        {
+          "id": "kinetic_typography_beat",
+          "label_zh": "動態字幕對拍",
+          "label_en": "Kinetic typography beat",
+          "tags": ["edit", "energy"],
+          "prompt": "Use kinetic typography on beat — words snap in with motion, scale-and-position varies, treated as character not subtitle."
+        },
+        {
+          "id": "handwritten_personal",
+          "label_zh": "手寫私感字",
+          "label_en": "Handwritten personal note",
+          "tags": ["intimate", "diary"],
+          "prompt": "Use handwritten-style text overlay — diary feeling, personal voice, trembling slightly imperfect — anti-corporate intimacy."
+        },
+        {
+          "id": "data_label_infographic",
+          "label_zh": "資料標籤圖解",
+          "label_en": "Data-label infographic",
+          "tags": ["info", "tutorial"],
+          "prompt": "Use clean data labels — arrows pointing to elements, numeric callouts — infographic logic, useful for explainer or tutorial."
+        },
+        {
+          "id": "lyric_sync_caption",
+          "label_zh": "歌詞同步字",
+          "label_en": "Lyric-sync caption",
+          "tags": ["music", "trend"],
+          "prompt": "Sync caption to lyric — each line appears on the beat it's sung, karaoke-but-cinematic — trend-aware emotional shorthand."
+        },
+        {
+          "id": "single_word_iconic",
+          "label_zh": "單字標題感",
+          "label_en": "Single word iconic",
+          "tags": ["poster", "minimal"],
+          "prompt": "Use one iconic word in poster-grade typography — one word doing all the work, magazine-cover discipline."
+        }
+      ],
+      "rewatch_layer": [
+        {
+          "id": "background_easter_egg",
+          "label_zh": "背景彩蛋細節",
+          "label_en": "Background easter egg",
+          "tags": ["detail", "rewatch"],
+          "prompt": "Plant one easter egg in the background — tiny visual joke, hidden character, signage callback — found only on second viewing."
+        },
+        {
+          "id": "second_meaning_caption",
+          "label_zh": "雙關意義文字",
+          "label_en": "Double-meaning caption",
+          "tags": ["wit", "share"],
+          "prompt": "Write a caption with two readings — first pass funny, second pass emotional, or vice versa — comment-section gold."
+        },
+        {
+          "id": "subliminal_recurring_motif",
+          "label_zh": "潛意識重複母題",
+          "label_en": "Subliminal recurring motif",
+          "tags": ["art", "puzzle"],
+          "prompt": "Hide a recurring motif — same color, same shape, same number appearing three times — viewer notices only on rewatch."
+        },
+        {
+          "id": "expression_micro_beat",
+          "label_zh": "微表情瞬間",
+          "label_en": "Micro-expression beat",
+          "tags": ["acting", "emotion"],
+          "prompt": "Insert a micro-expression — a flicker of doubt, glance, smile-correction — half a second long, changes the whole meaning."
+        },
+        {
+          "id": "foreshadow_payoff_in_frame",
+          "label_zh": "畫面內伏筆",
+          "label_en": "In-frame foreshadow",
+          "tags": ["narrative", "smart"],
+          "prompt": "Plant a foreshadow that pays off later in the same shot — object that becomes important, sound that returns — tight narrative satisfaction."
+        },
+        {
+          "id": "unusual_perspective_invite",
+          "label_zh": "不尋常視角邀請",
+          "label_en": "Unusual perspective invite",
+          "tags": ["art", "art_direction"],
+          "prompt": "Use an unusual perspective that takes a beat to parse — viewer 'gets it' on second look — perspective puzzle as engagement."
+        }
+      ],
+      "narrative_structure": [
+        {
+          "id": "cold_open_drop_in",
+          "label_zh": "冷開場直入",
+          "label_en": "Cold-open drop in",
+          "tags": ["fast", "scroll_stop"],
+          "prompt": "Drop the viewer in mid-action — no setup, context inferred while watching — instant scroll-stop, exposition forbidden."
+        },
+        {
+          "id": "setup_payoff_classic",
+          "label_zh": "鋪陳收尾古典",
+          "label_en": "Classic setup-payoff",
+          "tags": ["narrative", "satisfying"],
+          "prompt": "Set up a clean expectation in first beats, deliver a clean payoff in last beats — Aesop discipline at TikTok speed."
+        },
+        {
+          "id": "subverted_expectation",
+          "label_zh": "預期顛覆",
+          "label_en": "Subverted expectation",
+          "tags": ["twist", "humor"],
+          "prompt": "Build toward an obvious outcome, then deliver the opposite — controlled subversion, the twist must feel earned not random."
+        },
+        {
+          "id": "loop_returns_to_start",
+          "label_zh": "首尾循環",
+          "label_en": "Loop returns to start",
+          "tags": ["loop", "elegant"],
+          "prompt": "Structure the piece as a loop — last frame leads back to first frame — engineered for replay and ambient watching."
+        },
+        {
+          "id": "list_format_count",
+          "label_zh": "清單型計數",
+          "label_en": "List-format count",
+          "tags": ["info", "skim"],
+          "prompt": "Use a list structure — three or five beats, numbered visually or rhythmically — content-creator backbone for skimmable depth."
+        },
+        {
+          "id": "before_during_after",
+          "label_zh": "前中後三段",
+          "label_en": "Before-during-after",
+          "tags": ["transformation"],
+          "prompt": "Tell a transformation in three beats — before, during, after — process-content backbone, satisfaction guaranteed."
+        },
+        {
+          "id": "single_unbroken_moment",
+          "label_zh": "單一不間斷瞬間",
+          "label_en": "Single unbroken moment",
+          "tags": ["realtime", "art"],
+          "prompt": "Hold one unbroken moment — no cuts, no time jumps — real-time discipline, the brave format."
+        },
+        {
+          "id": "question_then_answer",
+          "label_zh": "提問再回答",
+          "label_en": "Question then answer",
+          "tags": ["explainer", "hook"],
+          "prompt": "Open with a question that demands an answer — visually or in text — viewer commits because their brain wants resolution."
+        },
+        {
+          "id": "anti_climax_intentional",
+          "label_zh": "刻意反高潮",
+          "label_en": "Intentional anti-climax",
+          "tags": ["humor", "art"],
+          "prompt": "Build energy toward something big, then deliberately undercut it — the joke or art statement is the deflation itself."
+        }
+      ]
+    },
+    "preset_combos": [
+      {
+        "id": "tiny_office_warmth",
+        "label_zh": "微型辦公室療癒",
+        "ingredients": {
+          "scene": "tiny_epic_workspace",
+          "shot": "low_angle_hero",
+          "lighting": "soft_window_poetry",
+          "style": "premium_editorial_cg",
+          "color": "warm_ember_glow",
+          "subject_archetype": "anthropomorphic_creature",
+          "emotion": "warm_healing",
+          "hook": "scale_contrast",
+          "motion": "slow_push_in",
+          "sound_design_cue": "asmr_tactile_focus",
+          "text_overlay_strategy": "no_text_pure_visual",
+          "rewatch_layer": "background_easter_egg",
+          "narrative_structure": "single_unbroken_moment"
+        }
+      },
+      {
+        "id": "neon_solitude_loop",
+        "label_zh": "霓虹孤獨循環",
+        "ingredients": {
+          "scene": "neon_night_market",
+          "shot": "long_lens_compression",
+          "lighting": "neon_rim_color_pop",
+          "style": "cinematic_realism",
+          "color": "neon_against_concrete",
+          "subject_archetype": "quiet_loner_observer",
+          "emotion": "bittersweet_loneliness",
+          "hook": "relatable_mirror",
+          "motion": "loop_seamless_hypnotic",
+          "sound_design_cue": "lofi_warm_loop",
+          "text_overlay_strategy": "single_punchline_caption",
+          "rewatch_layer": "second_meaning_caption",
+          "narrative_structure": "loop_returns_to_start"
+        }
+      },
+      {
+        "id": "absurd_pattern_break",
+        "label_zh": "荒謬模式破壞",
+        "ingredients": {
+          "scene": "studio_seamless_pop",
+          "shot": "symmetrical_centered",
+          "lighting": "high_key_clean_pop",
+          "style": "minimalist_graphic_poster",
+          "color": "high_contrast_primary",
+          "subject_archetype": "object_as_protagonist",
+          "emotion": "playful_absurdity",
+          "hook": "pattern_break",
+          "motion": "freeze_frame_punctuation",
+          "sound_design_cue": "single_diegetic_punch",
+          "text_overlay_strategy": "single_word_iconic",
+          "rewatch_layer": "subliminal_recurring_motif",
+          "narrative_structure": "subverted_expectation"
+        }
+      },
+      {
+        "id": "stadium_grit_triumph",
+        "label_zh": "球場汗水勝利",
+        "ingredients": {
+          "scene": "stadium_solo_moment",
+          "shot": "low_angle_hero",
+          "lighting": "harsh_midday_brutalist",
+          "style": "documentary_unposed",
+          "color": "teal_orange_blockbuster",
+          "subject_archetype": "underdog_in_motion",
+          "emotion": "triumphant_release",
+          "hook": "promise_of_payoff",
+          "motion": "speed_ramp_punctuation",
+          "sound_design_cue": "rising_synth_swell",
+          "text_overlay_strategy": "kinetic_typography_beat",
+          "rewatch_layer": "expression_micro_beat",
+          "narrative_structure": "before_during_after"
+        }
+      },
+      {
+        "id": "liminal_uncanny_dwell",
+        "label_zh": "閾限詭譎滯留",
+        "ingredients": {
+          "scene": "liminal_corridor",
+          "shot": "symmetrical_centered",
+          "lighting": "single_practical_motivated",
+          "style": "vhs_lofi_decay",
+          "color": "cool_subzero_palette",
+          "subject_archetype": "outsider_misfit",
+          "emotion": "uncanny_unease",
+          "hook": "mystery_object_or_action",
+          "motion": "static_lock_off",
+          "sound_design_cue": "ambient_room_tone_quiet",
+          "text_overlay_strategy": "no_text_pure_visual",
+          "rewatch_layer": "subliminal_recurring_motif",
+          "narrative_structure": "cold_open_drop_in"
+        }
+      }
+    ]
+  }

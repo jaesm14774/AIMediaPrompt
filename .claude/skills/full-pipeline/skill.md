@@ -17,10 +17,11 @@ Research → Generate Prompt (通過 S 級硬門檻) → Imagine (image ×4 / vi
 ```
 
 **參數說明：**
-- `[主題]`：核心 IP 或關鍵字（如 "Kirby", "Mario"）
+- `[主題]`：核心 IP 或關鍵字（如 "Kirby", "Mario"）；**可省略**，搭配 `--auto-trend` 自動決定
 - `--platforms <平台>`：Viral Score 評估目標平台（預設：`fb`）
 - `--type <類型>`：媒體類型 `image`（預設）或 `video`
 - `--dry-run`：預覽模式，不實際呼叫 API
+- `--auto-trend`：**自動偵測今日台灣趨勢**，省略主題也能跑完整 pipeline；主題模糊時也可加上此旗標增強新鮮感
 
 **範例：**
 ```bash
@@ -28,6 +29,9 @@ Research → Generate Prompt (通過 S 級硬門檻) → Imagine (image ×4 / vi
 /full-pipeline "Kirby" --type image --platforms fb
 /full-pipeline "水彩告白" --type video
 /full-pipeline "Mario" --dry-run
+/full-pipeline --auto-trend                        # 主題讓 AI 自動決定
+/full-pipeline --auto-trend --type video           # 自動找趨勢 + 生影片
+/full-pipeline "Kirby" --auto-trend               # 指定 IP + 讓趨勢決定情境角度
 ```
 
 ---
@@ -49,17 +53,37 @@ Research → Generate Prompt (通過 S 級硬門檻) → Imagine (image ×4 / vi
       └─ 對每個 S 級 Prompt Template：
           ├─ /imagine-prompt → image 產生 4 個 Prompt；video 產生 2 個 Prompt
           ├─ image 模式：python scripts/generate_media_gemini.py × 4
-          │   → 存入 Local_Media/<TemplateName>/01~04.png
+          │   → 存入 Local_Media/<YYYY-MM-DD-TemplateName>/01~04.png
           ├─ video 模式：先生成 2 張 reference 圖，再生成 2 支影片
-          │   → Local_Media/<TemplateName>/01~02.png
-          │   → Local_Media/<TemplateName>/01~02.mp4
+          │   → Local_Media/<YYYY-MM-DD-TemplateName>/01~02.png
+          │   → Local_Media/<YYYY-MM-DD-TemplateName>/01~02.mp4
+          ├─ python scripts/evaluate_media_output.py Local_Media/<YYYY-MM-DD-TemplateName>
+          │   → logs/media_evaluations/<YYYY-MM-DD-TemplateName>-evaluation.json
           ├─ /viral-score
           │   → 未達 S 級即停止，不上傳
-          └─ python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+          └─ python scripts/auto_upload_media.py "<YYYY-MM-DD-TemplateName>" --folder "<YYYY-MM-DD-TemplateName>"
               → 僅在 S 級時執行，上傳 URL 到檔案（不刪除本機媒體）
 ```
 
 ---
+
+## Phase 0（僅 --auto-trend 時）：趨勢偵測
+
+**若使用者傳入 `--auto-trend` 旗標，在 Phase 1 之前先執行：**
+
+```
+Step 0A: 執行 /auto-trend-scout
+  → 取得今日熱門話題 Top 5 + 每個話題的創意切入角度
+
+Step 0B: 自動選取最佳話題
+  → 選「推薦優先開發」排名第一的話題 + 推薦角度
+  → 若有指定 IP（如 "Kirby --auto-trend"），把趨勢角度嫁接到該 IP 上
+    範例：Kirby + 「今日颱風警報」→ Kirby 以荒謬正經的態度準備防颱物資
+
+Step 0C: 將偵測結果傳給 Phase 1
+  → 主題 = {趨勢話題} 或 {指定IP + 趨勢情境}
+  → 帶入 /auto-produce-prompt 作為初始主題輸入
+```
 
 ## Phase 1：內容創作（委派給 subagent）
 
@@ -108,7 +132,8 @@ Step 2A: 若 --type image，逐一呼叫 Gemini API（4 次）
     --template "<TemplateName>" \
     --index N \
     --type image
-  → 存入 Local_Media/<TemplateName>/01.png ~ 04.png
+  → 腳本自動建立 Local_Media/<YYYY-MM-DD-TemplateName>/（日期前綴自動加入）
+  → 存入 Local_Media/<YYYY-MM-DD-TemplateName>/01.png ~ 04.png
   → API 不穩、限速、單筆失敗時直接記錄，保留成功張數繼續
   → 僅在 4 / 4 全部失敗時才重試或標記需人工介入
 
@@ -126,19 +151,28 @@ Step 2B: 若 --type video，必須走 image-to-video 流程（禁止文字直出
     --template "<TemplateName>" \
     --index N \
     --type video \
-    --reference-image "Local_Media/<TemplateName>/0N.png"
+    --reference-image "Local_Media/<YYYY-MM-DD-TemplateName>/0N.png"
 
-  → 存入 Local_Media/<TemplateName>/01.png ~ 02.png 與 01.mp4 ~ 02.mp4
+  → 存入 Local_Media/<YYYY-MM-DD-TemplateName>/01.png ~ 02.png 與 01.mp4 ~ 02.mp4
   → 若 reference 圖只成功部分，僅對成功的 reference 圖繼續生成影片
   → API 不穩、限速、單筆失敗時直接記錄，不回頭補生失敗項
   → 僅在 reference 圖 2 / 2 全失敗，或可執行的影片生成全失敗時才重試或標記需人工介入
+
+Step 2.5: python scripts/evaluate_media_output.py Local_Media/<YYYY-MM-DD-TemplateName> \
+    --prompt-file Prompt/Image/<TemplateName>.md
+  （影片用：--prompt-file Prompt/Video/<TemplateName>.md，並可加 --frame-count 4）
+  → 評估項目：主體辨識 / 構圖 / 情緒停留感 / 技術品質 / 社群首屏吸睛度
+  → 報告輸出到 logs/media_evaluations/<TemplateName>-evaluation.json
+  → 若整批成品均分 < 7.0：標記「視覺品質偏弱」，記錄後仍繼續（不阻擋流程）
+  → 若單張 < 6.0 且同批有其他成功項：記錄該檔名，不重生
+  → 評估結果中的 reuse_components 和 reject_components 自動更新 template_components/library.json
 
 Step 3: /viral-score "Post/Test/[file].md" --type [image|video] --platform fb
   → 若未達 S 級（不是只有分數不足，也包含未通過硬門檻）：立即停止，不進入上傳
   → 若達 S 級：繼續 Step 4
 
-Step 4: python scripts/auto_upload_media.py "<TemplateName>" --folder "<TemplateName>"
-  → 上傳 Local_Media/<TemplateName>/ 內的媒體到 ImgBB/Cloudinary
+Step 4: python scripts/auto_upload_media.py "<YYYY-MM-DD-TemplateName>" --folder "<YYYY-MM-DD-TemplateName>"
+  → 上傳 Local_Media/<YYYY-MM-DD-TemplateName>/ 內的媒體到 ImgBB/Cloudinary
   → 將 URL 插入相關檔案
   → ⚠️ 不刪除本機媒體檔案
 
@@ -183,19 +217,21 @@ Full Pipeline 完成報告
 ━━━ Phase 2+3 結果 ━━━
 Template 1：Kirby-文藝復興油畫
   ├─ 媒體生成：4 / 4 張
+  ├─ 成品評估：avg 8.7/10（logs/media_evaluations/2026-01-07-Kirby-文藝復興油畫-evaluation.json）
   ├─ Viral Score：S 級 (9.3)
   └─ URL 上傳：✅ 已插入 Prompt 檔案
-  📁 Local_Media/Kirby-文藝復興油畫/ (4 張圖保留中)
+  📁 Local_Media/2026-01-07-Kirby-文藝復興油畫/ (4 張圖保留中)
 
 Template 2：Kirby-荒謬職場
   ├─ 媒體生成：4 / 4 張
+  ├─ 成品評估：avg 9.1/10（logs/media_evaluations/2026-01-07-Kirby-荒謬職場-evaluation.json）
   ├─ Viral Score：S 級 (9.1)
   └─ URL 上傳：✅ 已插入 Prompt 檔案
-  📁 Local_Media/Kirby-荒謬職場/ (4 張圖保留中)
+  📁 Local_Media/2026-01-07-Kirby-荒謬職場/ (4 張圖保留中)
 
 ━━━ 下一步：手動發布 ━━━
 確認媒體後執行：
-  python scripts/publish_to_social.py "2026-01-07-Kirby-文藝復興油畫" --template "Kirby-文藝復興油畫" --platforms fb
+  python scripts/publish_to_social.py "2026-01-07-Kirby-文藝復興油畫" --template "2026-01-07-Kirby-文藝復興油畫" --platforms fb
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -207,7 +243,7 @@ Template 2：Kirby-荒謬職場
 |------|------|
 | 只生成內容（不生成媒體） | `/auto-produce-prompt "主題"` |
 | 只生成圖片（已有 Template） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type image` |
-| 只生成影片（已有 reference 圖） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type video --reference-image "Local_Media/Name/01.png"` |
+| 只生成影片（已有 reference 圖） | `python scripts/generate_media_gemini.py --prompt "..." --template "Name" --index 1 --type video --reference-image "Local_Media/YYYY-MM-DD-Name/01.png"` |
 | 手動發布 | `python scripts/publish_to_social.py "Post" --template "Name" --platforms fb` |
 
 ---

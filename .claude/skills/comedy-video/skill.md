@@ -203,7 +203,7 @@ the whole expression radiating "you're about to see something incredible" — pu
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<開場畫面描述 + 角色情緒 + 環境，強調豎版構圖>" \
-  --output "Local_Media/<TemplateName>/comedy/scene_01.png" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/scene_01.png" \
   --type image
 ```
 
@@ -215,9 +215,9 @@ python scripts/generate_media_gemini.py \
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<完整 Beat 1 Prompt>" \
-  --output "Local_Media/<TemplateName>/comedy/clip_01.mp4" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_01.mp4" \
   --type video \
-  --reference-image "Local_Media/<TemplateName>/comedy/scene_01.png" \
+  --reference-image "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/scene_01.png" \
   --duration <時長> \
   --aspect-ratio 9:16
 ```
@@ -229,9 +229,9 @@ python scripts/generate_media_gemini.py \
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --extract-last-frame "Local_Media/<TemplateName>/comedy/clip_01.mp4" \
-  --diverge-from "Local_Media/<TemplateName>/comedy/scene_01.png" \
-  --output "Local_Media/<TemplateName>/comedy/frame_01_relay.png"
+  --extract-last-frame "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_01.mp4" \
+  --diverge-from "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/scene_01.png" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/frame_01_relay.png"
 ```
 
 > 📌 **為何不用固定 30%？** 短片段（例如 4s）的 30% 僅約 1.2s，畫面仍極接近「本段起始 reference」，下一幕等於重複同一張構圖。`--diverge-from` 會以本段使用的 reference 為基準，在片內多個時間點試擷，直到像素差異足夠（預設 MAE 門檻），仍失敗則改取接近片尾之幀。  
@@ -250,9 +250,9 @@ Beat 1 完成 ✅  [<功能>] (<Xs>)
 export PYTHONIOENCODING=utf-8
 python scripts/generate_media_gemini.py \
   --prompt "<完整 Beat N Prompt>" \
-  --output "Local_Media/<TemplateName>/comedy/clip_0N.mp4" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_0N.mp4" \
   --type video \
-  --reference-image "Local_Media/<TemplateName>/comedy/frame_{N-1}_relay.png" \
+  --reference-image "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/frame_{N-1}_relay.png" \
   --duration <時長> \
   --aspect-ratio 9:16
 ```
@@ -261,9 +261,9 @@ python scripts/generate_media_gemini.py \
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --extract-last-frame "Local_Media/<TemplateName>/comedy/clip_0N.mp4" \
-  --diverge-from "Local_Media/<TemplateName>/comedy/frame_{N-1}_relay.png" \
-  --output "Local_Media/<TemplateName>/comedy/frame_0N_relay.png"
+  --extract-last-frame "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_0N.mp4" \
+  --diverge-from "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/frame_{N-1}_relay.png" \
+  --output "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/frame_0N_relay.png"
 ```
 
 > **若前 Beat 失敗**：改用 `frame_{N-2}_relay.png` 作為 **影片** 的 reference；擷取接力幀時 `--diverge-from` 仍須對應「該段實際使用的 reference 圖」，Prompt 首句更新描述該幀狀態
@@ -282,13 +282,13 @@ Beat N 完成 ✅  [<功能>] (<Xs>)
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --clips Local_Media/<TemplateName>/comedy/clip_01.mp4 \
-          Local_Media/<TemplateName>/comedy/clip_02.mp4 \
+  --clips Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_01.mp4 \
+          Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_02.mp4 \
           （依實際成功片段列出）\
   --trim-overlap \
   --trim-prev-end 0.4 \
   --trim-next-start 0.3 \
-  --output Local_Media/<TemplateName>/comedy/final_optimized.mp4
+  --output Local_Media/<YYYY-MM-DD-TemplateName>/comedy/final_optimized.mp4
 ```
 
 > **English:** Always trim overlap before the delivery export. Raw concat keeps the last motion of Beat N and the first repeated motion of Beat N+1, which creates the "just finished, then did it again" feeling.
@@ -309,16 +309,16 @@ Join 2 = Beat 1 + Beat 2 時長
 **擷取每個接合點前後幀：**
 ```bash
 export PYTHONIOENCODING=utf-8
-mkdir -p "Local_Media/<TemplateName>/comedy/transitions"
+mkdir -p "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/transitions"
 
 # 每個接合點：before = 接合點 - 0.3s，after = 接合點 + 0.2s
 ffmpeg -y -ss <接合點 - 0.3> \
-  -i "Local_Media/<TemplateName>/comedy/final_comedy.mp4" \
-  -frames:v 1 "Local_Media/<TemplateName>/comedy/transitions/join_N_before.jpg"
+  -i "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/final_comedy.mp4" \
+  -frames:v 1 "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/transitions/join_N_before.jpg"
 
 ffmpeg -y -ss <接合點 + 0.2> \
-  -i "Local_Media/<TemplateName>/comedy/final_comedy.mp4" \
-  -frames:v 1 "Local_Media/<TemplateName>/comedy/transitions/join_N_after.jpg"
+  -i "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/final_comedy.mp4" \
+  -frames:v 1 "Local_Media/<YYYY-MM-DD-TemplateName>/comedy/transitions/join_N_after.jpg"
 ```
 
 **視覺分析（讀取每對 before/after 幀）：**
@@ -361,10 +361,10 @@ ffmpeg -y -ss 0.3 -i "clip_N+1.mp4" -c copy "clip_N+1_trim.mp4"
 ```bash
 export PYTHONIOENCODING=utf-8
 python scripts/concat_video_clips.py \
-  --clips Local_Media/<TemplateName>/comedy/clip_01[_trim].mp4 \
-          Local_Media/<TemplateName>/comedy/clip_02[_trim].mp4 \
+  --clips Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_01[_trim].mp4 \
+          Local_Media/<YYYY-MM-DD-TemplateName>/comedy/clip_02[_trim].mp4 \
           （有修剪用 _trim 版，無修剪用原始）\
-  --output Local_Media/<TemplateName>/comedy/final_optimized.mp4
+  --output Local_Media/<YYYY-MM-DD-TemplateName>/comedy/final_optimized.mp4
 ```
 
 ---
@@ -386,7 +386,7 @@ Beat N｜<功能>  ✅  clip_0N.mp4（<Xs>）
   ...
   修剪執行：<N 個 / 無>
 
-最終成品：Local_Media/<TemplateName>/comedy/final_optimized.mp4（<Xs>）
+最終成品：Local_Media/<YYYY-MM-DD-TemplateName>/comedy/final_optimized.mp4（<Xs>）
 （若無需修剪：final_comedy.mp4）
 
 喜劇節拍回顧：
@@ -415,7 +415,7 @@ Beat N｜<功能>  ✅  clip_0N.mp4（<Xs>）
 ## 儲存結構
 
 ```
-Local_Media/<TemplateName>/
+Local_Media/<YYYY-MM-DD-TemplateName>/
   comedy/
     scene_01.png             ← Beat 1 參考圖
     clip_01.mp4              ← Beat 1 影片

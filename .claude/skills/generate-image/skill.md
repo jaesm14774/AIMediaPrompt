@@ -19,22 +19,22 @@ version: "1.0.0"
 
 **參數說明：**
 - `[描述或檔案路徑]`：圖片/影片描述文字，或 Prompt 檔案路徑
-- `--template <名稱>`：Prompt Template 名稱（決定存入 `Local_Media/<名稱>/`）
+- `--template <名稱>`：Prompt Template 名稱（決定存入 `Local_Media/YYYY-MM-DD-<名稱>/`，日期自動加入）
 - `--type <類型>`：`image`（預設）或 `video`
 - `--index <序號>`：第幾張/支，用於命名（預設：1）
-- `--reference-image <路徑>`：生成影片時必填；若省略，會優先嘗試使用 `Local_Media/<名稱>/<序號>.png`
+- `--reference-image <路徑>`：生成影片時必填；若省略，會優先嘗試使用 `Local_Media/YYYY-MM-DD-<名稱>/<序號>.png`
 - `--style <風格>`：指定視覺風格，附加到 prompt（見下方風格列表）
 - `--aspect <比例>`：圖片比例（`1:1`、`16:9`、`2.35:1`），附加到 prompt
 - `--auto`：從檔案自動分析內容生成描述
 
 **範例：**
 ```bash
-# 生成圖片，存入 Local_Media/KirbyTemplate/01.png
+# 生成圖片，存入 Local_Media/YYYY-MM-DD-KirbyTemplate/01.png（日期自動加入）
 /generate-image "Kirby 在辦公室認真工作，穿著西裝打領帶" --template "KirbyTemplate" --index 1
 
 # 影片：先有 reference 圖，再生成影片
 /generate-image "Kirby 跳舞" --template "KirbyTemplate" --index 1
-python scripts/generate_media_gemini.py --prompt "Kirby 跳舞" --template "KirbyTemplate" --index 1 --type video --reference-image "Local_Media/KirbyTemplate/01.png"
+python scripts/generate_media_gemini.py --prompt "Kirby 跳舞" --template "KirbyTemplate" --index 1 --type video --reference-image "Local_Media/YYYY-MM-DD-KirbyTemplate/01.png"
 
 # 從教學文自動分析並生成
 /generate-image "Post/Test/2026-01-20-Kirby-Office.md" --template "KirbyOffice" --auto
@@ -105,8 +105,8 @@ pip install google-genai
 ### Step 3: 決定輸出路徑
 
 - 若指定 `--template <名稱>` 和 `--index <序號>`：
-  - 圖片：`Local_Media/<名稱>/<序號，補零2位>.png`（例：`Local_Media/KirbyTemplate/01.png`）
-  - 影片：`Local_Media/<名稱>/<序號，補零2位>.mp4`
+  - 圖片：`Local_Media/YYYY-MM-DD-<名稱>/<序號，補零2位>.png`（例：`Local_Media/2026-01-07-KirbyTemplate/01.png`，日期自動加入）
+  - 影片：`Local_Media/YYYY-MM-DD-<名稱>/<序號，補零2位>.mp4`
 - 若指定完整路徑 → 直接使用
 
 ### Step 4: 呼叫 Gemini API
@@ -137,12 +137,12 @@ python scripts/generate_media_gemini.py \
 
 類型：[image / video]
 模型：[gemini-3.1-flash-image-preview / veo-3.1-lite-generate-preview]
-位置：Local_Media/<TemplateName>/<序號>.png 或 .mp4
+位置：Local_Media/YYYY-MM-DD-<TemplateName>/<序號>.png 或 .mp4
 
 下一步建議：
 - 圖片流程：生成全部 4 張後，執行 /viral-score 評估
 - 影片流程：先確認 2 張 reference 圖，再生成 2 支影片後執行 /viral-score
-- 確認已達 S 級後執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+- 確認已達 S 級後執行 python scripts/auto_upload_media.py "YYYY-MM-DD-TemplateName" --folder "YYYY-MM-DD-TemplateName"
 ```
 
 ---
@@ -156,13 +156,13 @@ python scripts/generate_media_gemini.py \
    - 圖片流程 → 產生 4 個 Prompt
    - 影片流程 → 產生 2 個 Prompt
 2. 若是圖片流程，對每個 Prompt 呼叫 /generate-image：
-   - Prompt 1 → Local_Media/TemplateName/01.png
-   - Prompt 2 → Local_Media/TemplateName/02.png
-   - Prompt 3 → Local_Media/TemplateName/03.png
-   - Prompt 4 → Local_Media/TemplateName/04.png
+   - Prompt 1 → Local_Media/YYYY-MM-DD-TemplateName/01.png（日期自動加入）
+   - Prompt 2 → Local_Media/YYYY-MM-DD-TemplateName/02.png
+   - Prompt 3 → Local_Media/YYYY-MM-DD-TemplateName/03.png
+   - Prompt 4 → Local_Media/YYYY-MM-DD-TemplateName/04.png
 3. 若是影片流程，先生成 01.png、02.png，再各自生成 01.mp4、02.mp4
 4. /viral-score 評估
-5. 分數達 S 級後，再執行 python scripts/auto_upload_media.py "TemplateName" --folder "TemplateName"
+5. 分數達 S 級後，再執行 python scripts/auto_upload_media.py "YYYY-MM-DD-TemplateName" --folder "YYYY-MM-DD-TemplateName"
    （僅上傳，不刪除本機檔案）
 ```
 

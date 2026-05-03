@@ -14,17 +14,20 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 import time
+from datetime import date
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 IMAGE_MODEL = "gemini-3.1-flash-image-preview"
-VIDEO_MODEL = "veo-3.1-lite-generate-preview"
+# VIDEO_MODEL = "veo-3.1-lite-generate-preview"
 # VIDEO_MODEL = "veo-3.1-fast-generate-preview"
+VIDEO_MODEL = "veo-3.1-generate-preview"
 
-VIDEO_DURATION_SECONDS = 8  # 8s 最穩定，支援 reference_images
+VIDEO_DURATION_SECONDS = 6  # 預設用中段節奏；實際可傳入 4/6/8 秒
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
 VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
@@ -115,7 +118,7 @@ def generate_video(
                            確保角色外觀全片一致。與 reference_image_path 不同：
                            reference_image_path = 前幕中段幀（決定畫面起始狀態）
                            character_anchor_path = 初始角色圖（鎖定角色外觀）
-    duration_seconds:      8（最穩定，必須用 8 才能使用 reference_images）
+    duration_seconds:      Veo API 支援 4/6/8 秒；預設 6 秒，較長節奏再拉到 8 秒
     api_note:              排除元素請寫入主 Prompt（官方 Veo 指南：以名詞描述、避免 no/don't）。
                            公開 API 規格表未列 negative_prompt 參數。
     """
@@ -137,7 +140,7 @@ def generate_video(
 
         reference_image = types.Image.from_file(location=str(reference_image_path))
 
-        # 建立 config — duration=8 是使用 reference_images 的必要條件
+        # 建立 config：時長由上層策略決定，避免所有題材都被硬拉成同一節奏
         config_kwargs: dict = {
             "aspect_ratio": aspect_ratio,
             "number_of_videos": 1,
@@ -268,7 +271,11 @@ def main():
             output_path = PROJECT_ROOT / output_path
     elif args.template:
         ext = ".png" if args.type == "image" else ".mp4"
-        output_path = PROJECT_ROOT / "Local_Media" / args.template / f"{args.index:02d}{ext}"
+        # 若 template 名稱未含日期前綴，自動加上今天日期（與 Post 命名規則一致）
+        template_folder = args.template
+        if not re.match(r'^\d{4}-\d{2}-\d{2}-', template_folder):
+            template_folder = f"{date.today().strftime('%Y-%m-%d')}-{template_folder}"
+        output_path = PROJECT_ROOT / "Local_Media" / template_folder / f"{args.index:02d}{ext}"
     else:
         print("❌ 請指定 --output 路徑或 --template 名稱")
         parser.print_help()
@@ -297,7 +304,7 @@ def main():
                 reference_image_path = PROJECT_ROOT / reference_image_path
         elif args.template:
             inferred_path = (
-                PROJECT_ROOT / "Local_Media" / args.template / f"{args.index:02d}.png"
+                PROJECT_ROOT / "Local_Media" / template_folder / f"{args.index:02d}.png"
             )
             if inferred_path.exists():
                 reference_image_path = inferred_path

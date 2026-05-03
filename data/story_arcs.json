@@ -1,0 +1,410 @@
+{
+  "_meta": {
+    "version": "3.0",
+    "description": "療育系故事弧線模板。每種 3 個 beat，重點是讓畫面自然變得更可愛、更舒服、更溫暖，而不是製造戲劇衝突。",
+    "beats_structure": "beat 1 = 建立簡單舒服的場景；beat 2 = 發生小小可愛變化；beat 3 = 收在最療癒、最完整的畫面"
+  },
+  "soft_daily_delight": {
+    "label_zh": "日常小確幸",
+    "label_en": "Soft Daily Delight",
+    "description_en": "A simple everyday scene becomes a little brighter, cuter, and more satisfying through one small positive change.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Simple Setup",
+        "narrative": "Establish a clear, gentle everyday moment. The subject should already feel safe, cute, and approachable, with the setting easy to understand at a glance.",
+        "tone_guidance": "Tone: light, cheerful, clean, and calm. No tension, only soft anticipation.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Little Happy Change",
+        "narrative": "A small visual event makes the scene sweeter: more flowers, a brighter smile, a completed shape, a soft glow, or a tiny playful detail.",
+        "tone_guidance": "Tone: happy but gentle. The change should feel natural and cute, never loud.",
+        "shot_bias": ["cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "reveal_then_hold"]
+      },
+      {
+        "index": 3,
+        "label": "Complete Warm Frame",
+        "narrative": "End on the most satisfying version of the scene, where everything feels balanced, soft, and emotionally complete.",
+        "tone_guidance": "Tone: content, bright, wholesome. The final frame should feel like a healing illustration card.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "gentle_discovery": {
+    "label_zh": "溫柔小發現",
+    "label_en": "Gentle Discovery",
+    "description_en": "A calm scene reveals one tiny magical or surprising detail that deepens the softness without breaking the peaceful mood.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Calm Surface",
+        "narrative": "Start with a quiet, trustworthy scene. Keep the composition simple and let the character's softness carry the image.",
+        "tone_guidance": "Tone: peaceful, curious, delicate. The scene should feel safe before anything changes.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Tiny Reveal",
+        "narrative": "Introduce one subtle discovery: a glow, a drifting petal, a second friend, a tiny reflection, a soft pattern, or a cute visual echo.",
+        "tone_guidance": "Tone: wonder without shock. The moment should feel like a quiet smile, not a dramatic twist.",
+        "shot_bias": ["cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "parallax_flythrough"]
+      },
+      {
+        "index": 3,
+        "label": "Settled Wonder",
+        "narrative": "End after the character has simply accepted the sweet little discovery. The final image should feel magical and restful at the same time.",
+        "tone_guidance": "Tone: tender, dreamy, balanced. The impossible should feel gentle and natural.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "cozy_companionship": {
+    "label_zh": "陪伴感",
+    "label_en": "Cozy Companionship",
+    "description_en": "The core of the scene is simple togetherness: sharing space, sharing food, sharing warmth, or quietly staying near one another.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Together",
+        "narrative": "Show the character and companion already near each other in a safe and pleasant setting. Their closeness should be readable immediately.",
+        "tone_guidance": "Tone: kind, soft, affectionate, stable. No conflict or separation energy.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Shared Gesture",
+        "narrative": "Add one small interaction that confirms trust or care: leaning closer, sharing food, matching posture, or offering a tiny gift.",
+        "tone_guidance": "Tone: sweet and sincere. The gesture should feel small, visible, and emotionally direct.",
+        "shot_bias": ["cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "reveal_then_hold"]
+      },
+      {
+        "index": 3,
+        "label": "Warm Pairing",
+        "narrative": "End on a frame where the companionship itself is the healing point. The viewer should feel that being together is enough.",
+        "tone_guidance": "Tone: warm, loving, reassuring. Final image should feel safe and deeply gentle.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "peaceful_rest": {
+    "label_zh": "安靜休息",
+    "label_en": "Peaceful Rest",
+    "description_en": "The scene centers on comfort, stillness, napping, warmth, or quiet recharging. The image should soothe at first glance.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Resting Place",
+        "narrative": "Create a soft place to rest: blanket, leaf, cushion, cloud, tree shade, or window corner. The body language should already feel unguarded and calm.",
+        "tone_guidance": "Tone: sleepy, safe, unhurried, comforting. Prioritize softness over action.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Deeper Comfort",
+        "narrative": "A subtle change makes the resting moment even better: softer light, a breeze, a settling pillow, warm steam, a drifting leaf, or a quiet companion.",
+        "tone_guidance": "Tone: deeper exhale, gentler stillness, cozy immersion.",
+        "shot_bias": ["cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "reveal_then_hold"]
+      },
+      {
+        "index": 3,
+        "label": "Full Calm",
+        "narrative": "End on the most peaceful version of the image, where the rest feels complete and the viewer can almost feel the quiet.",
+        "tone_guidance": "Tone: serene, sleepy, deeply soothing. The frame should feel like visual comfort.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "simple_magic": {
+    "label_zh": "簡單小魔法",
+    "label_en": "Simple Magic",
+    "description_en": "A tiny magical element appears not to create spectacle, but to make a gentle scene feel even softer and more enchanting.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Quiet Magic Seed",
+        "narrative": "Begin with a clean, soft composition where a magical possibility could naturally exist: soft light, tiny stars, glowing drops, or dreamlike stillness.",
+        "tone_guidance": "Tone: calm, magical, delicate. The world should feel lightly enchanted from the start.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Small Enchantment",
+        "narrative": "Let one magical detail become visible. Keep it intimate and cute, like something the character notices rather than performs dramatically.",
+        "tone_guidance": "Tone: wonder, softness, childlike calm. Keep the magic tiny and emotionally warm.",
+        "shot_bias": ["cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "parallax_flythrough"]
+      },
+      {
+        "index": 3,
+        "label": "Comforting Glow",
+        "narrative": "End when the magic has fully blended into the cozy mood of the scene. The final frame should feel brighter, safer, and more tender than before.",
+        "tone_guidance": "Tone: glowing, peaceful, charming. The magic should feel like comfort, not power.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "comedy_escalation": {
+    "label_zh": "喜劇升溫",
+    "label_en": "Comedy Escalation",
+    "description_en": "A harmless situation keeps getting funnier and more chaotic, building to an absurd but lovable peak.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Innocent Start",
+        "narrative": "Begin with a simple action that seems harmless. The character tries to do something ordinary but already something slightly off is visible.",
+        "tone_guidance": "Tone: light, curious, setup energy. Nothing too silly yet — the joke is building.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Escalating Chaos",
+        "narrative": "The situation has gotten noticeably funnier. Things are piling up, going wrong in the best possible way, spinning slightly out of control — but the character is still trying.",
+        "tone_guidance": "Tone: playful panic, lovable struggle, slapstick without cruelty. The chaos should look fun, not stressful.",
+        "shot_bias": ["dutch_tilt_tension", "wide_angle_distortion"],
+        "motion_bias": ["whip_pan_energy", "speed_ramp_punctuation"]
+      },
+      {
+        "index": 3,
+        "label": "Peak Absurdity",
+        "narrative": "Land on the most gloriously ridiculous version of the situation — the character surrounded by the consequences, but wearing an expression of complete acceptance or delight.",
+        "tone_guidance": "Tone: absurd, joyful, screenshot-worthy. The final image should be the perfect punchline.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["freeze_frame_punctuation", "reveal_then_hold"]
+      }
+    ]
+  },
+  "hero_journey_mini": {
+    "label_zh": "迷你英雄旅程",
+    "label_en": "Mini Hero Journey",
+    "description_en": "A small but sincere adventure with a clear goal, real obstacle, and satisfying victory that feels genuinely earned.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "The Call",
+        "narrative": "Establish the character setting out on a mission. The goal is visible, the challenge implied. Energy is high and hopeful.",
+        "tone_guidance": "Tone: determined, excited, ready. The character should look like they mean business.",
+        "shot_bias": ["low_angle_hero", "cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "parallax_flythrough"]
+      },
+      {
+        "index": 2,
+        "label": "The Trial",
+        "narrative": "The character faces the central obstacle. Show genuine effort, a moment of doubt, and the inner resolve that pushes through.",
+        "tone_guidance": "Tone: tense but hopeful. The difficulty should feel real, but the spirit should stay intact.",
+        "shot_bias": ["dutch_tilt_tension", "shoulder_pov_immersive"],
+        "motion_bias": ["speed_ramp_punctuation", "chaotic_handheld_real"]
+      },
+      {
+        "index": 3,
+        "label": "Triumphant Return",
+        "narrative": "End on the character having succeeded — a quiet, satisfied pose that says: they did it.",
+        "tone_guidance": "Tone: proud, complete, earned. Victory should feel proportionate to the journey.",
+        "shot_bias": ["low_angle_hero", "extreme_wide_lonely"],
+        "motion_bias": ["reveal_then_hold", "vertical_descent_or_rise"]
+      }
+    ]
+  },
+  "plot_twist_ending": {
+    "label_zh": "反轉收尾",
+    "label_en": "Plot Twist Ending",
+    "description_en": "Build an obvious expectation, then deliver a completely different — funnier or warmer — resolution that reframes everything.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Expected Setup",
+        "narrative": "Establish a situation that appears to be heading in one clear direction. The viewer should feel confident they know how this ends.",
+        "tone_guidance": "Tone: familiar, predictable-feeling. Let the viewer get comfortable.",
+        "shot_bias": ["cinematic_medium_wide", "symmetrical_centered"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "The Pivot",
+        "narrative": "Something changes that redirects the scene entirely — an object appears, the scale reveals itself, or the logic inverts.",
+        "tone_guidance": "Tone: surprise, delight. Keep the twist earned, not random.",
+        "shot_bias": ["dutch_tilt_tension", "frame_within_frame"],
+        "motion_bias": ["whip_pan_energy", "match_cut_transformation"]
+      },
+      {
+        "index": 3,
+        "label": "Reframed Ending",
+        "narrative": "End on the new reality, which is better, funnier, or more touching than the original expectation.",
+        "tone_guidance": "Tone: satisfied, charmed. The final frame should trigger an involuntary smile.",
+        "shot_bias": ["cinematic_medium_wide", "overhead_tableau"],
+        "motion_bias": ["reveal_then_hold", "freeze_frame_punctuation"]
+      }
+    ]
+  },
+  "competition_spirit": {
+    "label_zh": "競技精神",
+    "label_en": "Competition Spirit",
+    "description_en": "The character enters a challenge — preparation, peak effort, and a result that shows the journey mattered more than the outcome.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Pre-Game",
+        "narrative": "Show the character preparing or sizing up the competition. Stakes are readable. Confidence and nerves coexist.",
+        "tone_guidance": "Tone: focused, a little nervous, ready. Sport-documentary energy.",
+        "shot_bias": ["low_angle_hero", "cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "Full Effort",
+        "narrative": "The character is all in — giving everything, right in the middle of the action. Show peak competitive energy.",
+        "tone_guidance": "Tone: intense, alive, committed. Every detail communicates 100% effort.",
+        "shot_bias": ["dutch_tilt_tension", "wide_angle_distortion"],
+        "motion_bias": ["speed_ramp_punctuation", "whip_pan_energy"]
+      },
+      {
+        "index": 3,
+        "label": "Earned Moment",
+        "narrative": "End on the character's relationship with the result — win or lose, they gave everything and they know it.",
+        "tone_guidance": "Tone: dignified, satisfied, complete. The emotion should feel real, not performed.",
+        "shot_bias": ["cinematic_medium_wide", "extreme_wide_lonely"],
+        "motion_bias": ["reveal_then_hold", "static_lock_off"]
+      }
+    ]
+  },
+  "transformation_arc": {
+    "label_zh": "成長蛻變",
+    "label_en": "Transformation Arc",
+    "description_en": "The character visibly changes through the experience — a skill gained, a fear overcome, a new understanding that reads clearly in the final image.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "Before",
+        "narrative": "Show the character before the change — uncertain, unfamiliar with the challenge, or in their original state.",
+        "tone_guidance": "Tone: uncertain, wide-eyed. Not defeated — just not yet transformed.",
+        "shot_bias": ["cinematic_medium_wide", "negative_space_isolation"],
+        "motion_bias": ["slow_push_in"]
+      },
+      {
+        "index": 2,
+        "label": "The Crucible",
+        "narrative": "Show the character in the middle of the transforming experience — learning, struggling, discovering something new.",
+        "tone_guidance": "Tone: effort, discovery, momentum. Something important is visibly happening.",
+        "shot_bias": ["cinematic_medium_wide", "shoulder_pov_immersive"],
+        "motion_bias": ["speed_ramp_punctuation", "parallax_flythrough"]
+      },
+      {
+        "index": 3,
+        "label": "After",
+        "narrative": "End on the changed character — confident, capable, present. The transformation is in the posture, not the costume.",
+        "tone_guidance": "Tone: assured, quietly proud. The change should feel earned and specific.",
+        "shot_bias": ["low_angle_hero", "cinematic_medium_wide"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "friendship_forged": {
+    "label_zh": "情誼締結",
+    "label_en": "Friendship Forged",
+    "description_en": "Two characters go from strangers to allies through a shared experience — the connection forms through doing, not just being together.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "First Contact",
+        "narrative": "The two characters meet or are placed together. There's distance — they don't yet know each other. The gap between them is visual.",
+        "tone_guidance": "Tone: curious, slightly awkward, potential unrealized.",
+        "shot_bias": ["two_shot_relationship", "cinematic_medium_wide"],
+        "motion_bias": ["slow_push_in", "static_lock_off"]
+      },
+      {
+        "index": 2,
+        "label": "Shared Moment",
+        "narrative": "Something happens that makes them cooperate, laugh together, or depend on each other. The connection begins.",
+        "tone_guidance": "Tone: warmer, leaning in, ice breaking. The gap is narrowing.",
+        "shot_bias": ["two_shot_relationship", "macro_intimate_detail"],
+        "motion_bias": ["slow_push_in", "reveal_then_hold"]
+      },
+      {
+        "index": 3,
+        "label": "Bonded",
+        "narrative": "End on the two characters clearly comfortable with each other — posture mirrored, distance gone, the unspoken understanding visible.",
+        "tone_guidance": "Tone: warm, natural, complete. The friendship feels real because of what was shown.",
+        "shot_bias": ["two_shot_relationship", "overhead_tableau"],
+        "motion_bias": ["reveal_then_hold"]
+      }
+    ]
+  },
+  "mystery_solved": {
+    "label_zh": "謎題揭曉",
+    "label_en": "Mystery Solved",
+    "description_en": "Something hidden or unexplained at the start — the journey to the answer reveals something delightful, funny, or unexpectedly heartwarming.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "The Question",
+        "narrative": "Establish something unknown or unexplained. Something is off, missing, or mysterious in an inviting way — the viewer should want to know.",
+        "tone_guidance": "Tone: curious, intriguing, slightly puzzling. The mystery should feel interesting, not threatening.",
+        "shot_bias": ["frame_within_frame", "negative_space_isolation"],
+        "motion_bias": ["slow_push_in", "parallax_flythrough"]
+      },
+      {
+        "index": 2,
+        "label": "Investigation",
+        "narrative": "The character searches, examines, or follows clues. Show the process of discovery — detective work made visual.",
+        "tone_guidance": "Tone: focused, curious, slightly dramatic in a fun way.",
+        "shot_bias": ["macro_intimate_detail", "shoulder_pov_immersive"],
+        "motion_bias": ["slow_push_in", "speed_ramp_punctuation"]
+      },
+      {
+        "index": 3,
+        "label": "The Reveal",
+        "narrative": "The answer is found — better than expected. The payoff reframes everything that came before.",
+        "tone_guidance": "Tone: delighted, satisfied. The reveal feels both surprising and inevitable.",
+        "shot_bias": ["cinematic_medium_wide", "low_angle_hero"],
+        "motion_bias": ["reveal_then_hold", "freeze_frame_punctuation"]
+      }
+    ]
+  },
+  "comeback_story": {
+    "label_zh": "逆境反撲",
+    "label_en": "Comeback Story",
+    "description_en": "The character faces a genuine setback, digs deep, and makes a meaningful recovery that feels hard-won and real.",
+    "beats": [
+      {
+        "index": 1,
+        "label": "The Fall",
+        "narrative": "Show the character after something has gone wrong — in the quiet aftermath of a setback. Posture, expression, environment carry the weight.",
+        "tone_guidance": "Tone: honest, low-energy, the real cost of failure. Not dramatic — just real.",
+        "shot_bias": ["negative_space_isolation", "extreme_wide_lonely"],
+        "motion_bias": ["static_lock_off"]
+      },
+      {
+        "index": 2,
+        "label": "Finding the Will",
+        "narrative": "Something small ignites the return — a memory, a friend, a decision, a small action. The pivot back toward trying feels authentic.",
+        "tone_guidance": "Tone: quiet determination, the decision before the action. Subtle but unambiguous.",
+        "shot_bias": ["cinematic_medium_wide", "macro_intimate_detail"],
+        "motion_bias": ["slow_push_in", "reveal_then_hold"]
+      },
+      {
+        "index": 3,
+        "label": "The Return",
+        "narrative": "End on the character standing again and moving forward. The comeback is in their posture, not a trophy.",
+        "tone_guidance": "Tone: earned, resilient, quietly triumphant. The viewer feels how far they've come.",
+        "shot_bias": ["low_angle_hero", "cinematic_medium_wide"],
+        "motion_bias": ["reveal_then_hold", "vertical_descent_or_rise"]
+      }
+    ]
+  }
+}

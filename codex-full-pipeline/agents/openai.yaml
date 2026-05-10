@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Full Pipeline"
+  short_description: "Run AIMediaPrompt end-to-end with Codex image generation."
+  default_prompt: "Run the Codex full pipeline for an AIMediaPrompt topic."
